@@ -16,3 +16,7 @@ node_modules
 
 # Claude Code internal files
 .claude/
+.vercel
+
+# Using pnpm as the lockfile of record
+package-lock.json
