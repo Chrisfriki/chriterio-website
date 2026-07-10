@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { Wordmark } from '@/components/wordmark'
 import { NAV_LINKS, CALENDLY_URL, WHATSAPP_URL } from '@/lib/site'
@@ -62,9 +63,23 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-white/40 md:flex-row md:items-center md:justify-between">
-          <span>© {new Date().getFullYear()} CHRITERIO · Todos los derechos reservados</span>
-          <span>Seller activo en Amazon.es · Sin permanencias · Precio cerrado</span>
+        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-white/40 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-6">
+            <span>© {new Date().getFullYear()} CHRITERIO · Todos los derechos reservados</span>
+            <span>Seller activo en Amazon.es · Sin permanencias · Precio cerrado</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-white/40">Diseñado por</span>
+            <span className="flex items-center rounded-md bg-white px-2 py-1">
+              <Image
+                src="/amz-creatives-logo.png"
+                alt="AMZ Creatives"
+                width={4773}
+                height={713}
+                className="h-4 w-auto"
+              />
+            </span>
+          </div>
         </div>
       </div>
     </footer>
