@@ -34,13 +34,13 @@ const FRAME_URLS = Array.from({ length: HERO_FRAME_COUNT }, (_, index) => getFra
 
 // Loaded first, before anything else, so there's a frame to paint ASAP.
 const PRIORITY_FIRST_INDEX = 0
-// Loaded right after the first frame: a handful of frames spread across the
-// sequence so an early scroll already lands close to the right image while
-// the rest streams in behind them.
-const PRIORITY_KEY_INDICES = [29, 59, 89, HERO_FRAME_COUNT - 1].filter(
-  (i, idx, arr) => i >= 0 && i < HERO_FRAME_COUNT && arr.indexOf(i) === idx,
-)
-const BACKGROUND_LOAD_CONCURRENCY = 6
+// After the first frame, the rest load with limited concurrency, always
+// picking whichever idle frame is closest to the current scroll target
+// (see pickNextIdleIndex) so the sequence "fills in" around wherever the
+// user actually is instead of a fixed order.
+const BACKGROUND_LOAD_CONCURRENCY = 8
+
+type FrameStatus = 'idle' | 'loading' | 'loaded' | 'error'
 
 const MAX_DPR = 2
 const MOBILE_BREAKPOINT = 768
@@ -98,11 +98,17 @@ export function ChriterioHeroSequence({
   const barRef = useRef<HTMLDivElement>(null)
 
   const imagesRef = useRef<HTMLImageElement[]>([])
-  const loadedRef = useRef<boolean[]>(new Array(HERO_FRAME_COUNT).fill(false))
-  const currentFrameRef = useRef(-1)
+  const statusRef = useRef<FrameStatus[]>(new Array(HERO_FRAME_COUNT).fill('idle'))
   const tickingRef = useRef(false)
   const rafIdRef = useRef<number | null>(null)
   const dprRef = useRef(1)
+
+  // Frame-selection state. Kept as refs (not React state) so scrolling never
+  // triggers a re-render — see `update()`.
+  const targetFrameIndexRef = useRef(0)
+  const previousTargetFrameIndexRef = useRef(0)
+  const renderedFrameIndexRef = useRef(-1)
+  const scrollDirectionRef = useRef<'down' | 'up' | null>(null)
 
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null)
   const [firstFrameReady, setFirstFrameReady] = useState(false)
@@ -115,30 +121,104 @@ export function ChriterioHeroSequence({
     return () => mq.removeEventListener('change', onChange)
   }, [])
 
-  // Nearest already-loaded frame to `target` (itself included). Returns -1
-  // if nothing has loaded yet at all.
-  const resolveDrawableIndex = (target: number) => {
-    if (loadedRef.current[target]) return target
+  // Nearest already-loaded frame to `target`, searching both directions.
+  // Only used for the very first paint, when nothing has been rendered yet
+  // (renderedFrameIndex === -1) — at that point there's no "previous frame"
+  // to protect against regressing from, so any loaded frame is an
+  // acceptable first image. Returns -1 if nothing has loaded at all yet.
+  const findNearestLoadedAnyDirection = (target: number) => {
+    if (statusRef.current[target] === 'loaded') return target
     for (let offset = 1; offset < HERO_FRAME_COUNT; offset++) {
       const before = target - offset
       const after = target + offset
-      if (before >= 0 && loadedRef.current[before]) return before
-      if (after < HERO_FRAME_COUNT && loadedRef.current[after]) return after
+      if (before >= 0 && statusRef.current[before] === 'loaded') return before
+      if (after < HERO_FRAME_COUNT && statusRef.current[after] === 'loaded') return after
     }
     return -1
   }
 
+  // Highest loaded index in [lo, hi] — used while scrolling down, so the
+  // substitute frame is always the closest one *at or below* the target,
+  // never something behind what's already rendered.
+  const findHighestLoadedInRange = (lo: number, hi: number) => {
+    for (let i = hi; i >= lo; i--) {
+      if (statusRef.current[i] === 'loaded') return i
+    }
+    return -1
+  }
+
+  // Lowest loaded index in [lo, hi] — used while scrolling up, so the
+  // substitute frame is always the closest one *at or above* the target,
+  // never something ahead of what's already rendered.
+  const findLowestLoadedInRange = (lo: number, hi: number) => {
+    for (let i = lo; i <= hi; i++) {
+      if (statusRef.current[i] === 'loaded') return i
+    }
+    return -1
+  }
+
+  // Resolves which frame should actually be painted for a given scroll
+  // target, without ever regressing behind the last frame that was
+  // rendered on screen. This is the fix for the "jumps back 3-4 frames"
+  // bug: the old fallback picked whichever loaded frame was numerically
+  // closest to the target, with no regard for which direction the user was
+  // scrolling or what was already on screen — so a stale, earlier frame
+  // that happened to be closer would flash in ahead of the real one.
+  const resolveFrameToRender = (targetIndex: number) => {
+    const rendered = renderedFrameIndexRef.current
+
+    if (rendered === -1) {
+      return findNearestLoadedAnyDirection(targetIndex)
+    }
+
+    if (statusRef.current[targetIndex] === 'loaded') return targetIndex
+
+    const direction = scrollDirectionRef.current ?? 'down'
+    const lo = Math.min(rendered, targetIndex)
+    const hi = Math.max(rendered, targetIndex)
+
+    let candidate =
+      direction === 'down' ? findHighestLoadedInRange(lo, hi) : findLowestLoadedInRange(lo, hi)
+    if (candidate === -1) candidate = rendered
+
+    // Hard invariant, regardless of how `candidate` was derived above.
+    if (direction === 'down' && candidate < rendered) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('Retroceso de fotograma detectado', {
+          direction,
+          previousRenderedFrame: rendered,
+          targetFrame: targetIndex,
+          nextRenderedFrame: candidate,
+        })
+      }
+      candidate = rendered
+    } else if (direction === 'up' && candidate > rendered) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('Avance de fotograma detectado durante scroll hacia arriba', {
+          direction,
+          previousRenderedFrame: rendered,
+          targetFrame: targetIndex,
+          nextRenderedFrame: candidate,
+        })
+      }
+      candidate = rendered
+    }
+
+    return candidate
+  }
+
+  /** Returns true if a frame was actually painted. */
   const drawFrame = (index: number) => {
     const canvas = canvasRef.current
     const img = imagesRef.current[index]
-    if (!canvas || !img || !img.complete || img.naturalWidth === 0) return
+    if (!canvas || !img || !img.complete || img.naturalWidth === 0) return false
 
     const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    if (!ctx) return false
 
     const cssWidth = canvas.clientWidth
     const cssHeight = canvas.clientHeight
-    if (cssWidth === 0 || cssHeight === 0) return
+    if (cssWidth === 0 || cssHeight === 0) return false
 
     const dpr = dprRef.current
     const pixelWidth = Math.round(cssWidth * dpr)
@@ -166,6 +246,7 @@ export function ChriterioHeroSequence({
     const dy = (cssHeight - drawHeight) / 2
 
     ctx.drawImage(img, dx, dy, drawWidth, drawHeight)
+    return true
   }
 
   const update = () => {
@@ -188,10 +269,19 @@ export function ChriterioHeroSequence({
       Math.round(frameProgress * (HERO_FRAME_COUNT - 1)),
     )
 
-    const drawableIndex = resolveDrawableIndex(targetIndex)
-    if (drawableIndex !== -1 && drawableIndex !== currentFrameRef.current) {
-      drawFrame(drawableIndex)
-      currentFrameRef.current = drawableIndex
+    const previousTarget = targetFrameIndexRef.current
+    if (targetIndex !== previousTarget) {
+      scrollDirectionRef.current = targetIndex > previousTarget ? 'down' : 'up'
+      previousTargetFrameIndexRef.current = previousTarget
+      targetFrameIndexRef.current = targetIndex
+    }
+
+    const resolvedIndex = resolveFrameToRender(targetIndex)
+    if (resolvedIndex !== -1 && resolvedIndex !== renderedFrameIndexRef.current) {
+      const painted = drawFrame(resolvedIndex)
+      if (painted) {
+        renderedFrameIndexRef.current = resolvedIndex
+      }
     }
 
     for (const [key, ref] of [
@@ -212,12 +302,12 @@ export function ChriterioHeroSequence({
     rafIdRef.current = requestAnimationFrame(update)
   }
 
-  // Priority-ordered preload: frame 1 first, then a handful of frames spread
-  // across the sequence, then the rest with limited concurrency in the
-  // background. Every successful load re-triggers `update()` so a
-  // temporarily-substituted frame gets swapped for the real one once it's
-  // ready, and the reveal only waits for the very first frame to land
-  // (whichever one that ends up being, in case an earlier one 404s).
+  // Preload: frame 1 first (painted immediately on arrival), then the rest
+  // with limited concurrency. Idle workers always pick whichever unrequested
+  // frame is closest to the *current* scroll target (re-read live off the
+  // ref on every pick), so loading dynamically re-prioritizes around
+  // wherever the user is actually scrolling instead of a fixed order — while
+  // still finishing the full 120-frame set in the background regardless.
   useEffect(() => {
     if (reducedMotion !== false) return
     let cancelled = false
@@ -225,16 +315,32 @@ export function ChriterioHeroSequence({
 
     const images = FRAME_URLS.map(() => new Image())
     imagesRef.current = images
-    loadedRef.current = new Array(HERO_FRAME_COUNT).fill(false)
+    statusRef.current = new Array(HERO_FRAME_COUNT).fill('idle')
+
+    const pickNextIdleIndex = () => {
+      const target = targetFrameIndexRef.current
+      let best = -1
+      let bestDistance = Infinity
+      for (let i = 0; i < HERO_FRAME_COUNT; i++) {
+        if (statusRef.current[i] !== 'idle') continue
+        const distance = Math.abs(i - target)
+        if (distance < bestDistance) {
+          bestDistance = distance
+          best = i
+        }
+      }
+      return best
+    }
 
     const loadOne = (index: number) =>
       new Promise<void>((resolve) => {
         const img = images[index]
         const src = FRAME_URLS[index]
+        statusRef.current[index] = 'loading'
         img.decoding = 'async'
         img.onload = () => {
           if (!cancelled) {
-            loadedRef.current[index] = true
+            statusRef.current[index] = 'loaded'
             if (!announcedFirstPaint) {
               announcedFirstPaint = true
               setFirstFrameReady(true)
@@ -244,6 +350,7 @@ export function ChriterioHeroSequence({
           resolve()
         }
         img.onerror = () => {
+          statusRef.current[index] = 'error'
           console.error('Error cargando fotograma:', src)
           resolve()
         }
@@ -254,27 +361,14 @@ export function ChriterioHeroSequence({
       await loadOne(PRIORITY_FIRST_INDEX)
       if (cancelled) return
 
-      await Promise.all(
-        PRIORITY_KEY_INDICES.filter((i) => i !== PRIORITY_FIRST_INDEX).map(loadOne),
-      )
-      if (cancelled) return
-
-      const already = new Set([PRIORITY_FIRST_INDEX, ...PRIORITY_KEY_INDICES])
-      const rest = Array.from({ length: HERO_FRAME_COUNT }, (_, i) => i).filter(
-        (i) => !already.has(i),
-      )
-
-      let cursor = 0
       const worker = async () => {
-        while (cursor < rest.length && !cancelled) {
-          const i = rest[cursor]
-          cursor += 1
-          await loadOne(i)
+        while (!cancelled) {
+          const next = pickNextIdleIndex()
+          if (next === -1) return
+          await loadOne(next)
         }
       }
-      await Promise.all(
-        Array.from({ length: BACKGROUND_LOAD_CONCURRENCY }, () => worker()),
-      )
+      await Promise.all(Array.from({ length: BACKGROUND_LOAD_CONCURRENCY }, () => worker()))
     }
 
     run()
@@ -294,7 +388,11 @@ export function ChriterioHeroSequence({
     const onScroll = () => requestUpdate()
     const onResize = () => {
       dprRef.current = Math.min(window.devicePixelRatio || 1, MAX_DPR)
-      currentFrameRef.current = -1
+      // Force a redraw at the new canvas size. Resetting to -1 (rather than
+      // leaving it pointing at the old frame) is fine here: this is a
+      // one-off geometry change, not the scroll-direction regression the
+      // rest of this file guards against.
+      renderedFrameIndexRef.current = -1
       requestUpdate()
     }
 
