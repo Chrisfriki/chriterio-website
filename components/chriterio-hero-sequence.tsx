@@ -35,9 +35,8 @@ const FRAME_URLS = Array.from({ length: HERO_FRAME_COUNT }, (_, index) => getFra
 // Loaded first, before anything else, so there's a frame to paint ASAP.
 const PRIORITY_FIRST_INDEX = 0
 // After the first frame, the rest load with limited concurrency, always
-// picking whichever idle frame is closest to the current scroll target
-// (see pickNextIdleIndex) so the sequence "fills in" around wherever the
-// user actually is instead of a fixed order.
+// picking whichever idle frame is closest to the current scroll target, so
+// loading dynamically re-prioritizes around wherever the user is scrolling.
 const BACKGROUND_LOAD_CONCURRENCY = 8
 
 type FrameStatus = 'idle' | 'loading' | 'loaded' | 'error'
@@ -45,6 +44,17 @@ type FrameStatus = 'idle' | 'loading' | 'loaded' | 'error'
 const MAX_DPR = 2
 const MOBILE_BREAKPOINT = 768
 const BACKGROUND_COLOR = '#050d1f'
+
+// --- Playhead smoothing tuning (safe to tweak) -----------------------------
+/** How aggressively the displayed frame chases the scroll target each tick (0-1: higher = snappier, lower = smoother/laggier). */
+const SMOOTHING_FACTOR = 0.16
+/** Max change in the (fractional) displayed frame per animation-frame tick. Keeps the canvas from ever skipping more than one drawn frame per render. */
+const MAX_FRAME_STEP = 0.9
+/** Trackpad/wheel micro-reversals shorter than this (px) are ignored. */
+const REVERSE_DISTANCE_THRESHOLD = 70
+/** ...and must persist at least this long (ms) before a direction change is accepted. */
+const REVERSE_TIME_THRESHOLD = 120
+// ----------------------------------------------------------------------------
 
 // Staggered reveal windows for each content group, all inside
 // [HERO_CONTENT_REVEAL_START, 1]. Order: headline -> actions -> cards -> bar.
@@ -99,16 +109,21 @@ export function ChriterioHeroSequence({
 
   const imagesRef = useRef<HTMLImageElement[]>([])
   const statusRef = useRef<FrameStatus[]>(new Array(HERO_FRAME_COUNT).fill('idle'))
-  const tickingRef = useRef(false)
-  const rafIdRef = useRef<number | null>(null)
   const dprRef = useRef(1)
 
-  // Frame-selection state. Kept as refs (not React state) so scrolling never
-  // triggers a re-render — see `update()`.
-  const targetFrameIndexRef = useRef(0)
-  const previousTargetFrameIndexRef = useRef(0)
-  const renderedFrameIndexRef = useRef(-1)
+  // --- Decoupled scroll-target vs. rendered-playhead state (all refs: never
+  // trigger a re-render, and the render loop is the only reader/writer of
+  // the "displayed" side of this split). ---
+  const progressRef = useRef(0) // stabilized (anti-bounce-gated) 0..1 hero progress, drives content reveal
+  const targetFrameFloatRef = useRef(0) // where the scroll *wants* the playhead to be
+  const displayedFrameFloatRef = useRef(0) // where the playhead actually, smoothly is
+  const lastDrawnFrameIndexRef = useRef(-1) // last frame index actually painted to the canvas
+  const lastScrollYRef = useRef(0)
   const scrollDirectionRef = useRef<'down' | 'up' | null>(null)
+  const reverseDistanceRef = useRef(0)
+  const reverseStartTimeRef = useRef<number | null>(null)
+  const rafIdRef = useRef<number | null>(null)
+  const needsRedrawRef = useRef(false)
 
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null)
   const [firstFrameReady, setFirstFrameReady] = useState(false)
@@ -122,92 +137,42 @@ export function ChriterioHeroSequence({
   }, [])
 
   // Nearest already-loaded frame to `target`, searching both directions.
-  // Only used for the very first paint, when nothing has been rendered yet
-  // (renderedFrameIndex === -1) — at that point there's no "previous frame"
-  // to protect against regressing from, so any loaded frame is an
-  // acceptable first image. Returns -1 if nothing has loaded at all yet.
+  // Used only to bootstrap the very first paint (lastDrawnFrameIndex === -1)
+  // — before anything is on screen there's no "previous frame" to protect
+  // against regressing from, so any loaded frame is an acceptable first
+  // image. After that, the render loop below only ever steps to the
+  // adjacent frame, never searches around.
   const findNearestLoadedAnyDirection = (target: number) => {
-    if (statusRef.current[target] === 'loaded') return target
+    const clamped = Math.max(0, Math.min(HERO_FRAME_COUNT - 1, target))
+    if (statusRef.current[clamped] === 'loaded') return clamped
     for (let offset = 1; offset < HERO_FRAME_COUNT; offset++) {
-      const before = target - offset
-      const after = target + offset
+      const before = clamped - offset
+      const after = clamped + offset
       if (before >= 0 && statusRef.current[before] === 'loaded') return before
       if (after < HERO_FRAME_COUNT && statusRef.current[after] === 'loaded') return after
     }
     return -1
   }
 
-  // Highest loaded index in [lo, hi] — used while scrolling down, so the
-  // substitute frame is always the closest one *at or below* the target,
-  // never something behind what's already rendered.
-  const findHighestLoadedInRange = (lo: number, hi: number) => {
-    for (let i = hi; i >= lo; i--) {
-      if (statusRef.current[i] === 'loaded') return i
+  const resizeCanvasBackingStore = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const cssWidth = canvas.clientWidth
+    const cssHeight = canvas.clientHeight
+    if (cssWidth === 0 || cssHeight === 0) return
+    const dpr = dprRef.current
+    const pixelWidth = Math.round(cssWidth * dpr)
+    const pixelHeight = Math.round(cssHeight * dpr)
+    if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+      canvas.width = pixelWidth
+      canvas.height = pixelHeight
     }
-    return -1
   }
 
-  // Lowest loaded index in [lo, hi] — used while scrolling up, so the
-  // substitute frame is always the closest one *at or above* the target,
-  // never something ahead of what's already rendered.
-  const findLowestLoadedInRange = (lo: number, hi: number) => {
-    for (let i = lo; i <= hi; i++) {
-      if (statusRef.current[i] === 'loaded') return i
-    }
-    return -1
-  }
-
-  // Resolves which frame should actually be painted for a given scroll
-  // target, without ever regressing behind the last frame that was
-  // rendered on screen. This is the fix for the "jumps back 3-4 frames"
-  // bug: the old fallback picked whichever loaded frame was numerically
-  // closest to the target, with no regard for which direction the user was
-  // scrolling or what was already on screen — so a stale, earlier frame
-  // that happened to be closer would flash in ahead of the real one.
-  const resolveFrameToRender = (targetIndex: number) => {
-    const rendered = renderedFrameIndexRef.current
-
-    if (rendered === -1) {
-      return findNearestLoadedAnyDirection(targetIndex)
-    }
-
-    if (statusRef.current[targetIndex] === 'loaded') return targetIndex
-
-    const direction = scrollDirectionRef.current ?? 'down'
-    const lo = Math.min(rendered, targetIndex)
-    const hi = Math.max(rendered, targetIndex)
-
-    let candidate =
-      direction === 'down' ? findHighestLoadedInRange(lo, hi) : findLowestLoadedInRange(lo, hi)
-    if (candidate === -1) candidate = rendered
-
-    // Hard invariant, regardless of how `candidate` was derived above.
-    if (direction === 'down' && candidate < rendered) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn('Retroceso de fotograma detectado', {
-          direction,
-          previousRenderedFrame: rendered,
-          targetFrame: targetIndex,
-          nextRenderedFrame: candidate,
-        })
-      }
-      candidate = rendered
-    } else if (direction === 'up' && candidate > rendered) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn('Avance de fotograma detectado durante scroll hacia arriba', {
-          direction,
-          previousRenderedFrame: rendered,
-          targetFrame: targetIndex,
-          nextRenderedFrame: candidate,
-        })
-      }
-      candidate = rendered
-    }
-
-    return candidate
-  }
-
-  /** Returns true if a frame was actually painted. */
+  // The one and only place that calls context.drawImage(). Scroll, resize,
+  // orientationchange, image.onload/decode and preload never call this
+  // directly — they only update refs and ask the render loop to run.
+  // Returns true if a frame was actually painted.
   const drawFrame = (index: number) => {
     const canvas = canvasRef.current
     const img = imagesRef.current[index]
@@ -221,13 +186,6 @@ export function ChriterioHeroSequence({
     if (cssWidth === 0 || cssHeight === 0) return false
 
     const dpr = dprRef.current
-    const pixelWidth = Math.round(cssWidth * dpr)
-    const pixelHeight = Math.round(cssHeight * dpr)
-    if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
-      canvas.width = pixelWidth
-      canvas.height = pixelHeight
-    }
-
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.fillStyle = BACKGROUND_COLOR
     ctx.fillRect(0, 0, cssWidth, cssHeight)
@@ -249,41 +207,7 @@ export function ChriterioHeroSequence({
     return true
   }
 
-  const update = () => {
-    tickingRef.current = false
-    const section = sectionRef.current
-    if (!section) return
-
-    const rect = section.getBoundingClientRect()
-    const viewportHeight = window.innerHeight
-    const scrollableDistance = rect.height - viewportHeight
-
-    let progress = scrollableDistance > 0 ? -rect.top / scrollableDistance : 0
-    progress = Math.min(1, Math.max(0, progress))
-
-    // Phase 1 (0 -> HERO_FRAME_PHASE_END): scrub frames 0..N-1.
-    // Phase hold + reveal (HERO_FRAME_PHASE_END -> 1): stay on the last frame.
-    const frameProgress = Math.min(1, progress / HERO_FRAME_PHASE_END)
-    const targetIndex = Math.min(
-      HERO_FRAME_COUNT - 1,
-      Math.round(frameProgress * (HERO_FRAME_COUNT - 1)),
-    )
-
-    const previousTarget = targetFrameIndexRef.current
-    if (targetIndex !== previousTarget) {
-      scrollDirectionRef.current = targetIndex > previousTarget ? 'down' : 'up'
-      previousTargetFrameIndexRef.current = previousTarget
-      targetFrameIndexRef.current = targetIndex
-    }
-
-    const resolvedIndex = resolveFrameToRender(targetIndex)
-    if (resolvedIndex !== -1 && resolvedIndex !== renderedFrameIndexRef.current) {
-      const painted = drawFrame(resolvedIndex)
-      if (painted) {
-        renderedFrameIndexRef.current = resolvedIndex
-      }
-    }
-
+  const applyStages = (progress: number) => {
     for (const [key, ref] of [
       ['headline', headlineRef],
       ['actions', actionsRef],
@@ -296,18 +220,163 @@ export function ChriterioHeroSequence({
     }
   }
 
-  const requestUpdate = () => {
-    if (tickingRef.current) return
-    tickingRef.current = true
-    rafIdRef.current = requestAnimationFrame(update)
+  const requestRender = () => {
+    if (rafIdRef.current !== null) return
+    rafIdRef.current = requestAnimationFrame(renderLoop)
+  }
+
+  // Single requestAnimationFrame loop: chases displayedFrameFloat toward
+  // targetFrameFloat one step at a time (never more than MAX_FRAME_STEP per
+  // tick), so the canvas always passes through every intermediate frame
+  // instead of jumping. Keeps running on its own until it settles, even if
+  // the user has stopped scrolling.
+  const renderLoop = () => {
+    rafIdRef.current = null
+
+    if (lastDrawnFrameIndexRef.current === -1) {
+      const bootstrapIndex = findNearestLoadedAnyDirection(Math.round(targetFrameFloatRef.current))
+      if (bootstrapIndex !== -1) {
+        const painted = drawFrame(bootstrapIndex)
+        if (painted) {
+          lastDrawnFrameIndexRef.current = bootstrapIndex
+          displayedFrameFloatRef.current = bootstrapIndex
+          needsRedrawRef.current = false
+          if (process.env.NODE_ENV !== 'production') {
+            console.debug('Frame dibujado', {
+              target: targetFrameFloatRef.current,
+              displayed: displayedFrameFloatRef.current,
+              index: bootstrapIndex,
+              direction: scrollDirectionRef.current,
+            })
+          }
+        }
+      }
+      applyStages(progressRef.current)
+      requestRender()
+      return
+    }
+
+    const target = targetFrameFloatRef.current
+    const displayed = displayedFrameFloatRef.current
+    const difference = target - displayed
+
+    let proposedNext: number
+    if (Math.abs(difference) < 0.01) {
+      proposedNext = target
+    } else {
+      const rawStep = difference * SMOOTHING_FACTOR
+      const step = Math.max(-MAX_FRAME_STEP, Math.min(MAX_FRAME_STEP, rawStep))
+      proposedNext = displayed + step
+    }
+
+    const proposedIndex = Math.max(0, Math.min(HERO_FRAME_COUNT - 1, Math.round(proposedNext)))
+
+    let advanced = false
+    if (proposedIndex !== lastDrawnFrameIndexRef.current || needsRedrawRef.current) {
+      const status = statusRef.current[proposedIndex]
+      if (status === 'loaded') {
+        const painted = drawFrame(proposedIndex)
+        if (painted) {
+          lastDrawnFrameIndexRef.current = proposedIndex
+          displayedFrameFloatRef.current = proposedNext
+          needsRedrawRef.current = false
+          advanced = true
+          if (process.env.NODE_ENV !== 'production') {
+            console.debug('Frame dibujado', {
+              target,
+              displayed: displayedFrameFloatRef.current,
+              index: proposedIndex,
+              direction: scrollDirectionRef.current,
+            })
+          }
+        }
+      } else if (status === 'error') {
+        // Permanently missing frame: don't stall on it forever — treat it as
+        // passed-through (the canvas keeps showing the last real frame) so
+        // the chase can keep moving as soon as neighboring frames are ready.
+        lastDrawnFrameIndexRef.current = proposedIndex
+        displayedFrameFloatRef.current = proposedNext
+        needsRedrawRef.current = false
+        advanced = true
+      }
+      // 'idle' | 'loading': not ready yet — wait and retry next tick,
+      // canvas keeps showing whatever was last successfully drawn.
+    } else {
+      // Same index as last drawn; let the float keep settling toward target.
+      displayedFrameFloatRef.current = proposedNext
+      advanced = true
+    }
+
+    applyStages(progressRef.current)
+
+    const settled = Math.abs(targetFrameFloatRef.current - displayedFrameFloatRef.current) < 0.001
+    if (!settled || !advanced) {
+      requestRender()
+    }
+  }
+
+  // Computes the raw progress/target for the *current* geometry and commits
+  // it as the accepted state (used both for genuine continued movement and
+  // for a confirmed direction reversal).
+  const acceptScrollMovement = (rawScrollY: number, direction: 'down' | 'up') => {
+    scrollDirectionRef.current = direction
+    lastScrollYRef.current = rawScrollY
+    reverseDistanceRef.current = 0
+    reverseStartTimeRef.current = null
+
+    const section = sectionRef.current
+    if (!section) return
+
+    const rect = section.getBoundingClientRect()
+    const viewportHeight = window.innerHeight
+    const scrollableDistance = rect.height - viewportHeight
+    let progress = scrollableDistance > 0 ? -rect.top / scrollableDistance : 0
+    progress = Math.min(1, Math.max(0, progress))
+    progressRef.current = progress
+
+    const frameProgress = Math.min(1, progress / HERO_FRAME_PHASE_END)
+    targetFrameFloatRef.current = frameProgress * (HERO_FRAME_COUNT - 1)
+
+    requestRender()
+  }
+
+  // The scroll listener's only job: figure out the raw progress/target and
+  // gate direction changes against accidental trackpad micro-reversals. It
+  // never touches the canvas.
+  const handleScrollMovement = () => {
+    const rawScrollY = window.scrollY
+    const delta = rawScrollY - lastScrollYRef.current
+    if (delta === 0) return
+
+    const eventDirection: 'down' | 'up' = delta > 0 ? 'down' : 'up'
+    const currentDirection = scrollDirectionRef.current
+
+    if (currentDirection === null || eventDirection === currentDirection) {
+      acceptScrollMovement(rawScrollY, eventDirection)
+      return
+    }
+
+    // Moving opposite to the confirmed direction: don't commit yet.
+    if (reverseStartTimeRef.current === null) {
+      reverseStartTimeRef.current = performance.now()
+    }
+    reverseDistanceRef.current = Math.abs(rawScrollY - lastScrollYRef.current)
+    const elapsed = performance.now() - reverseStartTimeRef.current
+
+    if (
+      reverseDistanceRef.current >= REVERSE_DISTANCE_THRESHOLD &&
+      elapsed >= REVERSE_TIME_THRESHOLD
+    ) {
+      acceptScrollMovement(rawScrollY, eventDirection)
+    }
+    // Otherwise: ignore the micro-reversal entirely — keep the previous
+    // direction, target and progress untouched.
   }
 
   // Preload: frame 1 first (painted immediately on arrival), then the rest
   // with limited concurrency. Idle workers always pick whichever unrequested
-  // frame is closest to the *current* scroll target (re-read live off the
-  // ref on every pick), so loading dynamically re-prioritizes around
-  // wherever the user is actually scrolling instead of a fixed order — while
-  // still finishing the full 120-frame set in the background regardless.
+  // frame is closest to the *current* scroll target, so loading dynamically
+  // re-prioritizes around wherever the user is actually scrolling.
   useEffect(() => {
     if (reducedMotion !== false) return
     let cancelled = false
@@ -318,7 +387,7 @@ export function ChriterioHeroSequence({
     statusRef.current = new Array(HERO_FRAME_COUNT).fill('idle')
 
     const pickNextIdleIndex = () => {
-      const target = targetFrameIndexRef.current
+      const target = Math.round(targetFrameFloatRef.current)
       let best = -1
       let bestDistance = Infinity
       for (let i = 0; i < HERO_FRAME_COUNT; i++) {
@@ -338,20 +407,38 @@ export function ChriterioHeroSequence({
         const src = FRAME_URLS[index]
         statusRef.current[index] = 'loading'
         img.decoding = 'async'
-        img.onload = () => {
-          if (!cancelled) {
-            statusRef.current[index] = 'loaded'
-            if (!announcedFirstPaint) {
-              announcedFirstPaint = true
-              setFirstFrameReady(true)
-            }
-            requestUpdate()
+
+        const finish = () => {
+          if (cancelled) {
+            resolve()
+            return
           }
+          statusRef.current[index] = 'loaded'
+          if (!announcedFirstPaint) {
+            announcedFirstPaint = true
+            setFirstFrameReady(true)
+          }
+          requestRender()
           resolve()
+        }
+
+        img.onload = () => {
+          if (cancelled) {
+            resolve()
+            return
+          }
+          // Only draw fully-decoded images. decode() also avoids a
+          // decode-on-first-paint stutter.
+          if (typeof img.decode === 'function') {
+            img.decode().then(finish).catch(finish)
+          } else {
+            finish()
+          }
         }
         img.onerror = () => {
           statusRef.current[index] = 'error'
           console.error('Error cargando fotograma:', src)
+          requestRender()
           resolve()
         }
         img.src = src
@@ -384,30 +471,46 @@ export function ChriterioHeroSequence({
     if (reducedMotion !== false) return
 
     dprRef.current = Math.min(window.devicePixelRatio || 1, MAX_DPR)
+    lastScrollYRef.current = window.scrollY
+    resizeCanvasBackingStore()
 
-    const onScroll = () => requestUpdate()
+    // Seed the initial progress/target directly (e.g. the page was reloaded
+    // mid-scroll) — there's no prior direction yet, so this bypasses the
+    // reversal gate on purpose.
+    const section = sectionRef.current
+    if (section) {
+      const rect = section.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      const scrollableDistance = rect.height - viewportHeight
+      let progress = scrollableDistance > 0 ? -rect.top / scrollableDistance : 0
+      progress = Math.min(1, Math.max(0, progress))
+      progressRef.current = progress
+      const frameProgress = Math.min(1, progress / HERO_FRAME_PHASE_END)
+      targetFrameFloatRef.current = frameProgress * (HERO_FRAME_COUNT - 1)
+      displayedFrameFloatRef.current = targetFrameFloatRef.current
+    }
+
+    const onScroll = () => handleScrollMovement()
     const onResize = () => {
       dprRef.current = Math.min(window.devicePixelRatio || 1, MAX_DPR)
-      // Force a redraw at the new canvas size. Resetting to -1 (rather than
-      // leaving it pointing at the old frame) is fine here: this is a
-      // one-off geometry change, not the scroll-direction regression the
-      // rest of this file guards against.
-      renderedFrameIndexRef.current = -1
-      requestUpdate()
+      resizeCanvasBackingStore()
+      needsRedrawRef.current = true
+      requestRender()
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onResize)
     window.addEventListener('orientationchange', onResize)
-    requestUpdate()
+    requestRender()
 
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
       window.removeEventListener('orientationchange', onResize)
       if (rafIdRef.current !== null) cancelAnimationFrame(rafIdRef.current)
-      tickingRef.current = false
+      rafIdRef.current = null
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion])
 
   // Avoid a flash of the wrong variant: render nothing until the media query resolves.
