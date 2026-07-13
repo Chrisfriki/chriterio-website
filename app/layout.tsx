@@ -1,6 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Space_Grotesk, Inter, Fraunces } from 'next/font/google'
+import { Space_Grotesk, Inter } from 'next/font/google'
 import { SiteNavbar } from '@/components/site-navbar'
 import { SiteFooter } from '@/components/site-footer'
 import './globals.css'
@@ -14,12 +14,6 @@ const inter = Inter({
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-space-grotesk',
-  display: 'swap',
-})
-
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  variable: '--font-fraunces',
   display: 'swap',
 })
 
@@ -43,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="bg-background">
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} ${fraunces.variable} antialiased`}
+        className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}
       >
         <SiteNavbar />
         {children}

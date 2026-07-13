@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { withBasePath } from '@/lib/base-path'
 import { cn } from '@/lib/utils'
 
 export function Wordmark({
@@ -10,7 +11,9 @@ export function Wordmark({
 }) {
   return (
     <Image
-      src={light ? '/chriterio-logo-white.png' : '/chriterio-logo-navy.png'}
+      src={withBasePath(
+        light ? '/chriterio-logo-white.png' : '/chriterio-logo-navy.png',
+      )}
       alt="CHRITERIO"
       width={1433}
       height={249}

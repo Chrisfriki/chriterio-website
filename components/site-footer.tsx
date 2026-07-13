@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Wordmark } from '@/components/wordmark'
+import { withBasePath } from '@/lib/base-path'
 import { NAV_LINKS, CALENDLY_URL, WHATSAPP_URL } from '@/lib/site'
 
 export function SiteFooter() {
@@ -72,7 +73,7 @@ export function SiteFooter() {
             <span className="text-white/40">Diseñado por</span>
             <span className="flex items-center rounded-md bg-white px-2 py-1">
               <Image
-                src="/amz-creatives-logo.png"
+                src={withBasePath('/amz-creatives-logo.png')}
                 alt="AMZ Creatives"
                 width={4773}
                 height={713}

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { PageHeader } from '@/components/page-header'
 import { FinalCta } from '@/components/final-cta'
 import { Reveal } from '@/components/reveal'
+import { withBasePath } from '@/lib/base-path'
 
 export const metadata: Metadata = {
   title: 'Sobre mí · CHRITERIO',
@@ -19,7 +20,7 @@ export default function SobreMiPage() {
           <Reveal>
             <div className="overflow-hidden rounded-3xl border border-border bg-light">
               <img
-                src="/christian.png"
+                src={withBasePath('/christian.png')}
                 alt="Christian, consultor de Amazon y seller activo en Amazon.es"
                 className="aspect-4/5 h-full w-full object-cover"
               />
