@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
+import { ChriterioHeroSequence } from '@/components/chriterio-hero-sequence'
 import { LinkButton } from '@/components/link-button'
 import { CALENDLY_URL, WHATSAPP_URL } from '@/lib/site'
 
@@ -12,67 +13,34 @@ const ease = [0.22, 1, 0.36, 1] as const
 
 export function Hero() {
   const reduceMotion = useReducedMotion()
-  const [revealed, setRevealed] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    if (revealed) {
-      window.dispatchEvent(new Event('chriterio:hero-ready'))
-    }
-  }, [revealed])
+  const [show, setShow] = useState(false)
 
   useEffect(() => {
     if (reduceMotion) {
-      setRevealed(true)
+      setShow(true)
       return
     }
-    // Fallback: reveal content even if the video is missing, blocked or stalls.
-    const fallback = window.setTimeout(() => setRevealed(true), 6000)
-    return () => window.clearTimeout(fallback)
+    const raf = requestAnimationFrame(() => setShow(true))
+    return () => cancelAnimationFrame(raf)
   }, [reduceMotion])
 
-  const handleEnded = () => {
-    // Freeze on the last frame, then reveal the content.
-    if (videoRef.current) videoRef.current.pause()
-    setRevealed(true)
-  }
-
-  const show = revealed || reduceMotion
-
   return (
-    <section className="relative flex h-[100svh] min-h-[640px] w-full items-end overflow-hidden bg-navy-dark">
-      {/* Background video with poster fallback */}
-      {!reduceMotion ? (
-        <video
-          ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover"
-          poster="/rocket-poster.png"
-          src="/rocket.mp4"
-          autoPlay
-          muted
-          playsInline
-          preload="auto"
-          onEnded={handleEnded}
-          onError={() => window.setTimeout(() => setRevealed(true), 1200)}
-        />
-      ) : (
-        <img
-          src="/rocket-poster.png"
-          alt="Cohete despegando"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      )}
+    <ChriterioHeroSequence id="home-hero">
+      {/* Legibility scrim so the text reads over any frame of the sequence */}
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-navy-dark/90 via-navy-dark/25 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-navy-dark/70 via-navy-dark/15 to-transparent" />
 
-      {/* Legibility overlay */}
-      <div
-        className="absolute inset-0"
-        style={{ backgroundColor: 'rgba(6,21,48,0.35)' }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-navy-dark/20 to-transparent" />
+      {/* Giant translucent watermark */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute top-20 left-1/2 z-[2] -translate-x-1/2 font-serif text-[20vw] leading-none font-medium tracking-tight whitespace-nowrap text-white/[0.07] select-none sm:top-24 md:top-28 md:text-[14vw]"
+      >
+        CHRITERIO
+      </span>
 
-      <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-24 md:pb-28">
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-5 pb-16 md:pb-20">
         {/* H1 line by line rise-up */}
-        <h1 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-7xl">
+        <h1 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
           {H1_LINES.map((line, i) => (
             <span key={line} className="block overflow-hidden">
               <motion.span
@@ -88,7 +56,7 @@ export function Hero() {
         </h1>
 
         {/* Glass cards */}
-        <div className="mt-8 flex flex-wrap gap-3 md:mt-10 md:gap-4">
+        <div className="mt-8 flex max-w-xl flex-wrap gap-3 md:mt-10 md:gap-4">
           <GlassCard show={show} delay={0.45}>
             <div className="flex items-center gap-2.5">
               <span className="relative flex size-2.5">
@@ -129,7 +97,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 16 }}
           animate={show ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.85, ease }}
-          className="mt-8 max-w-xl text-base leading-relaxed text-white/80 md:text-lg text-pretty"
+          className="mt-8 max-w-xl text-base leading-relaxed text-white/80 text-pretty md:text-lg"
         >
           Te lo digo en 7 días. Analizo tu cuenta con el mismo criterio que uso
           con mi propio dinero: soy seller activo en Amazon.es.
@@ -177,7 +145,7 @@ export function Hero() {
           <ChevronDown className="size-4" />
         </motion.div>
       </motion.div>
-    </section>
+    </ChriterioHeroSequence>
   )
 }
 

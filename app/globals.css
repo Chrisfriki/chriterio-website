@@ -7,6 +7,7 @@
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-space-grotesk), var(--font-inter), sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
   --color-navy: var(--navy);
   --color-navy-dark: var(--navy-dark);
   --color-electric: var(--electric);
@@ -180,6 +181,28 @@
   border-radius: 20px;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+}
+
+@utility glass-card-light {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px -12px rgba(10, 31, 68, 0.18);
+}
+
+@utility mask-fade-edges {
+  mask-image: radial-gradient(
+    ellipse 58% 62% at 66% 46%,
+    black 25%,
+    transparent 92%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 58% 62% at 66% 46%,
+    black 25%,
+    transparent 92%
+  );
 }
 
 @keyframes chr-pulse {

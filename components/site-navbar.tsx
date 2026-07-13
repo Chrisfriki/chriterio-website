@@ -13,54 +13,46 @@ import { LinkButton } from '@/components/link-button'
 export function SiteNavbar() {
   const pathname = usePathname()
   const isHome = pathname === '/'
-  const [scrolled, setScrolled] = useState(false)
+  const [solid, setSolid] = useState(!isHome)
   const [open, setOpen] = useState(false)
-  const [visible, setVisible] = useState(!isHome)
-
-  useEffect(() => {
-    setVisible(!isHome)
-  }, [isHome])
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  // On the home page the navbar fades in after the hero video ends.
-  useEffect(() => {
-    if (!isHome) return
-    const reveal = () => setVisible(true)
-    window.addEventListener('chriterio:hero-ready', reveal)
-    // Safety fallback in case the event never fires.
-    const t = window.setTimeout(reveal, 9000)
-    return () => {
-      window.removeEventListener('chriterio:hero-ready', reveal)
-      window.clearTimeout(t)
-    }
-  }, [isHome])
 
   useEffect(() => {
     setOpen(false)
   }, [pathname])
 
-  // Solid white when scrolled or on inner pages; transparent+blur over hero.
-  const solid = !isHome || scrolled
+  useEffect(() => {
+    if (!isHome) {
+      setSolid(true)
+      return
+    }
+
+    // The homepage hero can be a tall scroll-driven section (e.g. the
+    // ChriterioHeroSequence). Track its own bottom edge instead of a fixed
+    // scroll offset, so the navbar only turns solid once the hero has
+    // actually scrolled past, however tall it is.
+    const heroEl = document.getElementById('home-hero')
+    const onScroll = () => {
+      if (heroEl) {
+        setSolid(heroEl.getBoundingClientRect().bottom <= 0)
+      } else {
+        setSolid(window.scrollY > 40)
+      }
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [isHome])
+
   const linkColor = solid ? 'text-navy/80' : 'text-white/90'
 
   return (
     <>
-    <motion.header
-      initial={false}
-      animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : -12 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+    <header
       className={cn(
         'fixed inset-x-0 top-0 z-50 transition-colors duration-300',
-        visible ? 'pointer-events-auto' : 'pointer-events-none',
         solid
           ? 'border-b border-border bg-background/90 backdrop-blur-md'
-          : 'bg-navy-dark/10 backdrop-blur-md',
+          : 'bg-transparent',
       )}
     >
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:h-20">
@@ -102,7 +94,7 @@ export function SiteNavbar() {
           <Menu className="size-6" />
         </button>
       </nav>
-    </motion.header>
+    </header>
 
       <AnimatePresence>
         {open && (
