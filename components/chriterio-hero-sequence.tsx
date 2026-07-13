@@ -3,27 +3,44 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { withBasePath } from '@/lib/base-path'
 
-// This component draws frames via a plain `Image()` onto a canvas, which
-// bypasses next/image entirely, so it must prefix the basePath itself to
-// resolve correctly both on localhost and on GitHub Pages.
-const FRAME_BASE_PATH = withBasePath('/chriterio-hero/frames/')
+/** Change here to use more/fewer frames. */
+export const HERO_FRAME_COUNT = 120
 
-/** Change here to use more/fewer frames (60 files are available in /public/chriterio-hero/frames). */
-export const HERO_FRAME_COUNT = 52
+/** File extension of the frame sequence (public/chriterio-hero/frames/*.EXT). */
+const FRAME_EXTENSION = 'webp'
+
+/** Bump this whenever the frame files are replaced so browsers/GitHub Pages
+ *  don't keep serving a stale cached sequence under the same filenames. */
+const FRAME_VERSION = 'v4'
 
 /** Change here to make the overall scroll-driven hero longer or shorter. */
 export const HERO_SCROLL_HEIGHT_VH = 600
 
-/** Fraction of the scroll range spent playing frames 01 -> N (0 to this value). */
-export const HERO_FRAME_PHASE_END = 0.75
+/** Fraction of the scroll range spent playing frames 1 -> N. */
+export const HERO_FRAME_PHASE_END = 0.78
 
 /** Fraction of the scroll range where the last frame is held and content starts revealing. */
-export const HERO_CONTENT_REVEAL_START = 0.85
+export const HERO_CONTENT_REVEAL_START = 0.86
 
-const FRAME_URLS = Array.from(
-  { length: HERO_FRAME_COUNT },
-  (_, index) => `${FRAME_BASE_PATH}${String(index + 1).padStart(2, '0')}.png`,
+// This component draws frames via a plain `Image()` onto a canvas, which
+// bypasses next/image entirely, so it must prefix the basePath itself
+// (GitHub Pages serves this site from /chriterio-website/) to resolve
+// correctly both on localhost and in production. The basePath is applied
+// exactly once here — nowhere else in this file touches the raw path.
+const getFramePath = (index: number) =>
+  `${withBasePath('/chriterio-hero/frames/')}${String(index + 1).padStart(3, '0')}.${FRAME_EXTENSION}?v=${FRAME_VERSION}`
+
+const FRAME_URLS = Array.from({ length: HERO_FRAME_COUNT }, (_, index) => getFramePath(index))
+
+// Loaded first, before anything else, so there's a frame to paint ASAP.
+const PRIORITY_FIRST_INDEX = 0
+// Loaded right after the first frame: a handful of frames spread across the
+// sequence so an early scroll already lands close to the right image while
+// the rest streams in behind them.
+const PRIORITY_KEY_INDICES = [29, 59, 89, HERO_FRAME_COUNT - 1].filter(
+  (i, idx, arr) => i >= 0 && i < HERO_FRAME_COUNT && arr.indexOf(i) === idx,
 )
+const BACKGROUND_LOAD_CONCURRENCY = 6
 
 const MAX_DPR = 2
 const MOBILE_BREAKPOINT = 768
@@ -31,12 +48,17 @@ const BACKGROUND_COLOR = '#050d1f'
 
 // Staggered reveal windows for each content group, all inside
 // [HERO_CONTENT_REVEAL_START, 1]. Order: headline -> actions -> cards -> bar.
+// (The navbar/logo group is handled separately by SiteNavbar — see
+// HERO_NAV_REVEAL_RANGE below — since it lives outside this component.)
 const STAGE_RANGES = {
-  headline: [0.85, 0.92],
-  actions: [0.89, 0.95],
-  cards: [0.93, 0.98],
-  bar: [0.96, 1],
+  headline: [0.88, 0.94],
+  actions: [0.91, 0.96],
+  cards: [0.94, 0.985],
+  bar: [0.97, 1],
 } as const
+
+/** Reveal window for the global site navbar on the homepage (read by SiteNavbar). */
+export const HERO_NAV_REVEAL_RANGE: readonly [number, number] = [0.86, 0.9]
 
 function easeInOutSmooth(t: number) {
   return t * t * (3 - 2 * t)
@@ -76,6 +98,7 @@ export function ChriterioHeroSequence({
   const barRef = useRef<HTMLDivElement>(null)
 
   const imagesRef = useRef<HTMLImageElement[]>([])
+  const loadedRef = useRef<boolean[]>(new Array(HERO_FRAME_COUNT).fill(false))
   const currentFrameRef = useRef(-1)
   const tickingRef = useRef(false)
   const rafIdRef = useRef<number | null>(null)
@@ -91,6 +114,19 @@ export function ChriterioHeroSequence({
     mq.addEventListener('change', onChange)
     return () => mq.removeEventListener('change', onChange)
   }, [])
+
+  // Nearest already-loaded frame to `target` (itself included). Returns -1
+  // if nothing has loaded yet at all.
+  const resolveDrawableIndex = (target: number) => {
+    if (loadedRef.current[target]) return target
+    for (let offset = 1; offset < HERO_FRAME_COUNT; offset++) {
+      const before = target - offset
+      const after = target + offset
+      if (before >= 0 && loadedRef.current[before]) return before
+      if (after < HERO_FRAME_COUNT && loadedRef.current[after]) return after
+    }
+    return -1
+  }
 
   const drawFrame = (index: number) => {
     const canvas = canvasRef.current
@@ -130,7 +166,6 @@ export function ChriterioHeroSequence({
     const dy = (cssHeight - drawHeight) / 2
 
     ctx.drawImage(img, dx, dy, drawWidth, drawHeight)
-    currentFrameRef.current = index
   }
 
   const update = () => {
@@ -148,13 +183,15 @@ export function ChriterioHeroSequence({
     // Phase 1 (0 -> HERO_FRAME_PHASE_END): scrub frames 0..N-1.
     // Phase hold + reveal (HERO_FRAME_PHASE_END -> 1): stay on the last frame.
     const frameProgress = Math.min(1, progress / HERO_FRAME_PHASE_END)
-    const frameIndex = Math.min(
+    const targetIndex = Math.min(
       HERO_FRAME_COUNT - 1,
       Math.round(frameProgress * (HERO_FRAME_COUNT - 1)),
     )
 
-    if (frameIndex !== currentFrameRef.current) {
-      drawFrame(frameIndex)
+    const drawableIndex = resolveDrawableIndex(targetIndex)
+    if (drawableIndex !== -1 && drawableIndex !== currentFrameRef.current) {
+      drawFrame(drawableIndex)
+      currentFrameRef.current = drawableIndex
     }
 
     for (const [key, ref] of [
@@ -175,29 +212,72 @@ export function ChriterioHeroSequence({
     rafIdRef.current = requestAnimationFrame(update)
   }
 
-  // Preload every frame; draw + reveal as soon as the first one is ready.
+  // Priority-ordered preload: frame 1 first, then a handful of frames spread
+  // across the sequence, then the rest with limited concurrency in the
+  // background. Every successful load re-triggers `update()` so a
+  // temporarily-substituted frame gets swapped for the real one once it's
+  // ready, and the reveal only waits for the very first frame to land
+  // (whichever one that ends up being, in case an earlier one 404s).
   useEffect(() => {
     if (reducedMotion !== false) return
     let cancelled = false
+    let announcedFirstPaint = false
 
-    const images = FRAME_URLS.map((src, index) => {
-      const img = new Image()
-      img.decoding = 'async'
-      img.onload = () => {
-        if (cancelled) return
-        if (index === 0) {
-          setFirstFrameReady(true)
-          requestUpdate()
+    const images = FRAME_URLS.map(() => new Image())
+    imagesRef.current = images
+    loadedRef.current = new Array(HERO_FRAME_COUNT).fill(false)
+
+    const loadOne = (index: number) =>
+      new Promise<void>((resolve) => {
+        const img = images[index]
+        const src = FRAME_URLS[index]
+        img.decoding = 'async'
+        img.onload = () => {
+          if (!cancelled) {
+            loadedRef.current[index] = true
+            if (!announcedFirstPaint) {
+              announcedFirstPaint = true
+              setFirstFrameReady(true)
+            }
+            requestUpdate()
+          }
+          resolve()
+        }
+        img.onerror = () => {
+          console.error('Error cargando fotograma:', src)
+          resolve()
+        }
+        img.src = src
+      })
+
+    async function run() {
+      await loadOne(PRIORITY_FIRST_INDEX)
+      if (cancelled) return
+
+      await Promise.all(
+        PRIORITY_KEY_INDICES.filter((i) => i !== PRIORITY_FIRST_INDEX).map(loadOne),
+      )
+      if (cancelled) return
+
+      const already = new Set([PRIORITY_FIRST_INDEX, ...PRIORITY_KEY_INDICES])
+      const rest = Array.from({ length: HERO_FRAME_COUNT }, (_, i) => i).filter(
+        (i) => !already.has(i),
+      )
+
+      let cursor = 0
+      const worker = async () => {
+        while (cursor < rest.length && !cancelled) {
+          const i = rest[cursor]
+          cursor += 1
+          await loadOne(i)
         }
       }
-      img.onerror = () => {
-        console.error(`[ChriterioHeroSequence] Failed to load frame: ${src}`)
-      }
-      img.src = src
-      return img
-    })
+      await Promise.all(
+        Array.from({ length: BACKGROUND_LOAD_CONCURRENCY }, () => worker()),
+      )
+    }
 
-    imagesRef.current = images
+    run()
 
     return () => {
       cancelled = true
@@ -243,20 +323,18 @@ export function ChriterioHeroSequence({
   }
 
   if (reducedMotion) {
+    const lastFrame = FRAME_URLS[FRAME_URLS.length - 1]
     return (
       <section
         id={id}
         className={`relative h-[100svh] min-h-[640px] w-full overflow-hidden bg-[#050d1f] ${className ?? ''}`}
       >
         <img
-          src={FRAME_URLS[FRAME_URLS.length - 1]}
+          src={lastFrame}
           alt="Cohete Chriterio en órbita"
+          aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover"
-          onError={() =>
-            console.error(
-              `[ChriterioHeroSequence] Failed to load static frame: ${FRAME_URLS[FRAME_URLS.length - 1]}`,
-            )
-          }
+          onError={() => console.error('Error cargando fotograma:', lastFrame)}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050d1f]/85 via-[#050d1f]/20 to-transparent" />
         <div className="relative z-10 flex h-full w-full flex-col justify-end gap-6 px-5 pb-14 md:px-14 md:pb-16">

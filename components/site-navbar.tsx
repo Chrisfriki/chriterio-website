@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
+import { HERO_NAV_REVEAL_RANGE } from '@/components/chriterio-hero-sequence'
 import { cn } from '@/lib/utils'
 import { NAV_LINKS, CALENDLY_URL, WHATSAPP_URL } from '@/lib/site'
 import { Wordmark } from '@/components/wordmark'
@@ -15,6 +16,8 @@ export function SiteNavbar() {
   const isHome = pathname === '/'
   const [solid, setSolid] = useState(!isHome)
   const [open, setOpen] = useState(false)
+  const headerRef = useRef<HTMLElement>(null)
+  const rafIdRef = useRef<number | null>(null)
 
   useEffect(() => {
     setOpen(false)
@@ -23,24 +26,79 @@ export function SiteNavbar() {
   useEffect(() => {
     if (!isHome) {
       setSolid(true)
+      // Clear any inline reveal styles left over from a previous visit to
+      // the homepage so inner pages always render the navbar normally.
+      const header = headerRef.current
+      if (header) {
+        header.style.opacity = ''
+        header.style.visibility = ''
+        header.style.pointerEvents = ''
+        header.style.transform = ''
+      }
       return
     }
 
     // The homepage hero can be a tall scroll-driven section (e.g. the
     // ChriterioHeroSequence). Track its own bottom edge instead of a fixed
     // scroll offset, so the navbar only turns solid once the hero has
-    // actually scrolled past, however tall it is.
+    // actually scrolled past, however tall it is. The navbar also stays
+    // fully hidden (opacity/visibility/pointer-events) until the hero's own
+    // content-reveal stage begins, set imperatively (not via React state)
+    // so it doesn't re-render on every scroll tick.
     const heroEl = document.getElementById('home-hero')
-    const onScroll = () => {
-      if (heroEl) {
-        setSolid(heroEl.getBoundingClientRect().bottom <= 0)
-      } else {
-        setSolid(window.scrollY > 40)
-      }
+    let ticking = false
+
+    const apply = () => {
+      ticking = false
+      const header = headerRef.current
+      if (!heroEl || !header) return
+
+      const rect = heroEl.getBoundingClientRect()
+      const scrollableDistance = rect.height - window.innerHeight
+      // If the hero isn't scroll-jacked (e.g. prefers-reduced-motion, where
+      // it renders at a normal 100vh), there's nothing to wait for.
+      const progress =
+        scrollableDistance > 0
+          ? Math.min(1, Math.max(0, -rect.top / scrollableDistance))
+          : 1
+
+      setSolid(rect.bottom <= 0)
+
+      const [start, end] = HERO_NAV_REVEAL_RANGE
+      const t = Math.min(1, Math.max(0, (progress - start) / (end - start)))
+      header.style.opacity = String(t)
+      header.style.visibility = t > 0.02 ? 'visible' : 'hidden'
+      header.style.pointerEvents = t > 0.6 ? 'auto' : 'none'
+      header.style.transform = `translateY(${(1 - t) * -12}px)`
     }
+
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      rafIdRef.current = requestAnimationFrame(apply)
+    }
+
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    window.addEventListener('resize', onScroll)
+
+    // The hero's height starts at a placeholder ~100vh (while
+    // ChriterioHeroSequence is still resolving prefers-reduced-motion) and
+    // then jumps to the full scroll-jacked height. Watch for that so `apply`
+    // re-runs with the correct height instead of possibly sticking with a
+    // stale "revealed" state from that first frame.
+    let resizeObserver: ResizeObserver | null = null
+    if (heroEl && typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(onScroll)
+      resizeObserver.observe(heroEl)
+    }
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      resizeObserver?.disconnect()
+      if (rafIdRef.current !== null) cancelAnimationFrame(rafIdRef.current)
+    }
   }, [isHome])
 
   const linkColor = solid ? 'text-navy/80' : 'text-white/90'
@@ -48,11 +106,16 @@ export function SiteNavbar() {
   return (
     <>
     <header
+      ref={headerRef}
       className={cn(
         'fixed inset-x-0 top-0 z-50 transition-colors duration-300',
         solid
           ? 'border-b border-border bg-background/90 backdrop-blur-md'
           : 'bg-transparent',
+        // Hidden-by-default on the homepage so there's no flash of the
+        // navbar before hydration takes over and starts driving the
+        // opacity/visibility/pointer-events above imperatively.
+        isHome && 'opacity-0 invisible pointer-events-none',
       )}
     >
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:h-20">
