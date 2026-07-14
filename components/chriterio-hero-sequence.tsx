@@ -136,6 +136,10 @@ export function ChriterioHeroSequence({
   const displayedFrameFloatRef = useRef(0) // where the playhead actually, smoothly is
   const lastDrawnFrameIndexRef = useRef(-1) // last frame index actually painted to the canvas
   const lastScrollYRef = useRef(0)
+  // Cached, document-relative geometry. Re-measured only on mount/resize, never
+  // on every scroll tick — see measureGeometry() for why.
+  const sectionOffsetTopRef = useRef(0)
+  const sectionHeightRef = useRef(0)
   const scrollDirectionRef = useRef<'down' | 'up' | null>(null)
   const reverseDistanceRef = useRef(0)
   const reverseStartTimeRef = useRef<number | null>(null)
@@ -296,11 +300,31 @@ export function ChriterioHeroSequence({
     const difference = target - displayed
 
     let proposedNext: number
+    let blockedByDirection = false
     if (Math.abs(difference) < 0.01) {
       proposedNext = target
     } else {
       const rawStep = difference * SMOOTHING_FACTOR
-      const step = Math.max(-MAX_FRAME_STEP, Math.min(MAX_FRAME_STEP, rawStep))
+      let step = Math.max(-MAX_FRAME_STEP, Math.min(MAX_FRAME_STEP, rawStep))
+      // Guard against a rare edge case: if a new target lands *behind* the
+      // displayed frame while it's still mid-chase toward a previous target
+      // (only possible under extremely fast, erratic direction changes), the
+      // raw difference could momentarily point the wrong way relative to the
+      // just-confirmed scroll direction. Rather than let the chase take a
+      // step backward while "down" is confirmed (or forward while "up" is
+      // confirmed), pause here — the next accepted scroll event will supply
+      // a consistent target again and the loop restarts from there, so this
+      // never spins requestAnimationFrame waiting for a target direction
+      // disallows.
+      const direction = scrollDirectionRef.current
+      if (direction === 'down' && step < 0) {
+        step = 0
+        blockedByDirection = true
+      }
+      if (direction === 'up' && step > 0) {
+        step = 0
+        blockedByDirection = true
+      }
       proposedNext = displayed + step
     }
 
@@ -312,6 +336,20 @@ export function ChriterioHeroSequence({
       if (status === 'loaded') {
         const painted = drawFrame(proposedIndex)
         if (painted) {
+          if (
+            process.env.NODE_ENV !== 'production' &&
+            lastDrawnFrameIndexRef.current !== -1
+          ) {
+            const dir = scrollDirectionRef.current
+            const stepped = proposedIndex - lastDrawnFrameIndexRef.current
+            if ((dir === 'down' && stepped < 0) || (dir === 'up' && stepped > 0)) {
+              console.warn('Retroceso de fotograma detectado', {
+                direction: dir,
+                previousRenderedFrame: lastDrawnFrameIndexRef.current,
+                nextRenderedFrame: proposedIndex,
+              })
+            }
+          }
           lastDrawnFrameIndexRef.current = proposedIndex
           displayedFrameFloatRef.current = proposedNext
           needsRedrawRef.current = false
@@ -337,28 +375,52 @@ export function ChriterioHeroSequence({
     applyStages(progressRef.current)
 
     const settled = Math.abs(targetFrameFloatRef.current - displayedFrameFloatRef.current) < 0.001
-    if (!settled || !advanced) {
+    if (!blockedByDirection && (!settled || !advanced)) {
       requestRender()
     }
   }
 
-  // Computes the raw progress/target for the *current* geometry and commits
-  // it as the accepted state (used both for genuine continued movement and
-  // for a confirmed direction reversal).
+  // Caches the hero section's geometry in *document* coordinates
+  // (offsetTop + height) instead of relying on getBoundingClientRect() on
+  // every scroll event. getBoundingClientRect() is a viewport-relative
+  // layout query — with a `position: sticky` child inside, browsers can
+  // occasionally return a rect that hasn't caught up with the very latest
+  // scroll/compositor position yet, especially under fast or trackpad-
+  // driven scrolling. That produced a progress value that was momentarily
+  // *behind* where the scroll actually was, which then "caught up" a tick
+  // later — exactly the small backward-then-forward stutter this was
+  // fixing. Re-deriving progress from window.scrollY against a geometry
+  // snapshot taken once (mount) and refreshed only on resize removes that
+  // per-tick layout read entirely, so progress is a pure, monotonic
+  // function of scrollY.
+  const measureGeometry = () => {
+    const section = sectionRef.current
+    if (!section) return
+    const rect = section.getBoundingClientRect()
+    sectionOffsetTopRef.current = rect.top + window.scrollY
+    sectionHeightRef.current = rect.height
+  }
+
+  const computeProgressForScrollY = (scrollY: number) => {
+    const viewportHeight = window.innerHeight
+    const scrollableDistance = sectionHeightRef.current - viewportHeight
+    const raw =
+      scrollableDistance > 0
+        ? (scrollY - sectionOffsetTopRef.current) / scrollableDistance
+        : 0
+    return Math.min(1, Math.max(0, raw))
+  }
+
+  // Computes the raw progress/target for the *current* scroll position and
+  // commits it as the accepted state (used both for genuine continued
+  // movement and for a confirmed direction reversal).
   const acceptScrollMovement = (rawScrollY: number, direction: 'down' | 'up') => {
     scrollDirectionRef.current = direction
     lastScrollYRef.current = rawScrollY
     reverseDistanceRef.current = 0
     reverseStartTimeRef.current = null
 
-    const section = sectionRef.current
-    if (!section) return
-
-    const rect = section.getBoundingClientRect()
-    const viewportHeight = window.innerHeight
-    const scrollableDistance = rect.height - viewportHeight
-    let progress = scrollableDistance > 0 ? -rect.top / scrollableDistance : 0
-    progress = Math.min(1, Math.max(0, progress))
+    const progress = computeProgressForScrollY(rawScrollY)
     progressRef.current = progress
 
     const frameProgress = Math.min(1, progress / HERO_FRAME_PHASE_END)
@@ -500,27 +562,21 @@ export function ChriterioHeroSequence({
     dprRef.current = Math.min(window.devicePixelRatio || 1, MAX_DPR)
     lastScrollYRef.current = window.scrollY
     resizeCanvasBackingStore()
+    measureGeometry()
 
     // Seed the initial progress/target directly (e.g. the page was reloaded
     // mid-scroll) — there's no prior direction yet, so this bypasses the
     // reversal gate on purpose.
-    const section = sectionRef.current
-    if (section) {
-      const rect = section.getBoundingClientRect()
-      const viewportHeight = window.innerHeight
-      const scrollableDistance = rect.height - viewportHeight
-      let progress = scrollableDistance > 0 ? -rect.top / scrollableDistance : 0
-      progress = Math.min(1, Math.max(0, progress))
-      progressRef.current = progress
-      const frameProgress = Math.min(1, progress / HERO_FRAME_PHASE_END)
-      targetFrameFloatRef.current = frameProgress * (HERO_FRAME_COUNT - 1)
-      displayedFrameFloatRef.current = targetFrameFloatRef.current
-    }
+    progressRef.current = computeProgressForScrollY(window.scrollY)
+    const frameProgress = Math.min(1, progressRef.current / HERO_FRAME_PHASE_END)
+    targetFrameFloatRef.current = frameProgress * (HERO_FRAME_COUNT - 1)
+    displayedFrameFloatRef.current = targetFrameFloatRef.current
 
     const onScroll = () => handleScrollMovement()
     const onResize = () => {
       dprRef.current = Math.min(window.devicePixelRatio || 1, MAX_DPR)
       resizeCanvasBackingStore()
+      measureGeometry()
       needsRedrawRef.current = true
       requestRender()
     }
@@ -564,11 +620,11 @@ export function ChriterioHeroSequence({
           className="absolute inset-0 h-full w-full object-cover"
           onError={() => console.error('Error cargando fotograma:', lastFrame)}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050d1f]/85 via-[#050d1f]/20 to-transparent" />
-        <div className="relative z-10 flex h-full w-full flex-col justify-end gap-3 px-5 pb-14 md:px-14 md:pb-16">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050d1f]/90 via-[#050d1f]/25 to-transparent" />
+        <div className="relative z-10 flex h-full w-full flex-col justify-end gap-4 px-5 pb-14 md:px-14 md:pb-16">
           <div>{eyebrow}</div>
-          <div className="max-w-lg">{headline}</div>
-          <div className="max-w-md">{subtitle}</div>
+          <div className="max-w-lg md:max-w-xl">{headline}</div>
+          <div className="max-w-md md:max-w-lg">{subtitle}</div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div>{ctaPrimary}</div>
             <div>{ctaSecondary}</div>
@@ -610,14 +666,14 @@ export function ChriterioHeroSequence({
             keeping the rocket / earth / space visible everywhere else. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-[#050d1f]/85 via-[#050d1f]/15 to-transparent"
+          className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-[#050d1f]/90 via-[#050d1f]/25 to-transparent"
         />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-[1] hidden md:block"
           style={{
             background:
-              'radial-gradient(ellipse 65% 55% at 10% 100%, rgba(5,13,31,0.75) 0%, rgba(5,13,31,0.25) 55%, transparent 80%)',
+              'radial-gradient(ellipse 68% 60% at 8% 100%, rgba(5,13,31,0.82) 0%, rgba(5,13,31,0.32) 55%, transparent 80%)',
           }}
         />
 
@@ -625,16 +681,16 @@ export function ChriterioHeroSequence({
             document flow (no fixed pixel offsets), so it never overlaps
             regardless of how many lines the headline wraps into. Each piece
             fades/rises in on its own schedule via its own ref. */}
-        <div className="absolute inset-x-5 bottom-6 z-10 flex flex-col gap-3 md:inset-x-14 md:bottom-10 md:gap-4">
+        <div className="absolute inset-x-5 bottom-6 z-10 flex flex-col gap-4 md:inset-x-14 md:bottom-10 md:gap-5">
           <div ref={eyebrowRef} style={{ opacity: 0 }}>
             {eyebrow}
           </div>
 
-          <div ref={headlineRef} className="max-w-md md:max-w-lg" style={{ opacity: 0 }}>
+          <div ref={headlineRef} className="max-w-lg md:max-w-xl" style={{ opacity: 0 }}>
             {headline}
           </div>
 
-          <div ref={subtitleRef} className="max-w-sm md:max-w-md" style={{ opacity: 0 }}>
+          <div ref={subtitleRef} className="max-w-md md:max-w-lg" style={{ opacity: 0 }}>
             {subtitle}
           </div>
 
