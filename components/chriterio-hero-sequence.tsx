@@ -233,8 +233,9 @@ export function ChriterioHeroSequence({
     // the left-aligned text column instead of running straight through it.
     // On mobile the extra zoom above makes the visible horizontal window
     // much narrower, so the same bias needs a much smaller delta from center
-    // (0.5) or the rocket shifts out of frame entirely.
-    const horizontalAnchor = isMobile ? 0.46 : 0.42
+    // (0.5) or the rocket shifts out of frame entirely (verified visually —
+    // don't push this much past ~0.4 without re-checking screenshots).
+    const horizontalAnchor = isMobile ? 0.4 : 0.42
     const verticalAnchor = isMobile ? 0.05 : 0.5
     const dx = (cssWidth - drawWidth) * horizontalAnchor
     const dy = (cssHeight - drawHeight) * verticalAnchor
@@ -676,6 +677,17 @@ export function ChriterioHeroSequence({
               'radial-gradient(ellipse 68% 60% at 8% 100%, rgba(5,13,31,0.82) 0%, rgba(5,13,31,0.32) 55%, transparent 80%)',
           }}
         />
+        {/* Mobile-only left-to-right scrim: the rocket sits toward the right
+            of the frame, so darkening the left side protects the text column
+            without needing to touch the canvas/animation itself. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-[1] block md:hidden"
+          style={{
+            background:
+              'linear-gradient(90deg, rgba(5,13,31,0.75) 0%, rgba(5,13,31,0.35) 45%, transparent 75%)',
+          }}
+        />
 
         {/* Single bottom-anchored flex column: content stacks naturally in
             document flow (no fixed pixel offsets), so it never overlaps
@@ -694,11 +706,19 @@ export function ChriterioHeroSequence({
             {subtitle}
           </div>
 
-          <div className="mt-1 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div ref={ctaPrimaryRef} style={{ opacity: 0, pointerEvents: 'none' }}>
+          <div className="mt-5 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:gap-3 md:mt-1">
+            <div
+              ref={ctaPrimaryRef}
+              className="w-full sm:w-auto"
+              style={{ opacity: 0, pointerEvents: 'none' }}
+            >
               {ctaPrimary}
             </div>
-            <div ref={ctaSecondaryRef} style={{ opacity: 0, pointerEvents: 'none' }}>
+            <div
+              ref={ctaSecondaryRef}
+              className="flex justify-center sm:block"
+              style={{ opacity: 0, pointerEvents: 'none' }}
+            >
               {ctaSecondary}
             </div>
           </div>
