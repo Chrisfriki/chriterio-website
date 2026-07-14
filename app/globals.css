@@ -197,3 +197,36 @@
 .chr-pulse {
   animation: chr-pulse 1.8s ease-in-out infinite;
 }
+
+/* Lightweight CSS-only starfield — no image asset, no library. A small tile
+   of soft dots repeated across the section. Used by the post-hero "mission
+   control" section to keep the space aesthetic without a heavy background
+   image. */
+@utility starfield {
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.9), transparent 100%),
+    radial-gradient(1px 1px at 70% 55%, rgba(255, 255, 255, 0.6), transparent 100%),
+    radial-gradient(1.5px 1.5px at 40% 85%, rgba(255, 255, 255, 0.8), transparent 100%),
+    radial-gradient(1px 1px at 90% 15%, rgba(255, 255, 255, 0.5), transparent 100%),
+    radial-gradient(1px 1px at 25% 60%, rgba(255, 255, 255, 0.7), transparent 100%),
+    radial-gradient(1.5px 1.5px at 85% 80%, rgba(255, 255, 255, 0.4), transparent 100%),
+    radial-gradient(1px 1px at 55% 10%, rgba(255, 255, 255, 0.6), transparent 100%);
+  background-repeat: repeat;
+  background-size: 340px 260px;
+}
+
+@keyframes chr-orbit-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Very slow rotation for decorative orbital rings — imperceptible as motion,
+   just adds a sense of quiet mechanism. Pair with motion-safe: in markup so
+   prefers-reduced-motion disables it automatically. */
+.chr-orbit-spin {
+  animation: chr-orbit-spin 140s linear infinite;
+}

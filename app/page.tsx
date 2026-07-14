@@ -1,5 +1,5 @@
 import { Hero } from '@/components/home/hero'
-import { SellerReal } from '@/components/home/seller-real'
+import { MissionControl } from '@/components/home/mission-control'
 import { ServicesPreview } from '@/components/home/services-preview'
 import { CaseHighlight } from '@/components/home/case-highlight'
 import { FinalCta } from '@/components/final-cta'
@@ -8,7 +8,7 @@ export default function HomePage() {
   return (
     <main>
       <Hero />
-      <SellerReal />
+      <MissionControl />
       <ServicesPreview />
       <CaseHighlight />
       <FinalCta />

@@ -94,17 +94,37 @@ export const WHAT_I_CHECK = [
   'Operativa',
 ]
 
-export const SELLER_PROOF = [
+export type MissionModule = {
+  tag: string
+  title: string
+  desc: string
+}
+
+export const MISSION_MODULES: MissionModule[] = [
   {
-    title: 'Gestión de inventario real',
-    desc: 'Reorders, stock y forecast en cuentas propias, cada semana.',
+    tag: '01 · Rentabilidad',
+    title: 'Dinero real en juego',
+    desc: 'Tomamos decisiones pensando en margen, inversión y retorno. No recomendamos acciones porque estén de moda, sino porque tienen sentido para tu cuenta.',
   },
   {
-    title: 'Campañas PPC propias',
-    desc: 'Estructura de campañas, pujas y ACOS gestionados con mi dinero.',
+    tag: '02 · Visión global',
+    title: 'Todo está conectado',
+    desc: 'PPC, inventario, conversión, posicionamiento y margen forman parte del mismo sistema. Mejorar una métrica aislada no siempre mejora el negocio.',
   },
   {
-    title: 'Decisiones basadas en datos de venta',
-    desc: 'Lo que veo en mis cuentas es lo que aplico en la tuya.',
+    tag: '03 · Prioridades',
+    title: 'Qué mover primero y por qué',
+    desc: 'Detectamos qué acciones pueden generar más impacto y establecemos un orden claro. Sin informes interminables ni listas imposibles de ejecutar.',
   },
 ]
+
+export type ClientLogo = {
+  name: string
+  src: string
+}
+
+// Real client/brand logos go here once available — e.g.
+// { name: 'Acme', src: '/logos/acme.svg' }.
+// Keep this empty (not fabricated names/marks) until real assets exist;
+// <CredibilityStrip> falls back to neutral placeholder marks when empty.
+export const CLIENT_LOGOS: ClientLogo[] = []
