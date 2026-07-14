@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { ChevronDown } from 'lucide-react'
 import { withBasePath } from '@/lib/base-path'
 
 /** Change here to use more/fewer frames. */
@@ -13,14 +14,14 @@ const FRAME_EXTENSION = 'webp'
  *  don't keep serving a stale cached sequence under the same filenames. */
 const FRAME_VERSION = 'v4'
 
-/** Change here to make the overall scroll-driven hero longer or shorter. */
-export const HERO_SCROLL_HEIGHT_VH = 600
+/** Change here to make the overall scroll-driven hero longer or shorter. Kept
+ *  short on purpose: the rocket should read as a brief cinematic entrance,
+ *  not a long intro the visitor has to sit through before the message shows. */
+export const HERO_SCROLL_HEIGHT_VH = 240
 
-/** Fraction of the scroll range spent playing frames 1 -> N. */
-export const HERO_FRAME_PHASE_END = 0.78
-
-/** Fraction of the scroll range where the last frame is held and content starts revealing. */
-export const HERO_CONTENT_REVEAL_START = 0.86
+/** Fraction of the scroll range spent playing frames 1 -> N; the rest holds
+ *  the last frame as a stable backdrop while content keeps appearing/settles. */
+export const HERO_FRAME_PHASE_END = 0.85
 
 // This component draws frames via a plain `Image()` onto a canvas, which
 // bypasses next/image entirely, so it must prefix the basePath itself
@@ -56,19 +57,25 @@ const REVERSE_DISTANCE_THRESHOLD = 70
 const REVERSE_TIME_THRESHOLD = 120
 // ----------------------------------------------------------------------------
 
-// Staggered reveal windows for each content group, all inside
-// [HERO_CONTENT_REVEAL_START, 1]. Order: headline -> actions -> cards -> bar.
-// (The navbar/logo group is handled separately by SiteNavbar — see
-// HERO_NAV_REVEAL_RANGE below — since it lives outside this component.)
+// Narrative reveal choreography (fractions of the hero's total scroll
+// progress, 0-1). The rocket starts moving and clearing space immediately;
+// text cascades in shortly after — the headline should be fully in within
+// one or two normal scroll gestures, not a long unexplained intro.
+// Order: eyebrow -> headline -> subtitle -> CTA primary -> CTA secondary ->
+// microcopy -> cards. Each overlaps slightly with the next for a fluid feel
+// instead of everything popping in at once.
 const STAGE_RANGES = {
-  headline: [0.88, 0.94],
-  actions: [0.91, 0.96],
-  cards: [0.94, 0.985],
-  bar: [0.97, 1],
+  eyebrow: [0.04, 0.12],
+  headline: [0.08, 0.2],
+  subtitle: [0.24, 0.36],
+  ctaPrimary: [0.32, 0.44],
+  ctaSecondary: [0.38, 0.5],
+  microcopy: [0.46, 0.58],
+  cards: [0.55, 0.7],
 } as const
 
-/** Reveal window for the global site navbar on the homepage (read by SiteNavbar). */
-export const HERO_NAV_REVEAL_RANGE: readonly [number, number] = [0.86, 0.9]
+/** The "slide to start" hint fades out fast, right as the first scroll gesture begins. */
+const SCROLL_HINT_FADE_END = 0.05
 
 function easeInOutSmooth(t: number) {
   return t * t * (3 - 2 * t)
@@ -85,27 +92,37 @@ function applyStageStyle(el: HTMLElement | null, localT: number) {
 
 type ChriterioHeroSequenceProps = {
   id?: string
+  eyebrow: ReactNode
   headline: ReactNode
-  actions: ReactNode
+  subtitle: ReactNode
+  ctaPrimary: ReactNode
+  ctaSecondary: ReactNode
+  microcopy: ReactNode
   cards: ReactNode
-  bar?: ReactNode
   className?: string
 }
 
 export function ChriterioHeroSequence({
   id,
+  eyebrow,
   headline,
-  actions,
+  subtitle,
+  ctaPrimary,
+  ctaSecondary,
+  microcopy,
   cards,
-  bar,
   className,
 }: ChriterioHeroSequenceProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const scrollHintRef = useRef<HTMLDivElement>(null)
+  const eyebrowRef = useRef<HTMLDivElement>(null)
   const headlineRef = useRef<HTMLDivElement>(null)
-  const actionsRef = useRef<HTMLDivElement>(null)
+  const subtitleRef = useRef<HTMLDivElement>(null)
+  const ctaPrimaryRef = useRef<HTMLDivElement>(null)
+  const ctaSecondaryRef = useRef<HTMLDivElement>(null)
+  const microcopyRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<HTMLDivElement>(null)
-  const barRef = useRef<HTMLDivElement>(null)
 
   const imagesRef = useRef<HTMLImageElement[]>([])
   const statusRef = useRef<FrameStatus[]>(new Array(HERO_FRAME_COUNT).fill('idle'))
@@ -190,18 +207,33 @@ export function ChriterioHeroSequence({
     ctx.fillStyle = BACKGROUND_COLOR
     ctx.fillRect(0, 0, cssWidth, cssHeight)
 
+    // Always cover (fill, crop overflow) — on mobile this avoids the empty
+    // navy letterbox bars a "contain" fit would leave behind, and keeps the
+    // rocket a meaningful size instead of shrinking it to fit.
     const isMobile = cssWidth < MOBILE_BREAKPOINT
     const coverScale = Math.max(cssWidth / img.naturalWidth, cssHeight / img.naturalHeight)
-    const containScale = Math.min(cssWidth / img.naturalWidth, cssHeight / img.naturalHeight)
-    const scale = isMobile ? containScale : coverScale
-
+    // On mobile the text column spans the full width and sits in the bottom
+    // half of the screen, not beside the rocket like on desktop. A plain
+    // cover-fit shows the *entire* height of the source frame (nose to
+    // engine flame) — the flame/boosters start at roughly 60% down the
+    // source frame, right where the text lives. Zooming in so only the top
+    // ~60% of the source is visible, anchored near the top, keeps the nose
+    // and fuselage in view while pushing the bright flame plume out of frame
+    // entirely instead of behind the text.
+    const extraZoom = isMobile ? 1.65 : 1
+    const scale = coverScale * extraZoom
     const drawWidth = img.naturalWidth * scale
     const drawHeight = img.naturalHeight * scale
 
-    // On desktop, bias the crop right so the rocket clears the text column.
-    const horizontalAnchor = isMobile ? 0.5 : 0.36
+    // Bias the crop right on both breakpoints so the rocket sits clear of
+    // the left-aligned text column instead of running straight through it.
+    // On mobile the extra zoom above makes the visible horizontal window
+    // much narrower, so the same bias needs a much smaller delta from center
+    // (0.5) or the rocket shifts out of frame entirely.
+    const horizontalAnchor = isMobile ? 0.46 : 0.42
+    const verticalAnchor = isMobile ? 0.05 : 0.5
     const dx = (cssWidth - drawWidth) * horizontalAnchor
-    const dy = (cssHeight - drawHeight) / 2
+    const dy = (cssHeight - drawHeight) * verticalAnchor
 
     ctx.drawImage(img, dx, dy, drawWidth, drawHeight)
     return true
@@ -209,14 +241,25 @@ export function ChriterioHeroSequence({
 
   const applyStages = (progress: number) => {
     for (const [key, ref] of [
+      ['eyebrow', eyebrowRef],
       ['headline', headlineRef],
-      ['actions', actionsRef],
+      ['subtitle', subtitleRef],
+      ['ctaPrimary', ctaPrimaryRef],
+      ['ctaSecondary', ctaSecondaryRef],
+      ['microcopy', microcopyRef],
       ['cards', cardsRef],
-      ['bar', barRef],
     ] as const) {
       const [start, end] = STAGE_RANGES[key]
       const localT = Math.min(1, Math.max(0, (progress - start) / (end - start)))
       applyStageStyle(ref.current, localT)
+    }
+
+    const hint = scrollHintRef.current
+    if (hint) {
+      const fadeT = Math.min(1, Math.max(0, progress / SCROLL_HINT_FADE_END))
+      const opacity = 1 - easeInOutSmooth(fadeT)
+      hint.style.opacity = String(opacity)
+      hint.style.pointerEvents = opacity > 0.4 ? 'auto' : 'none'
     }
   }
 
@@ -241,14 +284,6 @@ export function ChriterioHeroSequence({
           lastDrawnFrameIndexRef.current = bootstrapIndex
           displayedFrameFloatRef.current = bootstrapIndex
           needsRedrawRef.current = false
-          if (process.env.NODE_ENV !== 'production') {
-            console.debug('Frame dibujado', {
-              target: targetFrameFloatRef.current,
-              displayed: displayedFrameFloatRef.current,
-              index: bootstrapIndex,
-              direction: scrollDirectionRef.current,
-            })
-          }
         }
       }
       applyStages(progressRef.current)
@@ -281,14 +316,6 @@ export function ChriterioHeroSequence({
           displayedFrameFloatRef.current = proposedNext
           needsRedrawRef.current = false
           advanced = true
-          if (process.env.NODE_ENV !== 'production') {
-            console.debug('Frame dibujado', {
-              target,
-              displayed: displayedFrameFloatRef.current,
-              index: proposedIndex,
-              direction: scrollDirectionRef.current,
-            })
-          }
         }
       } else if (status === 'error') {
         // Permanently missing frame: don't stall on it forever — treat it as
@@ -538,11 +565,16 @@ export function ChriterioHeroSequence({
           onError={() => console.error('Error cargando fotograma:', lastFrame)}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050d1f]/85 via-[#050d1f]/20 to-transparent" />
-        <div className="relative z-10 flex h-full w-full flex-col justify-end gap-6 px-5 pb-14 md:px-14 md:pb-16">
-          <div>{headline}</div>
-          <div>{actions}</div>
+        <div className="relative z-10 flex h-full w-full flex-col justify-end gap-3 px-5 pb-14 md:px-14 md:pb-16">
+          <div>{eyebrow}</div>
+          <div className="max-w-lg">{headline}</div>
+          <div className="max-w-md">{subtitle}</div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div>{ctaPrimary}</div>
+            <div>{ctaSecondary}</div>
+          </div>
+          <div>{microcopy}</div>
           <div>{cards}</div>
-          {bar && <div>{bar}</div>}
         </div>
       </section>
     )
@@ -571,38 +603,71 @@ export function ChriterioHeroSequence({
           </div>
         )}
 
-        {/* Localized scrim: only darkens the bottom-left corner behind the
-            text block, keeping the rocket / earth / space visible. */}
+        {/* Legibility scrim. On mobile the text spans the full width along
+            the bottom, so a full-width bottom-up gradient does the work. On
+            desktop the text only lives in the bottom-left column, so an
+            extra, stronger radial layer reinforces just that corner while
+            keeping the rocket / earth / space visible everywhere else. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1]"
+          className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-[#050d1f]/85 via-[#050d1f]/15 to-transparent"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-[1] hidden md:block"
           style={{
             background:
-              'radial-gradient(ellipse 65% 55% at 10% 100%, rgba(5,13,31,0.88) 0%, rgba(5,13,31,0.35) 55%, transparent 80%)',
+              'radial-gradient(ellipse 65% 55% at 10% 100%, rgba(5,13,31,0.75) 0%, rgba(5,13,31,0.25) 55%, transparent 80%)',
           }}
         />
 
         {/* Single bottom-anchored flex column: content stacks naturally in
             document flow (no fixed pixel offsets), so it never overlaps
-            regardless of how many lines the headline wraps into. */}
-        <div className="absolute inset-x-5 bottom-6 z-10 flex flex-col gap-4 md:inset-x-14 md:bottom-10 md:gap-5">
+            regardless of how many lines the headline wraps into. Each piece
+            fades/rises in on its own schedule via its own ref. */}
+        <div className="absolute inset-x-5 bottom-6 z-10 flex flex-col gap-3 md:inset-x-14 md:bottom-10 md:gap-4">
+          <div ref={eyebrowRef} style={{ opacity: 0 }}>
+            {eyebrow}
+          </div>
+
           <div ref={headlineRef} className="max-w-md md:max-w-lg" style={{ opacity: 0 }}>
             {headline}
           </div>
 
-          <div ref={actionsRef} style={{ opacity: 0, pointerEvents: 'none' }}>
-            {actions}
+          <div ref={subtitleRef} className="max-w-sm md:max-w-md" style={{ opacity: 0 }}>
+            {subtitle}
+          </div>
+
+          <div className="mt-1 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div ref={ctaPrimaryRef} style={{ opacity: 0, pointerEvents: 'none' }}>
+              {ctaPrimary}
+            </div>
+            <div ref={ctaSecondaryRef} style={{ opacity: 0, pointerEvents: 'none' }}>
+              {ctaSecondary}
+            </div>
+          </div>
+
+          <div ref={microcopyRef} style={{ opacity: 0 }}>
+            {microcopy}
           </div>
 
           <div ref={cardsRef} style={{ opacity: 0 }}>
             {cards}
           </div>
+        </div>
 
-          {bar && (
-            <div ref={barRef} style={{ opacity: 0 }}>
-              {bar}
-            </div>
-          )}
+        {/* "Slide to start" hint — visible only at the very top of the hero,
+            fades out at the first hint of scroll movement. */}
+        <div
+          ref={scrollHintRef}
+          className="absolute inset-x-0 bottom-6 z-10 flex justify-center md:bottom-8"
+        >
+          <div className="flex flex-col items-center gap-1 text-white/60">
+            <span className="text-[10px] tracking-widest uppercase">
+              Desliza para comenzar
+            </span>
+            <ChevronDown className="size-4 animate-bounce" />
+          </div>
         </div>
       </div>
     </section>
