@@ -50,10 +50,10 @@ export function BrandScroller({
           'flex w-max items-center gap-12',
           shouldAnimate &&
             direction === 'left' &&
-            'motion-safe:animate-brand-marquee motion-reduce:w-full motion-reduce:flex-wrap motion-reduce:justify-center',
+            'motion-safe:chr-brand-marquee motion-reduce:w-full motion-reduce:flex-wrap motion-reduce:justify-center',
           shouldAnimate &&
             direction === 'right' &&
-            'motion-safe:animate-brand-marquee-reverse motion-reduce:w-full motion-reduce:flex-wrap motion-reduce:justify-center',
+            'motion-safe:chr-brand-marquee-reverse motion-reduce:w-full motion-reduce:flex-wrap motion-reduce:justify-center',
           !shouldAnimate && 'w-full flex-wrap justify-center'
         )}
         style={shouldAnimate ? { animationDuration: `${duration}s` } : undefined}

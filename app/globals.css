@@ -226,14 +226,22 @@
 
 /* Very slow rotation for decorative orbital rings — imperceptible as motion,
    just adds a sense of quiet mechanism. Pair with motion-safe: in markup so
-   prefers-reduced-motion disables it automatically. */
-.chr-orbit-spin {
+   prefers-reduced-motion disables it automatically.
+   Defined via @utility (not a plain class) so the motion-safe:/motion-reduce:
+   variants below actually generate CSS — Tailwind v4 can only wrap its own
+   utilities in a variant's media query, not an arbitrary bare CSS class. A
+   plain `.chr-orbit-spin { animation: ... }` class with `motion-safe:` stuck
+   in front of it in JSX silently compiles to nothing. */
+@utility chr-orbit-spin {
   animation: chr-orbit-spin 140s linear infinite;
 }
 
 /* Infinite logo marquee for <BrandScroller>. The track renders the brand
    list twice back-to-back, so translating exactly -50% of the track's width
-   lands on an identical copy of the start — a seamless loop with no jump. */
+   lands on an identical copy of the start — a seamless loop with no jump.
+   Also @utility for the same reason as chr-orbit-spin above. Named
+   chr-brand-marquee (not animate-brand-marquee) to avoid colliding with
+   Tailwind's own animate-* utility namespace. */
 @keyframes brand-marquee {
   from {
     transform: translate3d(0, 0, 0);
@@ -252,10 +260,10 @@
   }
 }
 
-.animate-brand-marquee {
+@utility chr-brand-marquee {
   animation: brand-marquee 36s linear infinite;
 }
 
-.animate-brand-marquee-reverse {
+@utility chr-brand-marquee-reverse {
   animation: brand-marquee-reverse 36s linear infinite;
 }
