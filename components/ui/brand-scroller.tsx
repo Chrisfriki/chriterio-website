@@ -1,5 +1,7 @@
+'use client'
+
 import Image from 'next/image'
-import type { CSSProperties } from 'react'
+import { useRef, type CSSProperties } from 'react'
 import { cn } from '@/lib/utils'
 import { withBasePath } from '@/lib/base-path'
 
@@ -29,24 +31,44 @@ interface BrandScrollerProps {
 // static centered row instead.
 const MARQUEE_THRESHOLD = 5
 
+// How much slower the loop runs while hovered (1 = no change).
+const HOVER_PLAYBACK_RATE = 0.35
+
 export function BrandScroller({
   brands,
   direction = 'left',
   duration = 56,
   className,
 }: BrandScrollerProps) {
+  const trackRef = useRef<HTMLDivElement>(null)
+
   if (brands.length === 0) return null
 
   const shouldAnimate = brands.length >= MARQUEE_THRESHOLD
   const trackBrands = shouldAnimate ? [...brands, ...brands] : brands
 
+  // Slowing the marquee on hover via animation-duration (CSS-only) causes a
+  // visible jump: an infinite CSS animation's position is elapsed-time mod
+  // duration, so changing the duration mid-flight re-maps that same elapsed
+  // time onto a different point in the cycle. Scaling playbackRate on the
+  // already-running Web Animations API instance instead changes speed from
+  // the exact current position, with no jump and no second animation.
+  const setPlaybackRate = (rate: number) => {
+    trackRef.current?.getAnimations().forEach((animation) => {
+      animation.playbackRate = rate
+    })
+  }
+
   return (
     <div
-      className={cn('group relative w-full overflow-hidden', className)}
+      className={cn('relative w-full overflow-hidden', className)}
       role="group"
       aria-label="Marcas que han trabajado con AMZ Creatives"
+      onMouseEnter={() => setPlaybackRate(HOVER_PLAYBACK_RATE)}
+      onMouseLeave={() => setPlaybackRate(1)}
     >
       <div
+        ref={trackRef}
         className={cn(
           'flex w-max items-center gap-12',
           shouldAnimate &&
@@ -55,10 +77,6 @@ export function BrandScroller({
           shouldAnimate &&
             direction === 'right' &&
             'motion-safe:chr-brand-marquee-reverse motion-reduce:w-full motion-reduce:flex-wrap motion-reduce:justify-center',
-          // Hovering the scroller slows the loop down instead of stopping it
-          // dead — a gentler, more deliberate feel for scanning the logos.
-          shouldAnimate &&
-            'motion-safe:group-hover:[animation-duration:calc(var(--chr-marquee-duration)*2.6)]',
           !shouldAnimate && 'w-full flex-wrap justify-center'
         )}
         style={
