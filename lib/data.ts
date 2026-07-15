@@ -120,12 +120,34 @@ export const MISSION_MODULES: MissionModule[] = [
   },
 ]
 
-// Real brands/sellers that AMZ Creatives has worked with go here once their
-// logo files exist in the repo — e.g.
-// { name: 'Acme', logo: '/brands/acme.svg' }.
-// Add the logo file under /public/brands first (see brand-scroller.tsx for
-// the expected visual treatment), then add the entry here. Keep this empty
-// — never fabricate names or use stock/generic brand logos — until a real
-// asset is confirmed; <TrustedBrands> falls back to a static message when
-// empty rather than showing an empty carousel.
-export const TRUSTED_BRANDS: Brand[] = []
+// Real brands/sellers AMZ Creatives has worked with. Source files as
+// uploaded live in /public/brands; each one here points to a cleaned-up
+// version in /public/brands/processed (background removed, ink unified to
+// white — see scripts used at processing time, not checked into the repo)
+// so <BrandScroller> can render them uniformly without relying on a CSS
+// filter that breaks on multi-tone badge-style logos. Add new brands by
+// dropping the processed PNG in that folder and adding an entry below.
+export const TRUSTED_BRANDS: Brand[] = [
+  { name: 'Almar Baby', logo: '/brands/processed/almar-baby.png', width: 200, height: 127 },
+  { name: 'Anefort', logo: '/brands/processed/anefort.png', width: 288, height: 177 },
+  { name: 'Bebé Pituso', logo: '/brands/processed/bebe-pituso.png', width: 687, height: 252 },
+  { name: 'Detraps', logo: '/brands/processed/detraps.png', width: 700, height: 172 },
+  { name: 'Funny Baby', logo: '/brands/processed/funny-baby.png', width: 700, height: 496 },
+  { name: 'Kook Time', logo: '/brands/processed/kook-time.png', width: 700, height: 143 },
+  { name: 'Maternika', logo: '/brands/processed/maternika.png', width: 700, height: 87 },
+  { name: 'Maurenza', logo: '/brands/processed/maurenza.png', width: 700, height: 146 },
+  { name: 'Maxxpatt', logo: '/brands/processed/maxxpatt.png', width: 617, height: 229 },
+  { name: 'Neergy', logo: '/brands/processed/neergy.png', width: 595, height: 274 },
+  { name: 'Norditex', logo: '/brands/processed/norditex.png', width: 432, height: 99 },
+  { name: 'Pinisi Home', logo: '/brands/processed/pinisi.png', width: 300, height: 144 },
+  { name: 'PodCase', logo: '/brands/processed/podcase.png', width: 700, height: 218 },
+  { name: 'Pure4Home', logo: '/brands/processed/pure4home.png', width: 700, height: 145 },
+  { name: 'Snappy Blue', logo: '/brands/processed/sauk.png', width: 493, height: 314 },
+  { name: 'Savia de Alma', logo: '/brands/processed/savia-alma.png', width: 700, height: 809 },
+  { name: 'T2ND', logo: '/brands/processed/t2nd.png', width: 700, height: 145 },
+  { name: 'Thinia Home', logo: '/brands/processed/thinia-home.png', width: 532, height: 331 },
+  { name: 'Toral', logo: '/brands/processed/toral.png', width: 700, height: 474 },
+  { name: 'Umbra', logo: '/brands/processed/umbra.png', width: 382, height: 96 },
+  { name: 'Vaymat', logo: '/brands/processed/vaymat.png', width: 700, height: 181 },
+  { name: 'Xpintar', logo: '/brands/processed/xpintar.png', width: 700, height: 181 },
+]

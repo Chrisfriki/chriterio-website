@@ -9,6 +9,14 @@ export type Brand = {
   height?: number
 }
 
+// `logo` must already be a white-ink-on-transparent PNG/SVG — this component
+// only applies opacity, it doesn't recolor. A CSS filter (grayscale +
+// brightness-0 + invert) was tried here previously and looked fine on simple
+// single-tone logos, but silently destroyed any two-tone "badge" logo (solid
+// fill + same-color cutout text), since both regions collapse to identical
+// pixels once the filter runs. Pre-processing each logo per-file avoids that
+// failure mode entirely.
+
 interface BrandScrollerProps {
   brands: Brand[]
   direction?: 'left' | 'right'
@@ -70,7 +78,7 @@ export function BrandScroller({
                 alt={isDuplicate ? '' : brand.name}
                 width={brand.width ?? 120}
                 height={brand.height ?? 36}
-                className="max-h-8 w-auto max-w-[140px] object-contain opacity-70 grayscale brightness-0 invert transition-opacity duration-300 hover:opacity-100"
+                className="max-h-8 w-auto max-w-[140px] object-contain opacity-70 transition-opacity duration-300 hover:opacity-100"
               />
             </div>
           )
