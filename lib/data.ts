@@ -1,3 +1,5 @@
+import type { Brand } from '@/components/ui/brand-scroller'
+
 export type Service = {
   id: string
   name: string
@@ -118,13 +120,12 @@ export const MISSION_MODULES: MissionModule[] = [
   },
 ]
 
-export type ClientLogo = {
-  name: string
-  src: string
-}
-
-// Real client/brand logos go here once available — e.g.
-// { name: 'Acme', src: '/logos/acme.svg' }.
-// Keep this empty (not fabricated names/marks) until real assets exist;
-// <CredibilityStrip> falls back to neutral placeholder marks when empty.
-export const CLIENT_LOGOS: ClientLogo[] = []
+// Real brands/sellers that AMZ Creatives has worked with go here once their
+// logo files exist in the repo — e.g.
+// { name: 'Acme', logo: '/brands/acme.svg' }.
+// Add the logo file under /public/brands first (see brand-scroller.tsx for
+// the expected visual treatment), then add the entry here. Keep this empty
+// — never fabricate names or use stock/generic brand logos — until a real
+// asset is confirmed; <TrustedBrands> falls back to a static message when
+// empty rather than showing an empty carousel.
+export const TRUSTED_BRANDS: Brand[] = []

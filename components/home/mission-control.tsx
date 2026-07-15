@@ -2,30 +2,22 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, Coins, ListOrdered, Orbit } from 'lucide-react'
 import { Reveal } from '@/components/reveal'
-import { CLIENT_LOGOS, MISSION_MODULES } from '@/lib/data'
+import { MISSION_MODULES } from '@/lib/data'
 import { TEAM_TRAJECTORY_URL } from '@/lib/site'
 import { withBasePath } from '@/lib/base-path'
 
 const MODULE_ICONS = [Coins, Orbit, ListOrdered]
 
 /**
- * The full post-hero space sequence: credibility strip -> "Control de
- * misión" -> AMZ Creatives connection. Kept as one continuous section (one
- * shared dark background + starfield) rather than three separate <section>s
- * so there's no hard seam between them, and so the hero's dark canvas hands
- * off into this section without a visible cut.
+ * "Control de misión" -> AMZ Creatives connection. Kept as one continuous
+ * section (one shared dark background + starfield) rather than two separate
+ * <section>s so there's no hard seam between them. Sits after <TrustedBrands>,
+ * which already handles the hero's #050d1f -> navy-dark hand-off, so this
+ * section starts flat at navy-dark instead of re-fading.
  */
 export function MissionControl() {
   return (
     <section className="relative overflow-hidden bg-navy-dark">
-      {/* Shared space backdrop for the whole section. The top blends from
-          the hero canvas's exact background color (#050d1f) into the site's
-          navy-dark token, so the hand-off from the hero reads as one
-          continuous background instead of a cut. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#050d1f] via-navy-dark to-navy-dark"
-      />
       <div
         aria-hidden="true"
         className="starfield pointer-events-none absolute inset-0 opacity-60"
@@ -46,61 +38,10 @@ export function MissionControl() {
       />
 
       <div className="relative">
-        <CredibilityStrip />
         <MissionControlCards />
         <AmzConnection />
       </div>
     </section>
-  )
-}
-
-function CredibilityStrip() {
-  return (
-    <div className="border-b border-white/[0.08] px-5 py-10 md:px-8">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 text-center md:flex-row md:justify-between md:text-left">
-        <Reveal className="max-w-sm">
-          <p className="text-sm font-medium text-white/80">
-            Experiencia trabajando con sellers y marcas en Amazon
-          </p>
-          <p className="mt-1 text-xs text-white/45">
-            Parte del equipo detrás de AMZ Creatives
-          </p>
-        </Reveal>
-
-        <Reveal delay={0.08} className="w-full md:w-auto">
-          {CLIENT_LOGOS.length > 0 ? (
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 overflow-x-auto md:justify-end">
-              {CLIENT_LOGOS.map((logo) => (
-                <Image
-                  key={logo.name}
-                  src={withBasePath(logo.src)}
-                  alt={logo.name}
-                  width={120}
-                  height={32}
-                  className="h-6 w-auto shrink-0 opacity-60 grayscale transition-opacity hover:opacity-90 md:h-7"
-                />
-              ))}
-            </div>
-          ) : (
-            // No real client logos yet — add them to CLIENT_LOGOS in
-            // lib/data.ts (name + src under /public) and this placeholder
-            // row is replaced automatically. Neutral marks only, on
-            // purpose: never fabricate brand names/logos here.
-            <div
-              className="flex flex-wrap items-center justify-center gap-3"
-              aria-hidden="true"
-            >
-              {[0, 1, 2, 3].map((i) => (
-                <span
-                  key={i}
-                  className="h-7 w-20 shrink-0 rounded-md border border-white/10 bg-white/[0.03]"
-                />
-              ))}
-            </div>
-          )}
-        </Reveal>
-      </div>
-    </div>
   )
 }
 

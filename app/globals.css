@@ -230,3 +230,32 @@
 .chr-orbit-spin {
   animation: chr-orbit-spin 140s linear infinite;
 }
+
+/* Infinite logo marquee for <BrandScroller>. The track renders the brand
+   list twice back-to-back, so translating exactly -50% of the track's width
+   lands on an identical copy of the start — a seamless loop with no jump. */
+@keyframes brand-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes brand-marquee-reverse {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-brand-marquee {
+  animation: brand-marquee 36s linear infinite;
+}
+
+.animate-brand-marquee-reverse {
+  animation: brand-marquee-reverse 36s linear infinite;
+}
