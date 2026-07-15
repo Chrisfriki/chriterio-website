@@ -33,11 +33,11 @@ export function SiteNavbar() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-5 md:px-6 md:pt-6">
+      <header className="fixed inset-x-0 top-0 z-50 flex justify-start px-4 pt-5 md:px-6 md:pt-6">
         <nav
           aria-label="Principal"
           className={cn(
-            'flex w-full max-w-[1200px] items-center justify-between rounded-full border border-white/12 bg-navy-dark/60 px-4 py-2.5 shadow-[0_20px_50px_-18px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-[background-color,box-shadow] duration-300 md:px-5 md:py-3',
+            'inline-flex items-center gap-8 rounded-full border border-white/12 bg-navy-dark/60 px-4 py-2.5 shadow-[0_20px_50px_-18px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-[background-color,box-shadow] duration-300 md:gap-10 md:px-5 md:py-3',
             scrolled && 'bg-navy-dark/78 shadow-[0_20px_50px_-14px_rgba(0,0,0,0.7)]',
           )}
         >
