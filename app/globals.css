@@ -260,10 +260,15 @@
   }
 }
 
+/* Duration is a CSS custom property (set inline per <BrandScroller> instance)
+   so a hover variant can slow it down via calc() without needing a second
+   keyframe or a duplicate utility. */
 @utility chr-brand-marquee {
-  animation: brand-marquee 36s linear infinite;
+  animation: brand-marquee linear infinite;
+  animation-duration: var(--chr-marquee-duration, 56s);
 }
 
 @utility chr-brand-marquee-reverse {
-  animation: brand-marquee-reverse 36s linear infinite;
+  animation: brand-marquee-reverse linear infinite;
+  animation-duration: var(--chr-marquee-duration, 56s);
 }

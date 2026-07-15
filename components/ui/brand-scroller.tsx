@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import type { CSSProperties } from 'react'
 import { cn } from '@/lib/utils'
 import { withBasePath } from '@/lib/base-path'
 
@@ -31,7 +32,7 @@ const MARQUEE_THRESHOLD = 5
 export function BrandScroller({
   brands,
   direction = 'left',
-  duration = 36,
+  duration = 56,
   className,
 }: BrandScrollerProps) {
   if (brands.length === 0) return null
@@ -41,7 +42,7 @@ export function BrandScroller({
 
   return (
     <div
-      className={cn('relative w-full overflow-hidden', className)}
+      className={cn('group relative w-full overflow-hidden', className)}
       role="group"
       aria-label="Marcas que han trabajado con AMZ Creatives"
     >
@@ -54,9 +55,17 @@ export function BrandScroller({
           shouldAnimate &&
             direction === 'right' &&
             'motion-safe:chr-brand-marquee-reverse motion-reduce:w-full motion-reduce:flex-wrap motion-reduce:justify-center',
+          // Hovering the scroller slows the loop down instead of stopping it
+          // dead — a gentler, more deliberate feel for scanning the logos.
+          shouldAnimate &&
+            'motion-safe:group-hover:[animation-duration:calc(var(--chr-marquee-duration)*2.6)]',
           !shouldAnimate && 'w-full flex-wrap justify-center'
         )}
-        style={shouldAnimate ? { animationDuration: `${duration}s` } : undefined}
+        style={
+          shouldAnimate
+            ? ({ '--chr-marquee-duration': `${duration}s` } as CSSProperties)
+            : undefined
+        }
       >
         {trackBrands.map((brand, index) => {
           // The second copy exists only so the marquee loop has no seam; it's
