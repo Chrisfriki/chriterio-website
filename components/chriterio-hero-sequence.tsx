@@ -61,17 +61,11 @@ const REVERSE_TIME_THRESHOLD = 120
 // progress, 0-1). The rocket starts moving and clearing space immediately;
 // text cascades in shortly after — the headline should be fully in within
 // one or two normal scroll gestures, not a long unexplained intro.
-// Order: eyebrow -> headline -> subtitle -> CTA primary -> CTA secondary ->
-// microcopy -> cards. Each overlaps slightly with the next for a fluid feel
-// instead of everything popping in at once.
+// Order: headline -> subtitle, each overlapping slightly with the next for a
+// fluid feel instead of everything popping in at once.
 const STAGE_RANGES = {
-  eyebrow: [0.04, 0.12],
   headline: [0.08, 0.2],
   subtitle: [0.24, 0.36],
-  ctaPrimary: [0.32, 0.44],
-  ctaSecondary: [0.38, 0.5],
-  microcopy: [0.46, 0.58],
-  cards: [0.55, 0.7],
 } as const
 
 /** The "slide to start" hint fades out fast, right as the first scroll gesture begins. */
@@ -92,37 +86,22 @@ function applyStageStyle(el: HTMLElement | null, localT: number) {
 
 type ChriterioHeroSequenceProps = {
   id?: string
-  eyebrow: ReactNode
   headline: ReactNode
   subtitle: ReactNode
-  ctaPrimary: ReactNode
-  ctaSecondary: ReactNode
-  microcopy: ReactNode
-  cards: ReactNode
   className?: string
 }
 
 export function ChriterioHeroSequence({
   id,
-  eyebrow,
   headline,
   subtitle,
-  ctaPrimary,
-  ctaSecondary,
-  microcopy,
-  cards,
   className,
 }: ChriterioHeroSequenceProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
-  const eyebrowRef = useRef<HTMLDivElement>(null)
   const headlineRef = useRef<HTMLDivElement>(null)
   const subtitleRef = useRef<HTMLDivElement>(null)
-  const ctaPrimaryRef = useRef<HTMLDivElement>(null)
-  const ctaSecondaryRef = useRef<HTMLDivElement>(null)
-  const microcopyRef = useRef<HTMLDivElement>(null)
-  const cardsRef = useRef<HTMLDivElement>(null)
 
   const imagesRef = useRef<HTMLImageElement[]>([])
   const statusRef = useRef<FrameStatus[]>(new Array(HERO_FRAME_COUNT).fill('idle'))
@@ -224,18 +203,18 @@ export function ChriterioHeroSequence({
     // ~60% of the source is visible, anchored near the top, keeps the nose
     // and fuselage in view while pushing the bright flame plume out of frame
     // entirely instead of behind the text.
-    const extraZoom = isMobile ? 1.65 : 1
+    const extraZoom = isMobile ? 1.65 : 1.3
     const scale = coverScale * extraZoom
     const drawWidth = img.naturalWidth * scale
     const drawHeight = img.naturalHeight * scale
 
-    // Bias the crop right on both breakpoints so the rocket sits clear of
-    // the left-aligned text column instead of running straight through it.
-    // On mobile the extra zoom above makes the visible horizontal window
-    // much narrower, so the same bias needs a much smaller delta from center
-    // (0.5) or the rocket shifts out of frame entirely (verified visually —
-    // don't push this much past ~0.4 without re-checking screenshots).
-    const horizontalAnchor = isMobile ? 0.4 : 0.42
+    // Bias the crop right so the rocket sits clear of the centered text
+    // column instead of running straight through it. On mobile the extra
+    // zoom above makes the visible horizontal window much narrower, so the
+    // same bias needs a much smaller delta from center (0.5) or the rocket
+    // shifts out of frame entirely (verified visually — don't push this
+    // much past ~0.4 without re-checking screenshots).
+    const horizontalAnchor = isMobile ? 0.4 : 0
     const verticalAnchor = isMobile ? 0.05 : 0.5
     const dx = (cssWidth - drawWidth) * horizontalAnchor
     const dy = (cssHeight - drawHeight) * verticalAnchor
@@ -246,13 +225,8 @@ export function ChriterioHeroSequence({
 
   const applyStages = (progress: number) => {
     for (const [key, ref] of [
-      ['eyebrow', eyebrowRef],
       ['headline', headlineRef],
       ['subtitle', subtitleRef],
-      ['ctaPrimary', ctaPrimaryRef],
-      ['ctaSecondary', ctaSecondaryRef],
-      ['microcopy', microcopyRef],
-      ['cards', cardsRef],
     ] as const) {
       const [start, end] = STAGE_RANGES[key]
       const localT = Math.min(1, Math.max(0, (progress - start) / (end - start)))
@@ -618,20 +592,13 @@ export function ChriterioHeroSequence({
           src={lastFrame}
           alt="Cohete Chriterio en órbita"
           aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full origin-[5%_35%] scale-[1.6] object-cover"
           onError={() => console.error('Error cargando fotograma:', lastFrame)}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050d1f]/90 via-[#050d1f]/25 to-transparent" />
-        <div className="relative z-10 flex h-full w-full flex-col justify-end gap-4 px-5 pb-14 md:px-14 md:pb-16">
-          <div>{eyebrow}</div>
-          <div className="max-w-lg md:max-w-xl">{headline}</div>
-          <div className="max-w-md md:max-w-lg">{subtitle}</div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div>{ctaPrimary}</div>
-            <div>{ctaSecondary}</div>
-          </div>
-          <div>{microcopy}</div>
-          <div>{cards}</div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050d1f]/78 via-[#050d1f]/25 to-transparent" />
+        <div className="relative z-10 flex h-full w-full flex-col items-center gap-7 px-5 pt-28 text-center md:gap-8 md:pt-36">
+          <div className="max-w-4xl">{headline}</div>
+          <div className="max-w-[800px]">{subtitle}</div>
         </div>
       </section>
     )
@@ -660,75 +627,26 @@ export function ChriterioHeroSequence({
           </div>
         )}
 
-        {/* Legibility scrim. On mobile the text spans the full width along
-            the bottom, so a full-width bottom-up gradient does the work. On
-            desktop the text only lives in the bottom-left column, so an
-            extra, stronger radial layer reinforces just that corner while
-            keeping the rocket / earth / space visible everywhere else. */}
+        {/* Legibility scrim: darkest behind the top-anchored headline,
+            fading out by mid-height so the rocket stays fully visible below
+            it — a single symmetric gradient now that the content is centered
+            instead of living in a bottom-left column. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-[#050d1f]/90 via-[#050d1f]/25 to-transparent"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] hidden md:block"
-          style={{
-            background:
-              'radial-gradient(ellipse 68% 60% at 8% 100%, rgba(5,13,31,0.82) 0%, rgba(5,13,31,0.32) 55%, transparent 80%)',
-          }}
-        />
-        {/* Mobile-only left-to-right scrim: the rocket sits toward the right
-            of the frame, so darkening the left side protects the text column
-            without needing to touch the canvas/animation itself. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] block md:hidden"
-          style={{
-            background:
-              'linear-gradient(90deg, rgba(5,13,31,0.75) 0%, rgba(5,13,31,0.35) 45%, transparent 75%)',
-          }}
+          className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-[#050d1f]/78 via-[#050d1f]/25 to-transparent"
         />
 
-        {/* Single bottom-anchored flex column: content stacks naturally in
-            document flow (no fixed pixel offsets), so it never overlaps
-            regardless of how many lines the headline wraps into. Each piece
-            fades/rises in on its own schedule via its own ref. */}
-        <div className="absolute inset-x-5 bottom-6 z-10 flex flex-col gap-4 md:inset-x-14 md:bottom-10 md:gap-5">
-          <div ref={eyebrowRef} style={{ opacity: 0 }}>
-            {eyebrow}
-          </div>
-
-          <div ref={headlineRef} className="max-w-lg md:max-w-xl" style={{ opacity: 0 }}>
+        {/* Top-anchored, centered content: headline and subtitle only. The
+            rocket is free to read as the visual centerpiece through the rest
+            of the frame below/behind it. Each piece fades/rises in on its
+            own schedule via its own ref. */}
+        <div className="absolute inset-x-0 top-0 z-10 flex flex-col items-center gap-7 px-5 pt-28 text-center md:gap-8 md:pt-36">
+          <div ref={headlineRef} className="max-w-4xl" style={{ opacity: 0 }}>
             {headline}
           </div>
 
-          <div ref={subtitleRef} className="max-w-md md:max-w-lg" style={{ opacity: 0 }}>
+          <div ref={subtitleRef} className="max-w-[800px]" style={{ opacity: 0 }}>
             {subtitle}
-          </div>
-
-          <div className="mt-5 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:gap-3 md:mt-1">
-            <div
-              ref={ctaPrimaryRef}
-              className="w-full sm:w-auto"
-              style={{ opacity: 0, pointerEvents: 'none' }}
-            >
-              {ctaPrimary}
-            </div>
-            <div
-              ref={ctaSecondaryRef}
-              className="flex justify-center sm:block"
-              style={{ opacity: 0, pointerEvents: 'none' }}
-            >
-              {ctaSecondary}
-            </div>
-          </div>
-
-          <div ref={microcopyRef} style={{ opacity: 0 }}>
-            {microcopy}
-          </div>
-
-          <div ref={cardsRef} style={{ opacity: 0 }}>
-            {cards}
           </div>
         </div>
 
