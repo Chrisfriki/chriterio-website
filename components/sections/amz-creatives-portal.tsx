@@ -118,7 +118,7 @@ function ExpandingMedia({
   progress: MotionValue<number>
   isMobile: boolean
 }) {
-  const scaleX = useTransform(progress, [0, 0.12, 0.31, 0.76, 0.93, 1], [
+  const scaleX = useTransform(progress, [0, 0.04, 0.32, 0.76, 0.93, 1], [
     isMobile ? 0.88 : 0.44,
     isMobile ? 0.88 : 0.44,
     1,
@@ -126,17 +126,17 @@ function ExpandingMedia({
     isMobile ? 0.82 : 0.38,
     isMobile ? 0.82 : 0.38,
   ])
-  const scaleY = useTransform(progress, [0, 0.12, 0.31, 0.76, 0.93, 1], [
-    isMobile ? 0.46 : 0.5,
-    isMobile ? 0.46 : 0.5,
+  const scaleY = useTransform(progress, [0, 0.04, 0.32, 0.76, 0.93, 1], [
+    isMobile ? 0.52 : 0.68,
+    isMobile ? 0.52 : 0.68,
     1,
     1,
     isMobile ? 0.42 : 0.44,
     isMobile ? 0.42 : 0.44,
   ])
-  const borderRadius = useTransform(progress, [0.12, 0.31, 0.76, 0.93], [28, 0, 0, 28])
-  const shade = useTransform(progress, [0, 0.2, 0.34, 0.75, 0.9], [0.55, 0.35, 0.08, 0.08, 0.5])
-  const shadow = useTransform(progress, [0.12, 0.3, 0.78, 0.93], [0.65, 0, 0, 0.65])
+  const borderRadius = useTransform(progress, [0.04, 0.32, 0.76, 0.93], [28, 0, 0, 28])
+  const shade = useTransform(progress, [0, 0.18, 0.32, 0.75, 0.9], [0.5, 0.3, 0.06, 0.06, 0.5])
+  const shadow = useTransform(progress, [0.04, 0.31, 0.78, 0.93], [0.65, 0, 0, 0.65])
   const boxShadow = useTransform(shadow, (value) => `0 30px 90px rgba(0,0,0,${value})`)
 
   return (
@@ -268,13 +268,16 @@ export function AmzCreativesPortal() {
   })
   const progress = useSpring(scrollYProgress, { stiffness: 110, damping: 30, mass: 0.25 })
 
-  const chriterioIntroOpacity = useTransform(progress, [0, 0.1, 0.23], [1, 1, 0])
-  const introY = useTransform(progress, [0, 0.22], [0, -60])
-  const spaceOpacity = useTransform(progress, [0.16, 0.32, 0.76, 0.94], [1, 0, 0, 1])
-  const amzBackgroundOpacity = useTransform(progress, [0.23, 0.34, 0.77, 0.92], [0, 1, 1, 0])
-  const amzHeaderOpacity = useTransform(progress, [0.29, 0.37, 0.73, 0.81], [0, 1, 1, 0])
-  const amzIntroOpacity = useTransform(progress, [0.29, 0.35, 0.39, 0.44], [0, 1, 1, 0])
-  const outcomesOpacity = useTransform(progress, [0.68, 0.71, 0.76, 0.81], [0, 1, 1, 0])
+  const chriterioIntroOpacity = useTransform(progress, [0, 0.07, 0.26], [1, 1, 0])
+  const headingLeftX = useTransform(progress, [0.04, 0.27], [0, isMobile ? -90 : -360])
+  const headingRightX = useTransform(progress, [0.04, 0.27], [0, isMobile ? 90 : 360])
+  const introDetailsOpacity = useTransform(progress, [0, 0.08, 0.19], [1, 1, 0])
+  const introDetailsY = useTransform(progress, [0.04, 0.2], [0, 35])
+  const spaceOpacity = useTransform(progress, [0.2, 0.34, 0.76, 0.94], [1, 0, 0, 1])
+  const amzBackgroundOpacity = useTransform(progress, [0.32, 0.38, 0.77, 0.92], [0, 1, 1, 0])
+  const amzHeaderOpacity = useTransform(progress, [0.35, 0.4, 0.73, 0.81], [0, 1, 1, 0])
+  const amzIntroOpacity = useTransform(progress, [0.35, 0.4, 0.43, 0.47], [0, 1, 1, 0])
+  const outcomesOpacity = useTransform(progress, [0.72, 0.75, 0.78, 0.82], [0, 1, 1, 0])
   const returnOpacity = useTransform(progress, [0.87, 0.94, 1], [0, 1, 1])
   const returnY = useTransform(progress, [0.87, 0.96], [40, 0])
 
@@ -292,23 +295,37 @@ export function AmzCreativesPortal() {
 
         <motion.div className="absolute inset-0 z-20 bg-[#f3f0eb]" style={{ opacity: amzBackgroundOpacity }} aria-hidden="true" />
 
+        <motion.div className="pointer-events-none absolute inset-0 z-30" style={{ opacity: chriterioIntroOpacity }}>
+          <span className="absolute top-[12%] left-1/2 -translate-x-1/2 text-xs font-semibold tracking-widest text-electric uppercase md:top-[13%]">
+            Ejecución creativa
+          </span>
+          <h2 id="amz-portal-title" className="contents font-display font-bold tracking-[-0.04em]">
+            <motion.span
+              className="absolute top-[22%] left-5 w-[80vw] text-[clamp(2.15rem,5vw,5.25rem)] leading-[0.96] text-balance md:top-[31%] md:left-[3vw] md:w-[39vw]"
+              style={{ x: headingLeftX }}
+            >
+              No nos quedamos en el diagnóstico.
+            </motion.span>
+            <motion.span
+              className="absolute right-5 bottom-[22%] w-[80vw] text-right text-[clamp(2.15rem,5vw,5.25rem)] leading-[0.96] text-balance md:right-[3vw] md:bottom-[29%] md:w-[41vw]"
+              style={{ x: headingRightX }}
+            >
+              También construimos la parte visual.
+            </motion.span>
+          </h2>
+        </motion.div>
+
         <motion.div
-          className="absolute inset-0 z-30 flex items-center px-5 md:px-[8vw]"
-          style={{ opacity: chriterioIntroOpacity, y: introY }}
+          className="pointer-events-none absolute inset-x-5 bottom-6 z-30 flex flex-col gap-3 md:inset-x-[6vw] md:bottom-8 md:flex-row md:items-end md:justify-between"
+          style={{ opacity: introDetailsOpacity, y: introDetailsY }}
         >
-          <div className="max-w-xl md:max-w-2xl">
-            <span className="text-xs font-semibold tracking-widest text-electric uppercase">Ejecución creativa</span>
-            <h2 id="amz-portal-title" className="mt-4 font-display text-[clamp(2.25rem,5vw,4.75rem)] font-bold leading-[1.02] tracking-tight text-balance">
-              No nos quedamos en el diagnóstico. También construimos la parte visual.
-            </h2>
-            <p className="mt-6 max-w-xl text-sm leading-relaxed text-white/70 md:text-lg">
-              A través de AMZ Creatives desarrollamos imágenes, vídeos y experiencias visuales para marcas que quieren destacar y convertir mejor dentro de Amazon.
-            </p>
-            <span className="mt-8 inline-flex items-center gap-2 text-xs font-semibold tracking-wide text-white/55 uppercase">
-              <ArrowDown className="size-4" aria-hidden="true" />
-              Desliza para entrar en AMZ Creatives
-            </span>
-          </div>
+          <p className="max-w-md text-xs leading-relaxed text-white/60 md:text-sm">
+            A través de AMZ Creatives desarrollamos imágenes, vídeos y experiencias visuales para marcas que quieren destacar y convertir mejor dentro de Amazon.
+          </p>
+          <span className="inline-flex shrink-0 items-center gap-2 text-xs font-semibold tracking-wide text-white/55 uppercase">
+            <ArrowDown className="size-4" aria-hidden="true" />
+            Desliza para entrar en AMZ Creatives
+          </span>
         </motion.div>
 
         <motion.div className="pointer-events-none absolute inset-x-0 top-0 z-40 flex items-center justify-end px-5 py-6 md:px-8" style={{ opacity: amzHeaderOpacity }}>
@@ -328,7 +345,7 @@ export function AmzCreativesPortal() {
         </motion.div>
 
         {CAPABILITIES.map((capability, index) => {
-          const starts = [0.39, 0.47, 0.55, 0.63]
+          const starts = [0.46, 0.525, 0.59, 0.655]
           const start = starts[index]
           return <CapabilityPanel key={capability.number} capability={capability} progress={progress} range={[start, start + 0.025, start + 0.065, start + 0.095]} />
         })}
