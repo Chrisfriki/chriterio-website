@@ -141,11 +141,9 @@ export type ServiceArea = {
 }
 
 // The 12 real CHRITERIO services, grouped into the four areas presented as
-// large visual cards (see components/services/). Each area's `image` points
-// at an asset that doesn't exist in the repo yet — ServiceAreaCard falls
-// back to a plain dark gradient when the file is missing rather than
-// breaking, so drop the real photo in at that exact path whenever it's
-// ready and it picks it up automatically.
+// large visual cards (see components/services/). The image filenames are
+// deliberately URL-safe so they work consistently in local development and
+// in production deployments.
 export const SERVICE_AREAS: ServiceArea[] = [
   {
     id: 'visibilidad-publicidad',
@@ -155,7 +153,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     shortDescription: 'Cómo te encuentran, cómo te perciben y cómo conviertes.',
     introduction:
       'Trabajamos los elementos que determinan cómo aparece tu producto, cómo atrae tráfico y cómo convierte las visitas en ventas.',
-    image: '/images/services/visibility-advertising.webp',
+    image: '/images/services/visibility-advertising.jpg',
     services: [
       {
         id: 'ppc',
@@ -189,7 +187,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     shortDescription: 'Entender qué ocurre antes de decidir qué hacer.',
     introduction:
       'Analizamos la cuenta y el mercado para detectar bloqueos, oportunidades y decisiones que afectan directamente al beneficio.',
-    image: '/images/services/analysis-profitability.webp',
+    image: '/images/services/analysis-profitability.jpg',
     services: [
       {
         id: 'auditoria',
@@ -229,7 +227,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     shortDescription: 'Avanzar por fases sin perder rentabilidad ni control.',
     introduction:
       'Diseñamos cómo avanzar desde la situación actual hacia nuevos niveles de facturación, productos y mercados sin perder control.',
-    image: '/images/services/growth-expansion.webp',
+    image: '/images/services/growth-expansion.jpg',
     services: [
       {
         id: 'crecimiento',
@@ -262,7 +260,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     shortDescription: 'Decisiones acompañadas, prioridades claras y seguimiento.',
     introduction:
       'Acompañamos la toma de decisiones para convertir los datos de la cuenta en prioridades claras y acciones ejecutables.',
-    image: '/images/services/strategic-direction.webp',
+    image: '/images/services/strategic-direction.jpg',
     services: [
       {
         id: 'mentoria',
