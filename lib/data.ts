@@ -120,123 +120,165 @@ export const MISSION_MODULES: MissionModule[] = [
   },
 ]
 
-export type ServiceCatalogItem = {
+export type ServiceItem = {
   id: string
-  tag: string
+  eyebrow: string
   title: string
-  desc: string
-  cta: string
-  href: string
+  description: string
   note?: string
 }
 
-// The 12 real CHRITERIO services, grouped into the four conceptual
-// categories used to organize the catalog section (see
-// components/home/service-catalog.tsx). Anchors point at /servicios — the
-// dedicated sections for each one (#ppc, #posicionamiento, etc.) don't exist
-// there yet, so these currently just land on that page; wire up matching
-// ids on /servicios separately if/when that page gets a per-service layout.
-export const SERVICE_CATALOG: ServiceCatalogItem[] = [
-  // Visibilidad y publicidad
+export type ServiceArea = {
+  id: string
+  eyebrow: string
+  countLabel: string
+  title: string
+  shortDescription: string
+  introduction: string
+  image: string
+  imagePosition?: string
+  services: ServiceItem[]
+}
+
+// The 12 real CHRITERIO services, grouped into the four areas presented as
+// large visual cards (see components/services/). Each area's `image` points
+// at an asset that doesn't exist in the repo yet — ServiceAreaCard falls
+// back to a plain dark gradient when the file is missing rather than
+// breaking, so drop the real photo in at that exact path whenever it's
+// ready and it picks it up automatically.
+export const SERVICE_AREAS: ServiceArea[] = [
   {
-    id: 'ppc',
-    tag: 'Ads / PPC',
-    title: 'Gestión y escalado de campañas publicitarias',
-    desc: 'Diseñamos, optimizamos y escalamos campañas de Amazon Ads para mejorar la rentabilidad, controlar la inversión y acompañar el crecimiento de la cuenta.',
-    cta: 'Ver servicio',
-    href: '/servicios#ppc',
+    id: 'visibilidad-publicidad',
+    eyebrow: 'Adquisición',
+    countLabel: '03 servicios',
+    title: 'Visibilidad y publicidad',
+    shortDescription: 'Cómo te encuentran, cómo te perciben y cómo conviertes.',
+    introduction:
+      'Trabajamos los elementos que determinan cómo aparece tu producto, cómo atrae tráfico y cómo convierte las visitas en ventas.',
+    image: '/images/services/visibility-advertising.webp',
+    services: [
+      {
+        id: 'ppc',
+        eyebrow: 'Ads / PPC',
+        title: 'Gestión y escalado de campañas publicitarias',
+        description:
+          'Diseñamos, optimizamos y escalamos campañas de Amazon Ads para mejorar la rentabilidad, controlar la inversión y acompañar el crecimiento de la cuenta.',
+      },
+      {
+        id: 'posicionamiento',
+        eyebrow: 'SEO Amazon',
+        title: 'Posicionamiento orgánico y optimización de listings',
+        description:
+          'Optimizamos títulos, palabras clave, estructura y contenido para mejorar la visibilidad, la relevancia y la conversión del producto.',
+      },
+      {
+        id: 'contenido-visual',
+        eyebrow: 'Creatividad',
+        title: 'Contenido visual y creatividades de alta conversión',
+        description:
+          'Creamos imágenes, infografías, contenido A+ y recursos visuales orientados a mejorar la percepción y conversión del producto.',
+        note: 'Producción creativa desarrollada junto al equipo de AMZ Creatives.',
+      },
+    ],
   },
   {
-    id: 'posicionamiento',
-    tag: 'SEO Amazon',
-    title: 'Posicionamiento orgánico y optimización de listings',
-    desc: 'Optimizamos títulos, palabras clave, estructura y contenido para mejorar la visibilidad, la relevancia y la conversión del producto.',
-    cta: 'Ver servicio',
-    href: '/servicios#posicionamiento',
+    id: 'analisis-rentabilidad',
+    eyebrow: 'Control',
+    countLabel: '04 servicios',
+    title: 'Análisis y rentabilidad',
+    shortDescription: 'Entender qué ocurre antes de decidir qué hacer.',
+    introduction:
+      'Analizamos la cuenta y el mercado para detectar bloqueos, oportunidades y decisiones que afectan directamente al beneficio.',
+    image: '/images/services/analysis-profitability.webp',
+    services: [
+      {
+        id: 'auditoria',
+        eyebrow: 'Diagnóstico',
+        title: 'Auditoría y diagnóstico de cuenta',
+        description:
+          'Analizamos el estado real de la cuenta, detectamos sus principales bloqueos y establecemos qué acciones deben priorizarse.',
+      },
+      {
+        id: 'estudio-mercado',
+        eyebrow: 'Mercado',
+        title: 'Estudio de mercado y detección de oportunidades',
+        description:
+          'Evaluamos demanda, competencia, tendencias y barreras de entrada para identificar oportunidades con sentido comercial.',
+      },
+      {
+        id: 'rentabilidad',
+        eyebrow: 'Rentabilidad',
+        title: 'Optimización de rentabilidad y márgenes',
+        description:
+          'Analizamos costes, precios, publicidad y operativa para localizar fugas de rentabilidad y mejorar el beneficio real del negocio.',
+      },
+      {
+        id: 'competencia',
+        eyebrow: 'Competencia',
+        title: 'Análisis de la competencia',
+        description:
+          'Estudiamos ofertas, precios, posicionamiento, contenido y publicidad para entender dónde competir y cómo diferenciarse.',
+      },
+    ],
   },
   {
-    id: 'contenido-visual',
-    tag: 'Conversión',
-    title: 'Contenido visual y creatividades de alta conversión',
-    desc: 'Creamos imágenes, infografías, contenido A+ y recursos visuales orientados a mejorar la percepción y conversión del producto.',
-    cta: 'Ver servicio',
-    href: '/servicios#contenido-visual',
-    note: 'Con el mismo criterio visual que aplicamos junto al equipo de AMZ Creatives.',
-  },
-  // Análisis y rentabilidad
-  {
-    id: 'auditoria',
-    tag: 'Diagnóstico',
-    title: 'Auditoría y diagnóstico de cuenta',
-    desc: 'Analizamos el estado real de la cuenta, detectamos sus principales bloqueos y establecemos qué acciones deben priorizarse.',
-    cta: 'Ver servicio',
-    href: '/servicios#auditoria',
-  },
-  {
-    id: 'estudio-mercado',
-    tag: 'Oportunidades',
-    title: 'Estudio de mercado y detección de oportunidades',
-    desc: 'Evaluamos demanda, competencia, tendencias y barreras de entrada para identificar oportunidades con sentido comercial.',
-    cta: 'Ver servicio',
-    href: '/servicios#estudio-mercado',
-  },
-  {
-    id: 'rentabilidad',
-    tag: 'Rentabilidad',
-    title: 'Optimización de rentabilidad y márgenes',
-    desc: 'Analizamos costes, precios, publicidad y operativa para localizar fugas de rentabilidad y mejorar el beneficio real del negocio.',
-    cta: 'Ver servicio',
-    href: '/servicios#rentabilidad',
-  },
-  {
-    id: 'competencia',
-    tag: 'Competencia',
-    title: 'Análisis de la competencia',
-    desc: 'Estudiamos ofertas, precios, posicionamiento, contenido y publicidad para entender dónde competir y cómo diferenciarse.',
-    cta: 'Ver servicio',
-    href: '/servicios#competencia',
-  },
-  // Crecimiento y expansión
-  {
-    id: 'crecimiento',
-    tag: 'Escalado',
-    title: 'Estrategia de crecimiento por fases',
-    desc: 'Diseñamos una hoja de ruta progresiva con objetivos, prioridades y decisiones adaptadas al momento real de la cuenta.',
-    cta: 'Ver servicio',
-    href: '/servicios#crecimiento',
+    id: 'crecimiento-expansion',
+    eyebrow: 'Escalado',
+    countLabel: '03 servicios',
+    title: 'Crecimiento y expansión',
+    shortDescription: 'Avanzar por fases sin perder rentabilidad ni control.',
+    introduction:
+      'Diseñamos cómo avanzar desde la situación actual hacia nuevos niveles de facturación, productos y mercados sin perder control.',
+    image: '/images/services/growth-expansion.webp',
+    services: [
+      {
+        id: 'crecimiento',
+        eyebrow: 'Escalado',
+        title: 'Estrategia de crecimiento por fases',
+        description:
+          'Diseñamos una hoja de ruta progresiva con objetivos, prioridades y decisiones adaptadas al momento real de la cuenta.',
+      },
+      {
+        id: 'expansion',
+        eyebrow: 'Marketplaces',
+        title: 'Expansión internacional y nuevos marketplaces',
+        description:
+          'Estudiamos la viabilidad de nuevos mercados y definimos cómo expandir la marca sin replicar errores ni perder el control.',
+      },
+      {
+        id: 'lanzamientos',
+        eyebrow: 'Lanzamientos',
+        title: 'Lanzamiento de nuevos productos',
+        description:
+          'Definimos la estrategia de entrada, posicionamiento, publicidad y validación necesaria para lanzar con una base más sólida.',
+      },
+    ],
   },
   {
-    id: 'expansion',
-    tag: 'Marketplaces',
-    title: 'Expansión internacional y nuevos marketplaces',
-    desc: 'Estudiamos la viabilidad de nuevos mercados y definimos cómo expandir la marca sin replicar errores ni perder el control.',
-    cta: 'Ver servicio',
-    href: '/servicios#expansion',
-  },
-  {
-    id: 'lanzamientos',
-    tag: 'Lanzamientos',
-    title: 'Lanzamiento de nuevos productos',
-    desc: 'Definimos la estrategia de entrada, posicionamiento, publicidad y validación necesaria para lanzar con una base más sólida.',
-    cta: 'Ver servicio',
-    href: '/servicios#lanzamientos',
-  },
-  // Dirección estratégica
-  {
-    id: 'mentoria',
-    tag: 'Dirección',
-    title: 'Consultoría estratégica y mentoría 1:1',
-    desc: 'Trabajamos contigo en sesiones personalizadas para revisar decisiones, resolver bloqueos y dirigir el crecimiento de la cuenta.',
-    cta: 'Ver servicio',
-    href: '/servicios#mentoria',
-  },
-  {
-    id: 'soporte',
-    tag: 'Acompañamiento',
-    title: 'Acompañamiento y soporte continuo',
-    desc: 'Realizamos seguimiento de la cuenta, revisamos avances y te ayudamos a tomar decisiones a medida que aparecen nuevos retos.',
-    cta: 'Ver servicio',
-    href: '/servicios#soporte',
+    id: 'direccion-estrategica',
+    eyebrow: 'Dirección',
+    countLabel: '02 servicios',
+    title: 'Dirección estratégica',
+    shortDescription: 'Decisiones acompañadas, prioridades claras y seguimiento.',
+    introduction:
+      'Acompañamos la toma de decisiones para convertir los datos de la cuenta en prioridades claras y acciones ejecutables.',
+    image: '/images/services/strategic-direction.webp',
+    services: [
+      {
+        id: 'mentoria',
+        eyebrow: 'Mentoría',
+        title: 'Consultoría estratégica y mentoría 1:1',
+        description:
+          'Trabajamos contigo en sesiones personalizadas para revisar decisiones, resolver bloqueos y dirigir el crecimiento de la cuenta.',
+      },
+      {
+        id: 'soporte',
+        eyebrow: 'Soporte',
+        title: 'Acompañamiento y soporte continuo',
+        description:
+          'Realizamos seguimiento de la cuenta, revisamos avances y te ayudamos a tomar decisiones a medida que aparecen nuevos retos.',
+      },
+    ],
   },
 ]
 
