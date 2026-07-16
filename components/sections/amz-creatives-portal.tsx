@@ -38,6 +38,9 @@ import {
 } from '@/lib/amz-creative-projects'
 
 const SHOWREEL_SRC = withBasePath('/amz-creatives/showreel.mp4')
+const VIDEOS_THAT_SELL_SRC = withBasePath(
+  '/amz-creatives/videos-that-sell/showcase.mp4'
+)
 const CREATIVE_PROJECTS_URL = '/casos'
 
 type Capability = {
@@ -212,6 +215,57 @@ function CreativeFallback() {
         AMZ
       </div>
     </div>
+  )
+}
+
+function VideosThatSellShowcase() {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [hasVideoError, setHasVideoError] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || hasVideoError || prefersReducedMotion) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          void video.play().catch(() => {
+            // Some browsers may still require an explicit user gesture.
+          })
+        } else {
+          video.pause()
+        }
+      },
+      { threshold: 0.35 }
+    )
+
+    observer.observe(video)
+    return () => observer.disconnect()
+  }, [hasVideoError, prefersReducedMotion])
+
+  if (hasVideoError) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_65%_35%,#ff9d78,transparent_34%),linear-gradient(145deg,#181818,#3a302c)]">
+        <div className="flex size-16 items-center justify-center rounded-full bg-white text-[#171717]">
+          <Video className="size-7" aria-hidden="true" />
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <video
+      ref={videoRef}
+      src={VIDEOS_THAT_SELL_SRC}
+      className="absolute inset-0 size-full bg-black object-cover"
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      aria-label="Vídeo de producto desarrollado por AMZ Creatives"
+      onError={() => setHasVideoError(true)}
+    />
   )
 }
 
@@ -505,6 +559,8 @@ function AmzEditorialContent() {
               <div className={`relative min-w-0 ${index === 0 ? '' : 'aspect-[4/3] overflow-hidden rounded-[2rem] bg-[#1d1d1d]'} ${index % 2 ? 'md:order-1' : ''}`}>
                 {index === 0 ? (
                   <CreativePortfolioCarousel slides={IMAGES_THAT_CONVERT} />
+                ) : index === 1 ? (
+                  <VideosThatSellShowcase />
                 ) : (
                   <>
                     <div className="absolute inset-0 opacity-90" style={{ background: `radial-gradient(circle at 65% 35%, ${capability.accent}, transparent 34%), linear-gradient(145deg, #181818, #3a302c)` }} />
