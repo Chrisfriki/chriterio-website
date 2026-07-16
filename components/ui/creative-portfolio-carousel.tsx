@@ -115,7 +115,7 @@ export function CreativePortfolioCarousel({
         if (event.key === 'ArrowRight') next()
       }}
     >
-      <div ref={viewportRef} className="overflow-hidden py-5">
+      <div ref={viewportRef} className="overflow-hidden py-3">
         <motion.div
           className="flex w-full cursor-grab items-center active:cursor-grabbing [touch-action:pan-y]"
           animate={{ x: centerOffset - trackIndex * step }}
@@ -138,11 +138,12 @@ export function CreativePortfolioCarousel({
               <motion.article
                 ref={index === 0 ? firstCardRef : undefined}
                 key={`${slide.id}-${index}`}
-                className="mx-1.5 aspect-square w-[82%] shrink-0 overflow-hidden rounded-2xl border bg-white shadow-[0_16px_45px_rgba(25,25,25,0.08)] sm:mx-2 sm:w-[48%] lg:w-[31%]"
+                className="mx-1.5 aspect-square w-[86%] shrink-0 overflow-hidden rounded-2xl border bg-white sm:mx-2 sm:w-[56%] lg:w-[36%]"
                 animate={{
-                  scale: isActive ? 1 : 0.92,
-                  opacity: isActive ? 1 : 0.68,
+                  scale: isActive ? 1 : 0.82,
+                  opacity: isActive ? 1 : 0.42,
                   borderColor: isActive ? 'rgba(255,104,70,0.65)' : 'rgba(25,25,25,0.10)',
+                  zIndex: isActive ? 2 : 1,
                 }}
                 transition={
                   reducedMotion || isLoopReset
@@ -156,7 +157,7 @@ export function CreativePortfolioCarousel({
                     src={withBasePath(slide.src)}
                     alt={isClone ? '' : slide.alt}
                     fill
-                    sizes="(max-width: 639px) 82vw, (max-width: 1023px) 48vw, 31vw"
+                    sizes="(max-width: 639px) 86vw, (max-width: 1023px) 56vw, 36vw"
                     className="object-contain"
                     draggable={false}
                   />
@@ -167,7 +168,7 @@ export function CreativePortfolioCarousel({
         </motion.div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between gap-5 px-1">
+      <div className="mt-4 flex items-center justify-center px-1">
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -188,7 +189,7 @@ export function CreativePortfolioCarousel({
         </div>
 
         <p
-          className="font-mono text-xs font-semibold tracking-[0.14em] text-black/55"
+          className="sr-only"
           aria-live="polite"
           aria-atomic="true"
         >
