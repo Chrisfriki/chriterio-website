@@ -7,7 +7,11 @@ import {
   ArrowUpRight,
   Box,
   Camera,
+  CircleHelp,
+  Eye,
+  GripVertical,
   Layers3,
+  ScanText,
   Sparkles,
   Video,
   type LucideIcon,
@@ -80,12 +84,47 @@ const CAPABILITIES: Capability[] = [
   },
 ]
 
-const OUTCOMES = [
-  'Mejor presentación de producto',
-  'Mensajes visuales más claros',
-  'Mayor coherencia de marca',
-  'Producción adaptada a Amazon',
+const CREATIVE_BENEFITS = [
+  {
+    title: 'Capta la atención desde la primera imagen',
+    description:
+      'El producto destaca dentro de la categoría sin perder claridad ni incumplir las normas de Amazon.',
+    icon: Eye,
+  },
+  {
+    title: 'Explica su valor en segundos',
+    description:
+      'Los beneficios importantes se entienden rápido, sin obligar al comprador a descifrar el listing.',
+    icon: ScanText,
+  },
+  {
+    title: 'Resuelve dudas antes de la compra',
+    description:
+      'Las imágenes, el vídeo y el contenido A+ responden las objeciones que podrían frenar la decisión.',
+    icon: CircleHelp,
+  },
+  {
+    title: 'Eleva la percepción de marca',
+    description:
+      'Todo el contenido transmite más coherencia, confianza y calidad.',
+    icon: Sparkles,
+  },
 ]
+
+const CREATIVE_CHANGES = [
+  'Jerarquía visual más clara',
+  'Beneficios fáciles de identificar',
+  'Producto mostrado con más contexto',
+  'Identidad visual más coherente',
+]
+
+// TODO: Sustituir por la imagen original del listing en
+// /public/amz-creatives/before-after/before.webp.
+const BEFORE_IMAGE_SRC: string | null = null
+
+// TODO: Sustituir por el creativo final de AMZ Creatives en
+// /public/amz-creatives/before-after/after.webp.
+const AFTER_IMAGE_SRC: string | null = null
 
 const AMAZON_MARKETPLACE_HOSTS = new Set([
   'amazon.es',
@@ -300,6 +339,124 @@ function AmzProjectsGrid() {
   )
 }
 
+function ComparisonFallback({ final }: { final?: boolean }) {
+  return (
+    <div
+      className={`absolute inset-0 flex items-center justify-center border-2 border-dashed p-6 text-center ${
+        final
+          ? 'border-[#ff6846]/35 bg-[#fff7f3]'
+          : 'border-black/15 bg-[#e9e5df]'
+      }`}
+    >
+      <div>
+        <span className="text-[10px] font-bold tracking-[0.2em] text-black/40 uppercase">
+          Recurso pendiente
+        </span>
+        <p className="mt-3 font-display text-xl font-bold text-black/55 md:text-3xl">
+          {final ? 'Añadir imagen final' : 'Añadir imagen anterior'}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function BeforeAfterComparison() {
+  const [position, setPosition] = useState(50)
+
+  return (
+    <div className="mt-14 border-t border-black/25 pt-12 md:mt-20 md:pt-16">
+      <div className="max-w-3xl">
+        <span className="text-xs font-bold tracking-[0.2em] uppercase">
+          Antes y después
+        </span>
+        <h4 className="mt-5 font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-5xl">
+          El mismo producto. Una forma completamente distinta de presentarlo.
+        </h4>
+        <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/65 md:text-base">
+          Compara cómo cambia la percepción cuando la información, la fotografía y la jerarquía visual trabajan juntas.
+        </p>
+      </div>
+
+      <div className="relative mt-10 aspect-[4/3] w-full overflow-hidden rounded-[1.5rem] border border-black/20 bg-[#f3f0eb] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-black has-[:focus-visible]:ring-offset-4 has-[:focus-visible]:ring-offset-[#ff6846] md:aspect-[16/9] md:rounded-[2rem]">
+        {AFTER_IMAGE_SRC ? (
+          <Image
+            src={withBasePath(AFTER_IMAGE_SRC)}
+            alt="Creativo final desarrollado por AMZ Creatives"
+            fill
+            sizes="(max-width: 768px) 100vw, 1152px"
+            className="object-cover"
+          />
+        ) : (
+          <ComparisonFallback final />
+        )}
+
+        <div
+          className="absolute inset-y-0 left-0 overflow-hidden"
+          style={{ width: `${position}%` }}
+          aria-hidden="true"
+        >
+          <div className="absolute inset-y-0 left-0 w-[calc(100vw-2.5rem)] max-w-6xl md:w-[calc(100vw-4rem)]">
+            {BEFORE_IMAGE_SRC ? (
+              <Image
+                src={withBasePath(BEFORE_IMAGE_SRC)}
+                alt="Creativo anterior del producto"
+                fill
+                sizes="(max-width: 768px) 100vw, 1152px"
+                className="object-cover"
+              />
+            ) : (
+              <ComparisonFallback />
+            )}
+          </div>
+        </div>
+
+        <span className="absolute top-4 left-4 rounded-full bg-[#191919] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-white uppercase md:top-6 md:left-6">
+          Antes
+        </span>
+        <span className="absolute top-4 right-4 rounded-full bg-[#ff6846] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-black uppercase md:top-6 md:right-6">
+          Después
+        </span>
+
+        <div
+          className="pointer-events-none absolute inset-y-0 z-10 w-px bg-black/70"
+          style={{ left: `${position}%` }}
+          aria-hidden="true"
+        >
+          <span className="absolute top-1/2 left-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-black/20 bg-white text-black shadow-sm md:size-12">
+            <GripVertical className="size-5" />
+          </span>
+        </div>
+
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={position}
+          onChange={(event) => setPosition(Number(event.target.value))}
+          aria-label="Comparar el creativo anterior con el creativo final de AMZ Creatives"
+          className="absolute inset-0 z-20 size-full cursor-ew-resize opacity-0 [touch-action:pan-y]"
+        />
+      </div>
+
+      <div className="mt-8">
+        <p className="text-xs font-bold tracking-[0.18em] uppercase">
+          Qué hemos trabajado
+        </p>
+        <div className="mt-4 grid border-t border-black/25 sm:grid-cols-2 lg:grid-cols-4">
+          {CREATIVE_CHANGES.map((change) => (
+            <div
+              key={change}
+              className="border-b border-black/20 py-5 text-sm font-semibold sm:px-5 sm:first:pl-0 lg:border-r lg:last:border-r-0"
+            >
+              {change}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function AmzEditorialContent() {
   return (
     <div className="relative z-20 bg-[#f3f0eb] text-[#191919]">
@@ -346,15 +503,42 @@ function AmzEditorialContent() {
       <AmzProjectsGrid />
 
       <div className="bg-[#ff6846] px-5 py-24 md:px-8 md:py-32">
-        <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-2 md:items-end">
-          <div>
-            <span className="text-xs font-bold tracking-[0.2em] uppercase">Qué hemos conseguido</span>
-            <h3 className="mt-5 font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">Creatividad que mejora cómo se presenta una marca.</h3>
-            <p className="mt-6 text-sm leading-relaxed text-black/65 md:text-base">Hemos ayudado a marcas de diferentes sectores a explicar mejor sus productos, elevar su percepción visual y construir una presencia más competitiva dentro de Amazon.</p>
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-12 md:grid-cols-2 md:items-start md:gap-16">
+            <div>
+              <span className="text-xs font-bold tracking-[0.2em] uppercase">
+                Lo que cambia
+              </span>
+              <h3 className="mt-5 font-display text-4xl font-bold leading-tight tracking-tight text-balance md:text-6xl">
+                Cuando el creativo tiene estrategia, el producto deja de parecer uno más.
+              </h3>
+              <p className="mt-6 max-w-xl text-sm leading-relaxed text-black/65 md:text-base">
+                No se trata de añadir diseño. Se trata de ordenar la información, anticipar objeciones y hacer visible el valor del producto antes de que el comprador termine comparando solo por precio.
+              </p>
+            </div>
+            <div className="grid gap-x-8 sm:grid-cols-2">
+              {CREATIVE_BENEFITS.map((benefit) => {
+                const Icon = benefit.icon
+
+                return (
+                  <article
+                    key={benefit.title}
+                    className="border-t border-black/25 py-6"
+                  >
+                    <Icon className="size-5" aria-hidden="true" />
+                    <h4 className="mt-5 font-display text-xl font-bold leading-tight">
+                      {benefit.title}
+                    </h4>
+                    <p className="mt-3 text-sm leading-relaxed text-black/65">
+                      {benefit.description}
+                    </p>
+                  </article>
+                )
+              })}
+            </div>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {OUTCOMES.map((outcome) => <div key={outcome} className="flex items-center gap-3 border-t border-black/25 py-4 text-sm font-semibold"><Sparkles className="size-4 shrink-0" aria-hidden="true" />{outcome}</div>)}
-          </div>
+
+          <BeforeAfterComparison />
         </div>
       </div>
 
