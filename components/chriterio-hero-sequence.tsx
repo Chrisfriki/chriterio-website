@@ -635,6 +635,10 @@ export function ChriterioHeroSequence({
           onError={() => console.error('Error cargando fotograma:', lastFrame)}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#050d1f]/78 via-[#050d1f]/25 to-transparent" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(2,10,28,0.76)_0%,rgba(2,10,28,0.38)_38%,transparent_68%)]"
+        />
         <div className="relative z-10 flex h-full w-full flex-col items-center gap-7 px-5 pt-28 text-center md:gap-8 md:pt-36">
           <div className="max-w-4xl">{headline}</div>
           <div className="max-w-4xl">{secondaryHeadline}</div>
@@ -673,6 +677,10 @@ export function ChriterioHeroSequence({
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-[#050d1f]/78 via-[#050d1f]/25 to-transparent"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-[2] bg-[radial-gradient(circle_at_50%_25%,rgba(2,10,28,0.76)_0%,rgba(2,10,28,0.38)_38%,transparent_68%)]"
         />
 
         {/* Top-anchored, centered content: the two headline stages only. The
