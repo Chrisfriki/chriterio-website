@@ -64,7 +64,7 @@ export const AMZ_CREATIVE_PROJECTS: AmzCreativeProject[] = [
     logoWidth: 2000,
     logoHeight: 1000,
     amazonUrl:
-      'https://www.amazon.es/Impermeabilizante-Transparente-Poliuretano-Revestimiento-Hidrofugante/dp/B0DSQ9SJRP',
+      'https://www.amazon.es/Rampa-para-Perros-Peque%C3%B1os-Grandes/dp/B0FJXPG6SK',
     marketplace: 'Amazon ES',
     ariaLabel: 'Ver el producto de t2nd en Amazon',
   },
@@ -86,7 +86,7 @@ export const AMZ_CREATIVE_PROJECTS: AmzCreativeProject[] = [
     logoWidth: 700,
     logoHeight: 442,
     amazonUrl:
-      'https://www.amazon.es/Taloneras-Corregir-Fascitis-Plantar-Calcaneo/dp/B0CHSHWMSF/',
+      'https://www.amazon.es/Impermeabilizante-Transparente-Poliuretano-Revestimiento-Hidrofugante/dp/B0DSQ9SJRP',
     marketplace: 'Amazon ES',
     ariaLabel: 'Ver el producto de Snappy Blue en Amazon',
   },
@@ -97,7 +97,7 @@ export const AMZ_CREATIVE_PROJECTS: AmzCreativeProject[] = [
     logoWidth: 700,
     logoHeight: 233,
     amazonUrl:
-      'https://www.amazon.es/Rampa-para-Perros-Peque%C3%B1os-Grandes/dp/B0FJXPG6SK',
+      'https://www.amazon.es/Taloneras-Corregir-Fascitis-Plantar-Calcaneo/dp/B0CHSHWMSF/',
     marketplace: 'Amazon ES',
     ariaLabel: 'Ver el producto de PodCase en Amazon',
   },
