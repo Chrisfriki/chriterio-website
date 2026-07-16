@@ -4,16 +4,25 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { withBasePath } from '@/lib/base-path'
 
-/** The exported sequence is normalized from 001.webp through 119.webp. */
-const HERO_FIRST_FRAME_NUMBER = 1
-export const HERO_FRAME_COUNT = 119
+/**
+ * The source export contains three backward loops: 049 repeats 047, 069–077
+ * replay 060–068, and 111–119 oscillate through earlier orbital positions.
+ * Keep the files for provenance, but never feed those regressions to the
+ * playhead. This list is the verified chronological cut.
+ */
+const HERO_FRAME_NUMBERS = [
+  ...Array.from({ length: 48 }, (_, index) => index + 1),
+  ...Array.from({ length: 19 }, (_, index) => index + 50),
+  ...Array.from({ length: 33 }, (_, index) => index + 78),
+]
+export const HERO_FRAME_COUNT = HERO_FRAME_NUMBERS.length
 
 /** File extension of the frame sequence (public/chriterio-hero/frames/*.EXT). */
 const FRAME_EXTENSION = 'webp'
 
 /** Bump this whenever the frame files are replaced so browsers/GitHub Pages
  *  don't keep serving a stale cached sequence under the same filenames. */
-const FRAME_VERSION = 'v5'
+const FRAME_VERSION = 'v6'
 
 /** A longer runway gives the launch room to breathe before each copy stage. */
 export const HERO_SCROLL_HEIGHT_VH = 320
@@ -28,7 +37,7 @@ export const HERO_FRAME_PHASE_END = 0.78
 // correctly both on localhost and in production. The basePath is applied
 // exactly once here — nowhere else in this file touches the raw path.
 const getFramePath = (index: number) =>
-  `${withBasePath('/chriterio-hero/frames/')}${String(index + HERO_FIRST_FRAME_NUMBER).padStart(3, '0')}.${FRAME_EXTENSION}?v=${FRAME_VERSION}`
+  `${withBasePath('/chriterio-hero/frames/')}${String(HERO_FRAME_NUMBERS[index]).padStart(3, '0')}.${FRAME_EXTENSION}?v=${FRAME_VERSION}`
 
 const FRAME_URLS = Array.from({ length: HERO_FRAME_COUNT }, (_, index) => getFramePath(index))
 
