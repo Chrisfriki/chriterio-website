@@ -138,10 +138,10 @@ export function CreativePortfolioCarousel({
               <motion.article
                 ref={index === 0 ? firstCardRef : undefined}
                 key={`${slide.id}-${index}`}
-                className="mx-1.5 aspect-square w-[86%] shrink-0 overflow-hidden rounded-2xl border bg-white sm:mx-2 sm:w-[56%] lg:w-[36%]"
+                className="mx-1.5 aspect-square w-[92%] shrink-0 overflow-hidden rounded-[1.75rem] border bg-white sm:mx-2 sm:w-[92%]"
                 animate={{
-                  scale: isActive ? 1 : 0.82,
-                  opacity: isActive ? 1 : 0.42,
+                  scale: isActive ? 1 : 0.84,
+                  opacity: isActive ? 1 : 0.28,
                   borderColor: isActive ? 'rgba(255,104,70,0.65)' : 'rgba(25,25,25,0.10)',
                   zIndex: isActive ? 2 : 1,
                 }}
@@ -157,7 +157,7 @@ export function CreativePortfolioCarousel({
                     src={withBasePath(slide.src)}
                     alt={isClone ? '' : slide.alt}
                     fill
-                    sizes="(max-width: 639px) 86vw, (max-width: 1023px) 56vw, 36vw"
+                    sizes="(max-width: 767px) 92vw, 46vw"
                     className="object-contain"
                     draggable={false}
                   />
