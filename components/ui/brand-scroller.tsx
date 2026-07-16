@@ -70,7 +70,7 @@ export function BrandScroller({
       <div
         ref={trackRef}
         className={cn(
-          'flex w-max items-center gap-12',
+          'flex w-max items-center gap-14 md:gap-20',
           shouldAnimate &&
             direction === 'left' &&
             'motion-safe:chr-brand-marquee motion-reduce:w-full motion-reduce:flex-wrap motion-reduce:justify-center',
@@ -95,7 +95,7 @@ export function BrandScroller({
             <div
               key={`${brand.name}-${index}`}
               className={cn(
-                'flex h-10 shrink-0 items-center justify-center px-3',
+                'flex h-20 shrink-0 items-center justify-center px-4 md:h-24 md:px-5',
                 isDuplicate && 'motion-reduce:hidden'
               )}
               aria-hidden={isDuplicate || undefined}
@@ -105,7 +105,7 @@ export function BrandScroller({
                 alt={isDuplicate ? '' : brand.name}
                 width={brand.width ?? 120}
                 height={brand.height ?? 36}
-                className="max-h-8 w-auto max-w-[140px] object-contain opacity-70 transition-opacity duration-300 hover:opacity-100"
+                className="max-h-14 w-auto max-w-[190px] object-contain opacity-80 transition-opacity duration-300 hover:opacity-100 md:max-h-16 md:max-w-[230px]"
               />
             </div>
           )

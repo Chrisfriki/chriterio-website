@@ -5,11 +5,10 @@ import { TRUSTED_BRANDS } from '@/lib/data'
 import { withBasePath } from '@/lib/base-path'
 
 /**
- * Sits between the hero and "Control de misión". Its only job is honest
- * credibility: brands worked with through AMZ Creatives, never framed as
- * Chriterio's own client roster or consulting results. Background picks up
- * exactly where the hero canvas leaves off (#050d1f) and settles into the
- * site's navy-dark token by the bottom, so there's no seam either side.
+ * Sits between the service areas and "Control de misión". Its only job is
+ * honest credibility: brands worked with through AMZ Creatives, never framed
+ * as Chriterio's own client roster or consulting results. Its background
+ * matches the service area's navy-dark so there's no seam between blocks.
  */
 export function TrustedBrands() {
   return (
@@ -19,7 +18,7 @@ export function TrustedBrands() {
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#050d1f] via-navy-dark to-navy-dark"
+        className="pointer-events-none absolute inset-0 bg-navy-dark"
       />
       <div
         aria-hidden="true"
@@ -30,7 +29,7 @@ export function TrustedBrands() {
         className="pointer-events-none absolute top-1/2 left-1/2 size-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-electric/[0.06] blur-3xl"
       />
 
-      <div className="relative mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-24">
+      <div className="relative mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
         <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between md:gap-12">
           <Reveal className="max-w-xl">
             <span className="text-xs font-semibold tracking-widest text-electric uppercase">
@@ -42,11 +41,6 @@ export function TrustedBrands() {
             >
               Marcas que ya han confiado en nosotros
             </h2>
-            <p className="mt-4 text-sm leading-relaxed text-white/65 text-pretty md:text-base">
-              A través de AMZ Creatives hemos trabajado junto a sellers y
-              marcas de Amazon para mejorar la presentación, percepción y
-              conversión de sus productos.
-            </p>
           </Reveal>
 
           <Reveal
@@ -69,7 +63,7 @@ export function TrustedBrands() {
         </div>
 
         {TRUSTED_BRANDS.length > 0 && (
-          <Reveal delay={0.14} className="mt-12 md:mt-14">
+          <Reveal delay={0.14} className="mt-12 md:mt-16">
             <BrandScroller brands={TRUSTED_BRANDS} />
           </Reveal>
         )}
