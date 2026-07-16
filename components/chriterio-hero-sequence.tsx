@@ -4,8 +4,9 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { withBasePath } from '@/lib/base-path'
 
-/** Change here to use more/fewer frames. */
-export const HERO_FRAME_COUNT = 120
+/** The exported sequence starts at 002.webp and ends at 120.webp. */
+const HERO_FIRST_FRAME_NUMBER = 2
+export const HERO_FRAME_COUNT = 119
 
 /** File extension of the frame sequence (public/chriterio-hero/frames/*.EXT). */
 const FRAME_EXTENSION = 'webp'
@@ -14,14 +15,12 @@ const FRAME_EXTENSION = 'webp'
  *  don't keep serving a stale cached sequence under the same filenames. */
 const FRAME_VERSION = 'v4'
 
-/** Change here to make the overall scroll-driven hero longer or shorter. Kept
- *  short on purpose: the rocket should read as a brief cinematic entrance,
- *  not a long intro the visitor has to sit through before the message shows. */
-export const HERO_SCROLL_HEIGHT_VH = 240
+/** A longer runway gives the launch room to breathe before each copy stage. */
+export const HERO_SCROLL_HEIGHT_VH = 320
 
 /** Fraction of the scroll range spent playing frames 1 -> N; the rest holds
  *  the last frame as a stable backdrop while content keeps appearing/settles. */
-export const HERO_FRAME_PHASE_END = 0.85
+export const HERO_FRAME_PHASE_END = 0.78
 
 // This component draws frames via a plain `Image()` onto a canvas, which
 // bypasses next/image entirely, so it must prefix the basePath itself
@@ -29,7 +28,7 @@ export const HERO_FRAME_PHASE_END = 0.85
 // correctly both on localhost and in production. The basePath is applied
 // exactly once here — nowhere else in this file touches the raw path.
 const getFramePath = (index: number) =>
-  `${withBasePath('/chriterio-hero/frames/')}${String(index + 1).padStart(3, '0')}.${FRAME_EXTENSION}?v=${FRAME_VERSION}`
+  `${withBasePath('/chriterio-hero/frames/')}${String(index + HERO_FIRST_FRAME_NUMBER).padStart(3, '0')}.${FRAME_EXTENSION}?v=${FRAME_VERSION}`
 
 const FRAME_URLS = Array.from({ length: HERO_FRAME_COUNT }, (_, index) => getFramePath(index))
 
@@ -52,20 +51,20 @@ const SMOOTHING_FACTOR = 0.16
 /** Max change in the (fractional) displayed frame per animation-frame tick. Keeps the canvas from ever skipping more than one drawn frame per render. */
 const MAX_FRAME_STEP = 0.9
 /** Trackpad/wheel micro-reversals shorter than this (px) are ignored. */
-const REVERSE_DISTANCE_THRESHOLD = 70
+const REVERSE_DISTANCE_THRESHOLD = 180
 /** ...and must persist at least this long (ms) before a direction change is accepted. */
-const REVERSE_TIME_THRESHOLD = 120
+const REVERSE_TIME_THRESHOLD = 220
 // ----------------------------------------------------------------------------
 
 // Narrative reveal choreography (fractions of the hero's total scroll
 // progress, 0-1). The rocket starts moving and clearing space immediately;
 // text cascades in shortly after — the headline should be fully in within
 // one or two normal scroll gestures, not a long unexplained intro.
-// Order: headline -> subtitle, each overlapping slightly with the next for a
-// fluid feel instead of everything popping in at once.
+// Order: first thought -> answer -> supporting copy.
 const STAGE_RANGES = {
-  headline: [0.08, 0.2],
-  subtitle: [0.24, 0.36],
+  headline: [0.3, 0.42],
+  secondaryHeadline: [0.52, 0.64],
+  subtitle: [0.76, 0.88],
 } as const
 
 /** The "slide to start" hint fades out fast, right as the first scroll gesture begins. */
@@ -87,6 +86,7 @@ function applyStageStyle(el: HTMLElement | null, localT: number) {
 type ChriterioHeroSequenceProps = {
   id?: string
   headline: ReactNode
+  secondaryHeadline: ReactNode
   subtitle: ReactNode
   className?: string
 }
@@ -94,6 +94,7 @@ type ChriterioHeroSequenceProps = {
 export function ChriterioHeroSequence({
   id,
   headline,
+  secondaryHeadline,
   subtitle,
   className,
 }: ChriterioHeroSequenceProps) {
@@ -101,6 +102,7 @@ export function ChriterioHeroSequence({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
   const headlineRef = useRef<HTMLDivElement>(null)
+  const secondaryHeadlineRef = useRef<HTMLDivElement>(null)
   const subtitleRef = useRef<HTMLDivElement>(null)
 
   const imagesRef = useRef<HTMLImageElement[]>([])
@@ -173,10 +175,15 @@ export function ChriterioHeroSequence({
   // orientationchange, image.onload/decode and preload never call this
   // directly — they only update refs and ask the render loop to run.
   // Returns true if a frame was actually painted.
-  const drawFrame = (index: number) => {
+  const drawFrame = (framePosition: number) => {
     const canvas = canvasRef.current
-    const img = imagesRef.current[index]
-    if (!canvas || !img || !img.complete || img.naturalWidth === 0) return false
+    const lowerIndex = Math.max(0, Math.min(HERO_FRAME_COUNT - 1, Math.floor(framePosition)))
+    const upperIndex = Math.min(HERO_FRAME_COUNT - 1, lowerIndex + 1)
+    const lowerImage = imagesRef.current[lowerIndex]
+    const upperImage = imagesRef.current[upperIndex]
+    if (!canvas || !lowerImage || !lowerImage.complete || lowerImage.naturalWidth === 0) {
+      return false
+    }
 
     const ctx = canvas.getContext('2d')
     if (!ctx) return false
@@ -194,7 +201,10 @@ export function ChriterioHeroSequence({
     // navy letterbox bars a "contain" fit would leave behind, and keeps the
     // rocket a meaningful size instead of shrinking it to fit.
     const isMobile = cssWidth < MOBILE_BREAKPOINT
-    const coverScale = Math.max(cssWidth / img.naturalWidth, cssHeight / img.naturalHeight)
+    const coverScale = Math.max(
+      cssWidth / lowerImage.naturalWidth,
+      cssHeight / lowerImage.naturalHeight,
+    )
     // On mobile the text column spans the full width and sits in the bottom
     // half of the screen, not beside the rocket like on desktop. A plain
     // cover-fit shows the *entire* height of the source frame (nose to
@@ -205,8 +215,8 @@ export function ChriterioHeroSequence({
     // entirely instead of behind the text.
     const extraZoom = isMobile ? 1.65 : 1.3
     const scale = coverScale * extraZoom
-    const drawWidth = img.naturalWidth * scale
-    const drawHeight = img.naturalHeight * scale
+    const drawWidth = lowerImage.naturalWidth * scale
+    const drawHeight = lowerImage.naturalHeight * scale
 
     // Bias the crop right so the rocket sits clear of the centered text
     // column instead of running straight through it. On mobile the extra
@@ -219,13 +229,29 @@ export function ChriterioHeroSequence({
     const dx = (cssWidth - drawWidth) * horizontalAnchor
     const dy = (cssHeight - drawHeight) * verticalAnchor
 
-    ctx.drawImage(img, dx, dy, drawWidth, drawHeight)
+    ctx.globalAlpha = 1
+    ctx.drawImage(lowerImage, dx, dy, drawWidth, drawHeight)
+
+    // Blend toward the next decoded frame instead of replacing one bitmap
+    // abruptly with the next. This softens the discontinuities present in
+    // the source sequence itself while keeping scroll and frame order exact.
+    const blend = framePosition - lowerIndex
+    if (
+      blend > 0 &&
+      upperImage?.complete &&
+      upperImage.naturalWidth > 0
+    ) {
+      ctx.globalAlpha = blend
+      ctx.drawImage(upperImage, dx, dy, drawWidth, drawHeight)
+      ctx.globalAlpha = 1
+    }
     return true
   }
 
   const applyStages = (progress: number) => {
     for (const [key, ref] of [
       ['headline', headlineRef],
+      ['secondaryHeadline', secondaryHeadlineRef],
       ['subtitle', subtitleRef],
     ] as const) {
       const [start, end] = STAGE_RANGES[key]
@@ -306,10 +332,10 @@ export function ChriterioHeroSequence({
     const proposedIndex = Math.max(0, Math.min(HERO_FRAME_COUNT - 1, Math.round(proposedNext)))
 
     let advanced = false
-    if (proposedIndex !== lastDrawnFrameIndexRef.current || needsRedrawRef.current) {
+    if (Math.abs(proposedNext - displayed) > 0.001 || needsRedrawRef.current) {
       const status = statusRef.current[proposedIndex]
       if (status === 'loaded') {
-        const painted = drawFrame(proposedIndex)
+        const painted = drawFrame(proposedNext)
         if (painted) {
           if (
             process.env.NODE_ENV !== 'production' &&
@@ -395,11 +421,19 @@ export function ChriterioHeroSequence({
     reverseDistanceRef.current = 0
     reverseStartTimeRef.current = null
 
-    const progress = computeProgressForScrollY(rawScrollY)
+    const measuredProgress = computeProgressForScrollY(rawScrollY)
+    const progress =
+      direction === 'down'
+        ? Math.max(progressRef.current, measuredProgress)
+        : Math.min(progressRef.current, measuredProgress)
     progressRef.current = progress
 
     const frameProgress = Math.min(1, progress / HERO_FRAME_PHASE_END)
-    targetFrameFloatRef.current = frameProgress * (HERO_FRAME_COUNT - 1)
+    const measuredTarget = frameProgress * (HERO_FRAME_COUNT - 1)
+    targetFrameFloatRef.current =
+      direction === 'down'
+        ? Math.max(targetFrameFloatRef.current, measuredTarget)
+        : Math.min(targetFrameFloatRef.current, measuredTarget)
 
     requestRender()
   }
@@ -444,11 +478,12 @@ export function ChriterioHeroSequence({
   useEffect(() => {
     if (reducedMotion !== false) return
     let cancelled = false
-    let announcedFirstPaint = false
 
     const images = FRAME_URLS.map(() => new Image())
     imagesRef.current = images
     statusRef.current = new Array(HERO_FRAME_COUNT).fill('idle')
+    lastDrawnFrameIndexRef.current = -1
+    setFirstFrameReady(false)
 
     const pickNextIdleIndex = () => {
       const target = Math.round(targetFrameFloatRef.current)
@@ -478,10 +513,6 @@ export function ChriterioHeroSequence({
             return
           }
           statusRef.current[index] = 'loaded'
-          if (!announcedFirstPaint) {
-            announcedFirstPaint = true
-            setFirstFrameReady(true)
-          }
           requestRender()
           resolve()
         }
@@ -520,6 +551,10 @@ export function ChriterioHeroSequence({
         }
       }
       await Promise.all(Array.from({ length: BACKGROUND_LOAD_CONCURRENCY }, () => worker()))
+      if (!cancelled) {
+        setFirstFrameReady(true)
+        requestRender()
+      }
     }
 
     run()
@@ -598,6 +633,7 @@ export function ChriterioHeroSequence({
         <div className="absolute inset-0 bg-gradient-to-b from-[#050d1f]/78 via-[#050d1f]/25 to-transparent" />
         <div className="relative z-10 flex h-full w-full flex-col items-center gap-7 px-5 pt-28 text-center md:gap-8 md:pt-36">
           <div className="max-w-4xl">{headline}</div>
+          <div className="max-w-4xl">{secondaryHeadline}</div>
           <div className="max-w-[800px]">{subtitle}</div>
         </div>
       </section>
@@ -643,6 +679,10 @@ export function ChriterioHeroSequence({
         <div className="absolute inset-x-0 top-0 z-10 flex flex-col items-center gap-7 px-5 pt-28 text-center md:gap-8 md:pt-36">
           <div ref={headlineRef} className="max-w-4xl" style={{ opacity: 0 }}>
             {headline}
+          </div>
+
+          <div ref={secondaryHeadlineRef} className="max-w-4xl" style={{ opacity: 0 }}>
+            {secondaryHeadline}
           </div>
 
           <div ref={subtitleRef} className="max-w-[800px]" style={{ opacity: 0 }}>
