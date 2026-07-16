@@ -120,6 +120,126 @@ export const MISSION_MODULES: MissionModule[] = [
   },
 ]
 
+export type ServiceCatalogItem = {
+  id: string
+  tag: string
+  title: string
+  desc: string
+  cta: string
+  href: string
+  note?: string
+}
+
+// The 12 real CHRITERIO services, grouped into the four conceptual
+// categories used to organize the catalog section (see
+// components/home/service-catalog.tsx). Anchors point at /servicios — the
+// dedicated sections for each one (#ppc, #posicionamiento, etc.) don't exist
+// there yet, so these currently just land on that page; wire up matching
+// ids on /servicios separately if/when that page gets a per-service layout.
+export const SERVICE_CATALOG: ServiceCatalogItem[] = [
+  // Visibilidad y publicidad
+  {
+    id: 'ppc',
+    tag: 'Ads / PPC',
+    title: 'Gestión y escalado de campañas publicitarias',
+    desc: 'Diseñamos, optimizamos y escalamos campañas de Amazon Ads para mejorar la rentabilidad, controlar la inversión y acompañar el crecimiento de la cuenta.',
+    cta: 'Ver servicio',
+    href: '/servicios#ppc',
+  },
+  {
+    id: 'posicionamiento',
+    tag: 'SEO Amazon',
+    title: 'Posicionamiento orgánico y optimización de listings',
+    desc: 'Optimizamos títulos, palabras clave, estructura y contenido para mejorar la visibilidad, la relevancia y la conversión del producto.',
+    cta: 'Ver servicio',
+    href: '/servicios#posicionamiento',
+  },
+  {
+    id: 'contenido-visual',
+    tag: 'Conversión',
+    title: 'Contenido visual y creatividades de alta conversión',
+    desc: 'Creamos imágenes, infografías, contenido A+ y recursos visuales orientados a mejorar la percepción y conversión del producto.',
+    cta: 'Ver servicio',
+    href: '/servicios#contenido-visual',
+    note: 'Con el mismo criterio visual que aplicamos junto al equipo de AMZ Creatives.',
+  },
+  // Análisis y rentabilidad
+  {
+    id: 'auditoria',
+    tag: 'Diagnóstico',
+    title: 'Auditoría y diagnóstico de cuenta',
+    desc: 'Analizamos el estado real de la cuenta, detectamos sus principales bloqueos y establecemos qué acciones deben priorizarse.',
+    cta: 'Ver servicio',
+    href: '/servicios#auditoria',
+  },
+  {
+    id: 'estudio-mercado',
+    tag: 'Oportunidades',
+    title: 'Estudio de mercado y detección de oportunidades',
+    desc: 'Evaluamos demanda, competencia, tendencias y barreras de entrada para identificar oportunidades con sentido comercial.',
+    cta: 'Ver servicio',
+    href: '/servicios#estudio-mercado',
+  },
+  {
+    id: 'rentabilidad',
+    tag: 'Rentabilidad',
+    title: 'Optimización de rentabilidad y márgenes',
+    desc: 'Analizamos costes, precios, publicidad y operativa para localizar fugas de rentabilidad y mejorar el beneficio real del negocio.',
+    cta: 'Ver servicio',
+    href: '/servicios#rentabilidad',
+  },
+  {
+    id: 'competencia',
+    tag: 'Competencia',
+    title: 'Análisis de la competencia',
+    desc: 'Estudiamos ofertas, precios, posicionamiento, contenido y publicidad para entender dónde competir y cómo diferenciarse.',
+    cta: 'Ver servicio',
+    href: '/servicios#competencia',
+  },
+  // Crecimiento y expansión
+  {
+    id: 'crecimiento',
+    tag: 'Escalado',
+    title: 'Estrategia de crecimiento por fases',
+    desc: 'Diseñamos una hoja de ruta progresiva con objetivos, prioridades y decisiones adaptadas al momento real de la cuenta.',
+    cta: 'Ver servicio',
+    href: '/servicios#crecimiento',
+  },
+  {
+    id: 'expansion',
+    tag: 'Marketplaces',
+    title: 'Expansión internacional y nuevos marketplaces',
+    desc: 'Estudiamos la viabilidad de nuevos mercados y definimos cómo expandir la marca sin replicar errores ni perder el control.',
+    cta: 'Ver servicio',
+    href: '/servicios#expansion',
+  },
+  {
+    id: 'lanzamientos',
+    tag: 'Lanzamientos',
+    title: 'Lanzamiento de nuevos productos',
+    desc: 'Definimos la estrategia de entrada, posicionamiento, publicidad y validación necesaria para lanzar con una base más sólida.',
+    cta: 'Ver servicio',
+    href: '/servicios#lanzamientos',
+  },
+  // Dirección estratégica
+  {
+    id: 'mentoria',
+    tag: 'Dirección',
+    title: 'Consultoría estratégica y mentoría 1:1',
+    desc: 'Trabajamos contigo en sesiones personalizadas para revisar decisiones, resolver bloqueos y dirigir el crecimiento de la cuenta.',
+    cta: 'Ver servicio',
+    href: '/servicios#mentoria',
+  },
+  {
+    id: 'soporte',
+    tag: 'Acompañamiento',
+    title: 'Acompañamiento y soporte continuo',
+    desc: 'Realizamos seguimiento de la cuenta, revisamos avances y te ayudamos a tomar decisiones a medida que aparecen nuevos retos.',
+    cta: 'Ver servicio',
+    href: '/servicios#soporte',
+  },
+]
+
 // Real brands/sellers AMZ Creatives has worked with. Source files as
 // uploaded live in /public/brands; each one here points to a cleaned-up
 // version in /public/brands/processed (background removed, ink unified to
