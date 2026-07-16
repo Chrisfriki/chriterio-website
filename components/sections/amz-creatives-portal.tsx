@@ -23,9 +23,7 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import { withBasePath } from '@/lib/base-path'
 
-// Replace null with withBasePath('/amz-creatives/showreel.mp4') when the real
-// compressed showreel is available. Keeping it null avoids a production 404.
-const SHOWREEL_SRC: string | undefined = undefined
+const SHOWREEL_SRC = withBasePath('/amz-creatives/showreel.mp4')
 const CREATIVE_PROJECTS_URL = '/casos'
 
 type Capability = {
