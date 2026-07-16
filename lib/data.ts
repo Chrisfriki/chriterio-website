@@ -1,4 +1,5 @@
 import type { Brand } from '@/components/ui/brand-scroller'
+import { AMZ_CREATIVE_PROJECTS } from '@/lib/amz-creative-projects'
 
 export type Service = {
   id: string
@@ -280,30 +281,10 @@ export const SERVICE_AREAS: ServiceArea[] = [
   },
 ]
 
-// Real brands/sellers AMZ Creatives has worked with. Source files as
-// uploaded live in /public/brands; each one here points to a cleaned-up
-// version in /public/brands/processed (background removed, ink unified to
-// white — see scripts used at processing time, not checked into the repo)
-// so <BrandScroller> can render them uniformly without relying on a CSS
-// filter that breaks on multi-tone badge-style logos. Add new brands by
-// dropping the processed PNG in that folder and adding an entry below.
-export const TRUSTED_BRANDS: Brand[] = [
-  { name: 'Almar Baby', logo: '/brands/processed/almar-baby.png', width: 700, height: 448 },
-  { name: 'Anefort', logo: '/brands/processed/anefort.png', width: 700, height: 396 },
-  { name: 'Bebé Pituso', logo: '/brands/processed/bebe-pituso.png', width: 700, height: 251 },
-  { name: 'Detraps', logo: '/brands/processed/detraps.png', width: 607, height: 162 },
-  { name: 'Funny Baby', logo: '/brands/processed/funny-baby.png', width: 674, height: 604 },
-  { name: 'Kook Time', logo: '/brands/processed/kook-time.png', width: 700, height: 147 },
-  { name: 'Maternika', logo: '/brands/processed/maternika.png', width: 700, height: 102 },
-  { name: 'Maurenza', logo: '/brands/processed/maurenza.png', width: 632, height: 153 },
-  { name: 'Neergy', logo: '/brands/processed/neergy.png', width: 561, height: 264 },
-  { name: 'Norditex', logo: '/brands/processed/norditex.png', width: 273, height: 140 },
-  { name: 'Pinisi Home', logo: '/brands/processed/pinisi.png', width: 500, height: 248 },
-  { name: 'PodCase', logo: '/brands/processed/podcase.png', width: 700, height: 233 },
-  { name: 'Pure4Home', logo: '/brands/processed/pure4home.png', width: 700, height: 149 },
-  { name: 'Snappy Blue', logo: '/brands/processed/sauk.png', width: 700, height: 442 },
-  { name: 'Savia de Alma', logo: '/brands/processed/savia-alma.png', width: 680, height: 750 },
-  { name: 'Thinia Home', logo: '/brands/processed/thinia-home.png', width: 664, height: 411 },
-  { name: 'Umbra', logo: '/brands/processed/umbra.png', width: 669, height: 155 },
-  { name: 'Xpintar', logo: '/brands/processed/xpintar.png', width: 700, height: 184 },
-]
+// The AMZ project catalogue is the shared source of truth for these logos.
+export const TRUSTED_BRANDS: Brand[] = AMZ_CREATIVE_PROJECTS.map((project) => ({
+  name: project.brand,
+  logo: project.logoSrc,
+  width: project.logoWidth,
+  height: project.logoHeight,
+}))

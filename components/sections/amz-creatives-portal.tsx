@@ -7,6 +7,7 @@ import {
   ArrowUpRight,
   Box,
   Camera,
+  ExternalLink,
   Layers3,
   Sparkles,
   Video,
@@ -20,8 +21,13 @@ import {
   useTransform,
   type MotionValue,
 } from 'framer-motion'
+import { track } from '@vercel/analytics'
 import { useEffect, useRef, useState } from 'react'
 import { withBasePath } from '@/lib/base-path'
+import {
+  AMZ_CREATIVE_PROJECTS,
+  type AmzCreativeProject,
+} from '@/lib/amz-creative-projects'
 
 const SHOWREEL_SRC = withBasePath('/amz-creatives/showreel.mp4')
 const CREATIVE_PROJECTS_URL = '/casos'
@@ -80,6 +86,53 @@ const OUTCOMES = [
   'Mayor coherencia de marca',
   'Producción adaptada a Amazon',
 ]
+
+const AMAZON_MARKETPLACE_HOSTS = new Set([
+  'amazon.es',
+  'amazon.com',
+  'amazon.fr',
+  'amazon.de',
+  'amazon.it',
+  'amazon.co.uk',
+  'amazon.ca',
+  'amazon.com.au',
+  'amazon.co.jp',
+  'amazon.com.be',
+  'amazon.com.br',
+  'amazon.com.mx',
+  'amazon.ae',
+  'amazon.in',
+  'amazon.nl',
+  'amazon.pl',
+  'amazon.sa',
+  'amazon.se',
+  'amazon.sg',
+])
+
+function getValidAmazonUrl(url: string | null) {
+  if (!url) return null
+
+  try {
+    const parsedUrl = new URL(url)
+    const hostname = parsedUrl.hostname.toLowerCase().replace(/^www\./, '')
+    return parsedUrl.protocol === 'https:' && AMAZON_MARKETPLACE_HOSTS.has(hostname)
+      ? parsedUrl
+      : null
+  } catch {
+    return null
+  }
+}
+
+function handleProjectClick(project: AmzCreativeProject, marketplace: string) {
+  if (process.env.NODE_ENV !== 'production' || !project.amazonUrl) return
+
+  track('amz_creative_project_click', {
+    brand: project.brand,
+    productName: project.productName ?? '',
+    amazonUrl: project.amazonUrl,
+    marketplace,
+  })
+}
 
 function useMobileViewport() {
   const [isMobile, setIsMobile] = useState(false)
@@ -165,35 +218,120 @@ function ExpandingMedia({
 function ReducedMotionPortal() {
   return (
     <section className="relative bg-[#020817] text-white" aria-labelledby="amz-portal-title">
-      <div className="starfield absolute inset-0 opacity-50" aria-hidden="true" />
-      <div className="relative mx-auto max-w-6xl px-5 py-24 md:px-8">
-        <span className="text-xs font-semibold tracking-widest text-electric uppercase">
-          Ejecución creativa
-        </span>
-        <h2 id="amz-portal-title" className="mt-4 max-w-3xl font-display text-4xl font-bold md:text-6xl">
-          No nos quedamos en el diagnóstico. También construimos la parte visual.
-        </h2>
-      </div>
-      <div className="relative bg-[#f3f0eb] px-5 py-24 text-[#191919] md:px-8">
+      <div className="starfield relative px-5 py-24 md:px-8">
         <div className="mx-auto max-w-6xl">
-          <Image src={withBasePath('/amz-creatives-logo.png')} alt="AMZ Creatives" width={4773} height={713} className="h-8 w-auto" />
-          <h3 className="mt-12 max-w-4xl font-display text-4xl font-bold md:text-6xl">
-            Creatividad diseñada para destacar dentro de Amazon.
-          </h3>
-          <div className="mt-16 grid gap-6 md:grid-cols-2">
-            {CAPABILITIES.map((capability) => (
-              <article key={capability.number} className="rounded-3xl bg-white p-7">
-                <span className="font-display text-4xl font-bold text-[#ff6846]">{capability.number}</span>
-                <h4 className="mt-5 font-display text-2xl font-bold">{capability.title}</h4>
-                <p className="mt-4 text-sm leading-relaxed text-black/60">{capability.description}</p>
-              </article>
-            ))}
-          </div>
+          <span className="text-xs font-semibold tracking-widest text-electric uppercase">
+            Ejecución creativa
+          </span>
+          <h2 id="amz-portal-title" className="mt-4 max-w-3xl font-display text-4xl font-bold md:text-6xl">
+            No nos quedamos en el diagnóstico. También construimos la parte visual.
+          </h2>
         </div>
       </div>
-      <div className="relative mx-auto max-w-6xl px-5 py-24 md:px-8">
-        <span className="text-xs font-semibold tracking-widest text-electric uppercase">Un mismo criterio</span>
-        <h3 className="mt-4 max-w-3xl font-display text-4xl font-bold md:text-6xl">Estrategia y ejecución, conectadas.</h3>
+      <AmzEditorialContent />
+    </section>
+  )
+}
+
+function AmzProjectsGrid() {
+  return (
+    <section
+      aria-labelledby="amz-projects-heading"
+      className="mx-auto max-w-7xl px-5 pb-28 md:px-8 md:pb-40"
+    >
+      <div className="max-w-3xl">
+        <span className="text-xs font-bold tracking-[0.2em] text-[#ff6846] uppercase">
+          Marcas y proyectos
+        </span>
+        <h3
+          id="amz-projects-heading"
+          className="mt-5 font-display text-4xl font-bold leading-tight tracking-tight text-balance md:text-6xl"
+        >
+          No hablamos solo de creatividad. Puedes verla en Amazon.
+        </h3>
+        <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/60 md:text-lg">
+          Explora algunos de los productos en los que hemos trabajado y comprueba
+          cómo se aplica la estrategia visual dentro del listing real.
+        </p>
+      </div>
+
+      <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+        {AMZ_CREATIVE_PROJECTS.map((project) => {
+          const amazonUrl = getValidAmazonUrl(project.amazonUrl)
+          const marketplace = project.marketplace ?? amazonUrl?.hostname ?? ''
+          const cardContent = (
+            <>
+              <div className="flex min-h-24 flex-1 items-center justify-center p-5 md:min-h-28 md:p-6">
+                <Image
+                  src={withBasePath(project.logoSrc)}
+                  alt={`Logo de ${project.brand}`}
+                  width={project.logoWidth}
+                  height={project.logoHeight}
+                  className="max-h-14 w-auto max-w-full object-contain md:max-h-16"
+                />
+              </div>
+              <div className="flex min-h-14 items-end justify-between gap-3 border-t border-white/10 px-4 py-3 text-left">
+                <div className="min-w-0">
+                  <span className="block truncate text-xs font-semibold text-white">
+                    {project.brand}
+                  </span>
+                  {project.productName && (
+                    <span className="mt-0.5 block truncate text-[11px] text-white/45">
+                      {project.productName}
+                    </span>
+                  )}
+                  {amazonUrl && (
+                    <span className="mt-1 hidden text-[10px] font-semibold tracking-wide text-[#ff9d78] uppercase md:block">
+                      Ver en Amazon
+                    </span>
+                  )}
+                </div>
+                {amazonUrl && (
+                  <ExternalLink
+                    className="size-3.5 shrink-0 text-white/55 transition-colors group-hover:text-[#ff9d78]"
+                    aria-hidden="true"
+                  />
+                )}
+              </div>
+            </>
+          )
+
+          return amazonUrl ? (
+            <a
+              key={project.id}
+              href={amazonUrl.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={project.ariaLabel}
+              title={`${project.brand}${project.productName ? ` · ${project.productName}` : ''} · Ver en Amazon`}
+              onClick={() => handleProjectClick(project, marketplace)}
+              className="group flex min-h-40 flex-col overflow-hidden rounded-2xl border border-black/10 bg-[#1d1d1d] transition duration-300 hover:-translate-y-1 hover:scale-[1.025] hover:border-[#ff6846]/55 focus-visible:ring-2 focus-visible:ring-[#ff6846] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f3f0eb] focus-visible:outline-none"
+            >
+              {cardContent}
+            </a>
+          ) : (
+            <div
+              key={project.id}
+              className="flex min-h-40 flex-col overflow-hidden rounded-2xl border border-black/10 bg-[#1d1d1d]/90 opacity-60"
+              title={`${project.brand} · Enlace de Amazon pendiente`}
+            >
+              {cardContent}
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="mt-6 flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
+        <p className="text-xs text-black/45">
+          Pulsa sobre una marca para ver el producto en Amazon.
+        </p>
+        <Link
+          href={CREATIVE_PROJECTS_URL}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-[#191919] transition-colors hover:text-[#ff6846] focus-visible:ring-2 focus-visible:ring-[#ff6846] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f3f0eb] focus-visible:outline-none"
+        >
+          Ver más proyectos creativos
+          <ArrowUpRight className="size-4" aria-hidden="true" />
+        </Link>
       </div>
     </section>
   )
@@ -239,6 +377,8 @@ function AmzEditorialContent() {
           )
         })}
       </div>
+
+      <AmzProjectsGrid />
 
       <div className="bg-[#ff6846] px-5 py-24 md:px-8 md:py-32">
         <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-2 md:items-end">
