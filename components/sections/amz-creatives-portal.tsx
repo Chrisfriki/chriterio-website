@@ -316,12 +316,9 @@ export function AmzCreativesPortal() {
         </motion.div>
 
         <motion.div
-          className="pointer-events-none absolute inset-x-5 bottom-6 z-30 flex flex-col gap-3 md:inset-x-[6vw] md:bottom-8 md:flex-row md:items-end md:justify-between"
+          className="pointer-events-none absolute right-5 bottom-6 z-30 md:right-[6vw] md:bottom-8"
           style={{ opacity: introDetailsOpacity, y: introDetailsY }}
         >
-          <p className="max-w-md text-xs leading-relaxed text-white/60 md:text-sm">
-            A través de AMZ Creatives desarrollamos imágenes, vídeos y experiencias visuales para marcas que quieren destacar y convertir mejor dentro de Amazon.
-          </p>
           <span className="inline-flex shrink-0 items-center gap-2 text-xs font-semibold tracking-wide text-white/55 uppercase">
             <ArrowDown className="size-4" aria-hidden="true" />
             Desliza para entrar en AMZ Creatives

@@ -9,7 +9,7 @@ export default function HomePage() {
   return (
     <main>
       <Hero />
-      <div className="relative overflow-hidden bg-[#020817]">
+      <div className="relative overflow-x-clip bg-[#020817]">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-gradient-to-b from-[#050d1f] to-transparent"
