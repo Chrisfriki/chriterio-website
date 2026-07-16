@@ -118,25 +118,21 @@ function ExpandingMedia({
   progress: MotionValue<number>
   isMobile: boolean
 }) {
-  const scaleX = useTransform(progress, [0, 0.04, 0.32, 0.76, 0.93, 1], [
+  const scaleX = useTransform(progress, [0, 0.08, 0.82, 1], [
     isMobile ? 0.88 : 0.44,
     isMobile ? 0.88 : 0.44,
-    1,
-    1,
-    isMobile ? 0.82 : 0.38,
-    isMobile ? 0.82 : 0.38,
+    1.04,
+    1.08,
   ])
-  const scaleY = useTransform(progress, [0, 0.04, 0.32, 0.76, 0.93, 1], [
+  const scaleY = useTransform(progress, [0, 0.08, 0.82, 1], [
     isMobile ? 0.52 : 0.68,
     isMobile ? 0.52 : 0.68,
-    1,
-    1,
-    isMobile ? 0.42 : 0.44,
-    isMobile ? 0.42 : 0.44,
+    1.04,
+    1.08,
   ])
-  const borderRadius = useTransform(progress, [0.04, 0.32, 0.76, 0.93], [28, 0, 0, 28])
-  const shade = useTransform(progress, [0, 0.18, 0.32, 0.75, 0.9], [0.5, 0.3, 0.06, 0.06, 0.5])
-  const shadow = useTransform(progress, [0.04, 0.31, 0.78, 0.93], [0.65, 0, 0, 0.65])
+  const borderRadius = useTransform(progress, [0.08, 0.82], [28, 0])
+  const shade = useTransform(progress, [0, 0.55, 0.86], [0.5, 0.22, 0])
+  const shadow = useTransform(progress, [0.08, 0.75], [0.65, 0])
   const boxShadow = useTransform(shadow, (value) => `0 30px 90px rgba(0,0,0,${value})`)
 
   return (
@@ -165,59 +161,6 @@ function ExpandingMedia({
       )}
       <motion.div className="absolute inset-0 bg-black" style={{ opacity: shade }} />
     </motion.div>
-  )
-}
-
-function CapabilityPanel({
-  capability,
-  progress,
-  range,
-}: {
-  capability: Capability
-  progress: MotionValue<number>
-  range: [number, number, number, number]
-}) {
-  const opacity = useTransform(progress, range, [0, 1, 1, 0])
-  const y = useTransform(progress, range, [50, 0, 0, -50])
-  const Icon = capability.icon
-
-  return (
-    <motion.article
-      className="pointer-events-none absolute inset-0 z-40 grid content-center px-5 py-24 md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-16 md:px-[8vw]"
-      style={{ opacity, y }}
-    >
-      <div className="relative hidden aspect-[4/3] overflow-hidden rounded-[2rem] bg-[#222] md:block">
-        <div
-          className="absolute inset-0 opacity-90"
-          style={{
-            background: `radial-gradient(circle at 65% 35%, ${capability.accent}, transparent 34%), linear-gradient(145deg, #181818, #3a302c)`,
-          }}
-        />
-        <span className="absolute -right-2 -bottom-12 font-display text-[15rem] font-bold leading-none tracking-tighter text-white/10">
-          {capability.number}
-        </span>
-        <div className="absolute top-8 left-8 flex size-16 items-center justify-center rounded-full bg-white text-[#171717]">
-          <Icon className="size-7" aria-hidden="true" />
-        </div>
-      </div>
-
-      <div className="max-w-2xl text-[#191919]">
-        <div className="flex items-center gap-4">
-          <span className="font-display text-5xl font-bold text-[#ff6846] md:text-7xl">
-            {capability.number}
-          </span>
-          <span className="text-xs font-bold tracking-[0.2em] uppercase md:text-sm">
-            {capability.eyebrow}
-          </span>
-        </div>
-        <h3 className="mt-7 font-display text-[clamp(2rem,4vw,4.5rem)] font-bold leading-[0.98] tracking-[-0.04em] text-balance">
-          {capability.title}
-        </h3>
-        <p className="mt-6 max-w-xl text-sm leading-relaxed text-[#191919]/65 md:text-lg">
-          {capability.description}
-        </p>
-      </div>
-    </motion.article>
   )
 }
 
@@ -258,42 +201,99 @@ function ReducedMotionPortal() {
   )
 }
 
+function AmzEditorialContent() {
+  return (
+    <div className="relative z-20 bg-[#f3f0eb] text-[#191919]">
+      <div className="mx-auto max-w-6xl px-5 py-24 md:px-8 md:py-32">
+        <div className="flex items-center justify-between gap-8">
+          <span className="text-xs font-bold tracking-[0.22em] text-[#ff6846] uppercase">AMZ Creatives</span>
+          <Image src={withBasePath('/amz-creatives-logo.png')} alt="AMZ Creatives" width={4773} height={713} className="h-6 w-auto md:h-8" />
+        </div>
+        <h3 className="mt-12 max-w-5xl font-display text-[clamp(3rem,7vw,7rem)] font-bold leading-[0.92] tracking-[-0.055em] text-balance">
+          Creatividad diseñada para destacar dentro de Amazon.
+        </h3>
+        <p className="mt-8 max-w-2xl text-base leading-relaxed text-black/60 md:text-xl">
+          Unimos estrategia, diseño y producción para mejorar cómo se percibe, se entiende y se compra un producto.
+        </p>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-5 pb-28 md:px-8 md:pb-40">
+        {CAPABILITIES.map((capability, index) => {
+          const Icon = capability.icon
+          return (
+            <article key={capability.number} className="grid gap-8 border-t border-black/15 py-16 md:grid-cols-2 md:items-center md:gap-20 md:py-24">
+              <div className={index % 2 ? 'md:order-2' : undefined}>
+                <div className="flex items-center gap-4">
+                  <span className="font-display text-5xl font-bold text-[#ff6846] md:text-7xl">{capability.number}</span>
+                  <span className="text-xs font-bold tracking-[0.18em] uppercase">{capability.eyebrow}</span>
+                </div>
+                <h4 className="mt-7 font-display text-3xl font-bold leading-tight tracking-tight md:text-5xl">{capability.title}</h4>
+                <p className="mt-6 max-w-xl text-sm leading-relaxed text-black/60 md:text-lg">{capability.description}</p>
+              </div>
+              <div className={`relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-[#1d1d1d] ${index % 2 ? 'md:order-1' : ''}`}>
+                <div className="absolute inset-0 opacity-90" style={{ background: `radial-gradient(circle at 65% 35%, ${capability.accent}, transparent 34%), linear-gradient(145deg, #181818, #3a302c)` }} />
+                <span className="absolute -right-2 -bottom-12 font-display text-[12rem] font-bold leading-none tracking-tighter text-white/10 md:text-[15rem]">{capability.number}</span>
+                <div className="absolute top-7 left-7 flex size-14 items-center justify-center rounded-full bg-white text-[#171717] md:top-8 md:left-8 md:size-16">
+                  <Icon className="size-6 md:size-7" aria-hidden="true" />
+                </div>
+              </div>
+            </article>
+          )
+        })}
+      </div>
+
+      <div className="bg-[#ff6846] px-5 py-24 md:px-8 md:py-32">
+        <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-2 md:items-end">
+          <div>
+            <span className="text-xs font-bold tracking-[0.2em] uppercase">Qué hemos conseguido</span>
+            <h3 className="mt-5 font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">Creatividad que mejora cómo se presenta una marca.</h3>
+            <p className="mt-6 text-sm leading-relaxed text-black/65 md:text-base">Hemos ayudado a marcas de diferentes sectores a explicar mejor sus productos, elevar su percepción visual y construir una presencia más competitiva dentro de Amazon.</p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {OUTCOMES.map((outcome) => <div key={outcome} className="flex items-center gap-3 border-t border-black/25 py-4 text-sm font-semibold"><Sparkles className="size-4 shrink-0" aria-hidden="true" />{outcome}</div>)}
+          </div>
+        </div>
+      </div>
+
+      <div className="starfield relative bg-[#020817] px-5 py-28 text-white md:px-8 md:py-36">
+        <div className="mx-auto max-w-6xl">
+          <span className="text-xs font-semibold tracking-widest text-electric uppercase">Un mismo criterio</span>
+          <h3 className="mt-5 max-w-4xl font-display text-[clamp(2.75rem,6vw,6rem)] font-bold leading-[0.98] tracking-tight text-balance">Estrategia y ejecución, conectadas.</h3>
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-xl">CHRITERIO detecta qué necesita tu cuenta. AMZ Creatives lo convierte en una solución visual preparada para competir.</p>
+          <Link href={CREATIVE_PROJECTS_URL} className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10">
+            Ver proyectos creativos <ArrowUpRight className="size-4" aria-hidden="true" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function AmzCreativesPortal() {
-  const sectionRef = useRef<HTMLElement>(null)
+  const entryRef = useRef<HTMLDivElement>(null)
   const reducedMotion = useReducedMotion()
   const isMobile = useMobileViewport()
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: entryRef,
     offset: ['start start', 'end end'],
   })
   const progress = useSpring(scrollYProgress, { stiffness: 110, damping: 30, mass: 0.25 })
 
-  const chriterioIntroOpacity = useTransform(progress, [0, 0.07, 0.26], [1, 1, 0])
-  const headingLeftX = useTransform(progress, [0.04, 0.27], [0, isMobile ? -90 : -360])
-  const headingRightX = useTransform(progress, [0.04, 0.27], [0, isMobile ? 90 : 360])
-  const introDetailsOpacity = useTransform(progress, [0, 0.08, 0.19], [1, 1, 0])
-  const introDetailsY = useTransform(progress, [0.04, 0.2], [0, 35])
-  const spaceOpacity = useTransform(progress, [0.2, 0.34, 0.76, 0.94], [1, 0, 0, 1])
-  const amzBackgroundOpacity = useTransform(progress, [0.32, 0.38, 0.77, 0.92], [0, 1, 1, 0])
-  const amzHeaderOpacity = useTransform(progress, [0.35, 0.4, 0.73, 0.81], [0, 1, 1, 0])
-  const amzIntroOpacity = useTransform(progress, [0.35, 0.4, 0.43, 0.47], [0, 1, 1, 0])
-  const outcomesOpacity = useTransform(progress, [0.72, 0.75, 0.78, 0.82], [0, 1, 1, 0])
-  const returnOpacity = useTransform(progress, [0.87, 0.94, 1], [0, 1, 1])
-  const returnY = useTransform(progress, [0.87, 0.96], [40, 0])
+  const chriterioIntroOpacity = useTransform(progress, [0, 0.2, 0.72], [1, 1, 0])
+  const headingLeftX = useTransform(progress, [0.12, 0.75], [0, isMobile ? -110 : -440])
+  const headingRightX = useTransform(progress, [0.12, 0.75], [0, isMobile ? 110 : 440])
+  const introDetailsOpacity = useTransform(progress, [0, 0.18, 0.55], [1, 1, 0])
+  const introDetailsY = useTransform(progress, [0.15, 0.58], [0, 35])
+  const spaceOpacity = useTransform(progress, [0.35, 0.9], [1, 0])
 
   if (reducedMotion) return <ReducedMotionPortal />
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative h-[380vh] bg-[#020817] text-white md:h-[460vh] xl:h-[500vh]"
-      aria-labelledby="amz-portal-title"
-    >
-      <div className="sticky top-0 h-[100dvh] min-h-[620px] overflow-hidden">
+    <section className="relative bg-[#020817] text-white" aria-labelledby="amz-portal-title">
+      <div ref={entryRef} className="relative h-[190vh] md:h-[220vh]">
+        <div className="sticky top-0 h-[100dvh] min-h-[620px] overflow-hidden">
         <motion.div className="starfield absolute inset-0 bg-[#020817]" style={{ opacity: spaceOpacity }} aria-hidden="true" />
         <ExpandingMedia progress={progress} isMobile={isMobile} />
-
-        <motion.div className="absolute inset-0 z-20 bg-[#f3f0eb]" style={{ opacity: amzBackgroundOpacity }} aria-hidden="true" />
 
         <motion.div className="pointer-events-none absolute inset-0 z-30" style={{ opacity: chriterioIntroOpacity }}>
           <span className="absolute top-[12%] left-1/2 -translate-x-1/2 text-xs font-semibold tracking-widest text-electric uppercase md:top-[13%]">
@@ -328,52 +328,9 @@ export function AmzCreativesPortal() {
           </span>
         </motion.div>
 
-        <motion.div className="pointer-events-none absolute inset-x-0 top-0 z-40 flex items-center justify-end px-5 py-6 md:px-8" style={{ opacity: amzHeaderOpacity }}>
-          <Image src={withBasePath('/amz-creatives-logo.png')} alt="AMZ Creatives" width={4773} height={713} className="h-6 w-auto md:h-8" />
-        </motion.div>
-
-        <motion.div className="pointer-events-none absolute inset-0 z-40 flex items-center px-5 md:px-[8vw]" style={{ opacity: amzIntroOpacity }}>
-          <div className="max-w-4xl text-[#191919]">
-            <span className="text-xs font-bold tracking-[0.22em] text-[#ff6846] uppercase">AMZ Creatives</span>
-            <h3 className="mt-6 font-display text-[clamp(2.5rem,6vw,6.5rem)] font-bold leading-[0.94] tracking-[-0.05em] text-balance">
-              Creatividad diseñada para destacar dentro de Amazon.
-            </h3>
-            <p className="mt-7 max-w-2xl text-base leading-relaxed text-black/60 md:text-xl">
-              Unimos estrategia, diseño y producción para mejorar cómo se percibe, se entiende y se compra un producto.
-            </p>
-          </div>
-        </motion.div>
-
-        {CAPABILITIES.map((capability, index) => {
-          const starts = [0.46, 0.525, 0.59, 0.655]
-          const start = starts[index]
-          return <CapabilityPanel key={capability.number} capability={capability} progress={progress} range={[start, start + 0.025, start + 0.065, start + 0.095]} />
-        })}
-
-        <motion.div className="pointer-events-none absolute inset-0 z-40 flex items-center px-5 md:px-[8vw]" style={{ opacity: outcomesOpacity }}>
-          <div className="mx-auto grid w-full max-w-6xl gap-10 text-[#191919] md:grid-cols-2 md:items-end">
-            <div>
-              <span className="text-xs font-bold tracking-[0.2em] text-[#ff6846] uppercase">Qué hemos conseguido</span>
-              <h3 className="mt-5 font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">Creatividad que mejora cómo se presenta una marca.</h3>
-              <p className="mt-6 text-sm leading-relaxed text-black/60 md:text-base">Hemos ayudado a marcas de diferentes sectores a explicar mejor sus productos, elevar su percepción visual y construir una presencia más competitiva dentro de Amazon.</p>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {OUTCOMES.map((outcome) => <div key={outcome} className="flex items-center gap-3 border-t border-black/15 py-4 text-sm font-semibold"><Sparkles className="size-4 shrink-0 text-[#ff6846]" aria-hidden="true" />{outcome}</div>)}
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div className="absolute inset-0 z-50 flex items-center px-5 md:px-[8vw]" style={{ opacity: returnOpacity, y: returnY }}>
-          <div className="max-w-3xl">
-            <span className="text-xs font-semibold tracking-widest text-electric uppercase">Un mismo criterio</span>
-            <h3 className="mt-5 font-display text-[clamp(2.5rem,6vw,6rem)] font-bold leading-[0.98] tracking-tight text-balance">Estrategia y ejecución, conectadas.</h3>
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-xl">CHRITERIO detecta qué necesita tu cuenta. AMZ Creatives lo convierte en una solución visual preparada para competir.</p>
-            <Link href={CREATIVE_PROJECTS_URL} className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10">
-              Ver proyectos creativos <ArrowUpRight className="size-4" aria-hidden="true" />
-            </Link>
-          </div>
-        </motion.div>
+        </div>
       </div>
+      <AmzEditorialContent />
     </section>
   )
 }
