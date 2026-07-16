@@ -4,8 +4,8 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { withBasePath } from '@/lib/base-path'
 
-/** The exported sequence starts at 002.webp and ends at 120.webp. */
-const HERO_FIRST_FRAME_NUMBER = 2
+/** The exported sequence is normalized from 001.webp through 119.webp. */
+const HERO_FIRST_FRAME_NUMBER = 1
 export const HERO_FRAME_COUNT = 119
 
 /** File extension of the frame sequence (public/chriterio-hero/frames/*.EXT). */
@@ -13,7 +13,7 @@ const FRAME_EXTENSION = 'webp'
 
 /** Bump this whenever the frame files are replaced so browsers/GitHub Pages
  *  don't keep serving a stale cached sequence under the same filenames. */
-const FRAME_VERSION = 'v4'
+const FRAME_VERSION = 'v5'
 
 /** A longer runway gives the launch room to breathe before each copy stage. */
 export const HERO_SCROLL_HEIGHT_VH = 320
@@ -64,7 +64,6 @@ const REVERSE_TIME_THRESHOLD = 220
 const STAGE_RANGES = {
   headline: [0.3, 0.42],
   secondaryHeadline: [0.52, 0.64],
-  subtitle: [0.76, 0.88],
 } as const
 
 /** The "slide to start" hint fades out fast, right as the first scroll gesture begins. */
@@ -87,7 +86,6 @@ type ChriterioHeroSequenceProps = {
   id?: string
   headline: ReactNode
   secondaryHeadline: ReactNode
-  subtitle: ReactNode
   className?: string
 }
 
@@ -95,7 +93,6 @@ export function ChriterioHeroSequence({
   id,
   headline,
   secondaryHeadline,
-  subtitle,
   className,
 }: ChriterioHeroSequenceProps) {
   const sectionRef = useRef<HTMLElement>(null)
@@ -103,7 +100,6 @@ export function ChriterioHeroSequence({
   const scrollHintRef = useRef<HTMLDivElement>(null)
   const headlineRef = useRef<HTMLDivElement>(null)
   const secondaryHeadlineRef = useRef<HTMLDivElement>(null)
-  const subtitleRef = useRef<HTMLDivElement>(null)
 
   const imagesRef = useRef<HTMLImageElement[]>([])
   const statusRef = useRef<FrameStatus[]>(new Array(HERO_FRAME_COUNT).fill('idle'))
@@ -252,7 +248,6 @@ export function ChriterioHeroSequence({
     for (const [key, ref] of [
       ['headline', headlineRef],
       ['secondaryHeadline', secondaryHeadlineRef],
-      ['subtitle', subtitleRef],
     ] as const) {
       const [start, end] = STAGE_RANGES[key]
       const localT = Math.min(1, Math.max(0, (progress - start) / (end - start)))
@@ -634,7 +629,6 @@ export function ChriterioHeroSequence({
         <div className="relative z-10 flex h-full w-full flex-col items-center gap-7 px-5 pt-28 text-center md:gap-8 md:pt-36">
           <div className="max-w-4xl">{headline}</div>
           <div className="max-w-4xl">{secondaryHeadline}</div>
-          <div className="max-w-[800px]">{subtitle}</div>
         </div>
       </section>
     )
@@ -672,7 +666,7 @@ export function ChriterioHeroSequence({
           className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-[#050d1f]/78 via-[#050d1f]/25 to-transparent"
         />
 
-        {/* Top-anchored, centered content: headline and subtitle only. The
+        {/* Top-anchored, centered content: the two headline stages only. The
             rocket is free to read as the visual centerpiece through the rest
             of the frame below/behind it. Each piece fades/rises in on its
             own schedule via its own ref. */}
@@ -685,9 +679,6 @@ export function ChriterioHeroSequence({
             {secondaryHeadline}
           </div>
 
-          <div ref={subtitleRef} className="max-w-[800px]" style={{ opacity: 0 }}>
-            {subtitle}
-          </div>
         </div>
 
         {/* "Slide to start" hint — visible only at the very top of the hero,

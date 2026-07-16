@@ -14,15 +14,6 @@ export function Hero() {
           Premia al que decide mejor.
         </p>
       }
-      subtitle={
-        <p className="text-white/75 text-pretty [text-shadow:0_1px_16px_rgba(0,0,0,0.5)]">
-          <span className="block text-[clamp(1.0625rem,0.95rem+0.6vw,1.375rem)] leading-relaxed">
-            En CHRITERIO analizamos tu negocio con experiencia real como
-            sellers, datos y una estrategia diseñada para crecer con
-            rentabilidad.
-          </span>
-        </p>
-      }
     />
   )
 }
