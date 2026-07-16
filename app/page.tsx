@@ -1,7 +1,7 @@
 import { Hero } from '@/components/home/hero'
 import { TrustedBrands } from '@/components/home/trusted-brands'
-import { MissionControl } from '@/components/home/mission-control'
 import { ServicesSection } from '@/components/services/services-section'
+import { AmzCreativesPortal } from '@/components/sections/amz-creatives-portal'
 import { CaseHighlight } from '@/components/home/case-highlight'
 import { FinalCta } from '@/components/final-cta'
 
@@ -21,7 +21,7 @@ export default function HomePage() {
         <div className="relative">
           <ServicesSection />
           <TrustedBrands />
-          <MissionControl />
+          <AmzCreativesPortal />
           <CaseHighlight />
           <FinalCta className="bg-transparent" />
         </div>
