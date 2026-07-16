@@ -22,11 +22,7 @@ export function ServicesSectionClient({
   const openArea = areas.find((area) => area.id === openId) ?? null
 
   return (
-    <section className="relative overflow-hidden bg-navy-dark">
-      <div
-        aria-hidden="true"
-        className="starfield pointer-events-none absolute inset-0 opacity-50"
-      />
+    <section className="relative overflow-hidden bg-transparent">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute top-0 right-[-10%] size-[28rem] rounded-full bg-electric/[0.07] blur-3xl"

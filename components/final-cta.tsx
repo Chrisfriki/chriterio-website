@@ -1,16 +1,19 @@
 import { LinkButton } from '@/components/link-button'
 import { Reveal } from '@/components/reveal'
 import { CALENDLY_URL, WHATSAPP_URL } from '@/lib/site'
+import { cn } from '@/lib/utils'
 
 export function FinalCta({
   title = '¿Vemos qué está frenando tu cuenta?',
   note = 'Julio-agosto es el momento: quien quiere llegar fuerte a Q4 se mueve ahora.',
+  className,
 }: {
   title?: string
   note?: string
+  className?: string
 }) {
   return (
-    <section className="bg-navy-dark px-5 py-24 text-white">
+    <section className={cn('bg-navy-dark px-5 py-24 text-white', className)}>
       <div className="mx-auto max-w-3xl text-center">
         <Reveal>
           <h2 className="font-display text-3xl font-bold tracking-tight text-balance md:text-5xl">

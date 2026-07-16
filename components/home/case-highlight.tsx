@@ -4,7 +4,7 @@ import { Reveal } from '@/components/reveal'
 
 export function CaseHighlight() {
   return (
-    <section className="bg-navy px-5 py-24 text-white">
+    <section className="bg-transparent px-5 py-24 text-white">
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <span className="text-xs font-semibold tracking-widest text-electric uppercase">

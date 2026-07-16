@@ -7,23 +7,15 @@ import { withBasePath } from '@/lib/base-path'
 /**
  * Sits between the service areas and "Control de misión". Its only job is
  * honest credibility: brands worked with through AMZ Creatives, never framed
- * as Chriterio's own client roster or consulting results. Its background
- * matches the service area's navy-dark so there's no seam between blocks.
+ * as Chriterio's own client roster or consulting results. The homepage owns
+ * the shared space background, so this section remains transparent.
  */
 export function TrustedBrands() {
   return (
     <section
       aria-labelledby="trusted-brands-heading"
-      className="relative overflow-hidden border-b border-white/[0.08] bg-navy-dark"
+      className="relative overflow-hidden bg-transparent"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-navy-dark"
-      />
-      <div
-        aria-hidden="true"
-        className="starfield pointer-events-none absolute inset-0 opacity-50"
-      />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute top-1/2 left-1/2 size-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-electric/[0.06] blur-3xl"

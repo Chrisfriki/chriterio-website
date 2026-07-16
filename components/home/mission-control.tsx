@@ -10,18 +10,12 @@ const MODULE_ICONS = [Coins, Orbit, ListOrdered]
 
 /**
  * "Control de misión" -> AMZ Creatives connection. Kept as one continuous
- * section (one shared dark background + starfield) rather than two separate
- * <section>s so there's no hard seam between them. Sits after <TrustedBrands>,
- * which already handles the hero's #050d1f -> navy-dark hand-off, so this
- * section starts flat at navy-dark instead of re-fading.
+ * section rather than two separate <section>s. The homepage owns the shared
+ * space background so this block stays transparent and joins its neighbours.
  */
 export function MissionControl() {
   return (
-    <section className="relative overflow-hidden bg-navy-dark">
-      <div
-        aria-hidden="true"
-        className="starfield pointer-events-none absolute inset-0 opacity-60"
-      />
+    <section className="relative overflow-hidden bg-transparent">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -top-10 -left-32 size-[26rem] rounded-full bg-electric/10 blur-3xl"
@@ -114,7 +108,7 @@ function MissionControlCards() {
 
 function AmzConnection() {
   return (
-    <div className="border-t border-white/[0.08] px-5 py-16 md:px-8 md:py-20">
+    <div className="px-5 py-16 md:px-8 md:py-20">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col items-start gap-8 rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:flex-row md:items-center md:justify-between md:p-10">
           <Reveal className="max-w-xl">
