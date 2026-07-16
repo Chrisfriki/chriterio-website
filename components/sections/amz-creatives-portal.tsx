@@ -7,6 +7,8 @@ import {
   ArrowUpRight,
   Box,
   Camera,
+  ChevronLeft,
+  ChevronRight,
   CircleHelp,
   Eye,
   GripVertical,
@@ -126,6 +128,11 @@ const BEFORE_IMAGE_SRC: string | null = null
 // /public/amz-creatives/before-after/after.webp.
 const AFTER_IMAGE_SRC: string | null = null
 
+const IMAGES_THAT_CONVERT = Array.from({ length: 11 }, (_, index) => ({
+  src: `/amz-creatives/images-that-convert/${index + 1}.webp`,
+  alt: `Creativo de producto desarrollado por AMZ Creatives ${index + 1} de 11`,
+}))
+
 const AMAZON_MARKETPLACE_HOSTS = new Set([
   'amazon.es',
   'amazon.com',
@@ -196,6 +203,73 @@ function CreativeFallback() {
       <div className="absolute right-[22%] bottom-[14%] h-[42%] w-[17%] rotate-12 rounded-[2.5rem] border border-white/20 bg-gradient-to-br from-white/30 to-white/5 shadow-2xl backdrop-blur-sm" />
       <div className="absolute bottom-[12%] left-[8%] font-display text-[clamp(5rem,18vw,18rem)] font-bold leading-none tracking-[-0.08em] text-white/[0.06]">
         AMZ
+      </div>
+    </div>
+  )
+}
+
+function ImagesThatConvertCarousel() {
+  const [activeIndex, setActiveIndex] = useState(0)
+  const activeImage = IMAGES_THAT_CONVERT[activeIndex]
+
+  const showPrevious = () => {
+    setActiveIndex((current) =>
+      current === 0 ? IMAGES_THAT_CONVERT.length - 1 : current - 1
+    )
+  }
+
+  const showNext = () => {
+    setActiveIndex((current) =>
+      current === IMAGES_THAT_CONVERT.length - 1 ? 0 : current + 1
+    )
+  }
+
+  return (
+    <div
+      className="relative size-full overflow-hidden bg-[#e9e5df]"
+      role="region"
+      aria-roledescription="carrusel"
+      aria-label="Imágenes que convierten"
+      onKeyDown={(event) => {
+        if (event.key === 'ArrowLeft') showPrevious()
+        if (event.key === 'ArrowRight') showNext()
+      }}
+    >
+      <Image
+        key={activeImage.src}
+        src={withBasePath(activeImage.src)}
+        alt={activeImage.alt}
+        fill
+        sizes="(max-width: 768px) 100vw, 50vw"
+        className="object-contain"
+        priority={activeIndex === 0}
+      />
+
+      <div className="absolute inset-x-4 top-1/2 flex -translate-y-1/2 justify-between md:inset-x-5">
+        <button
+          type="button"
+          onClick={showPrevious}
+          aria-label="Ver creativo anterior"
+          className="flex size-11 items-center justify-center rounded-full border border-black/15 bg-white/90 text-black shadow-sm backdrop-blur-sm transition hover:scale-105 hover:bg-white focus-visible:ring-2 focus-visible:ring-[#ff6846] focus-visible:ring-offset-2 focus-visible:outline-none md:size-12"
+        >
+          <ChevronLeft className="size-5" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={showNext}
+          aria-label="Ver siguiente creativo"
+          className="flex size-11 items-center justify-center rounded-full border border-black/15 bg-white/90 text-black shadow-sm backdrop-blur-sm transition hover:scale-105 hover:bg-white focus-visible:ring-2 focus-visible:ring-[#ff6846] focus-visible:ring-offset-2 focus-visible:outline-none md:size-12"
+        >
+          <ChevronRight className="size-5" aria-hidden="true" />
+        </button>
+      </div>
+
+      <div
+        className="absolute right-4 bottom-4 rounded-full bg-black/75 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm md:right-5 md:bottom-5"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {activeIndex + 1} / {IMAGES_THAT_CONVERT.length}
       </div>
     </div>
   )
@@ -489,11 +563,17 @@ function AmzEditorialContent() {
                 <p className="mt-6 max-w-xl text-sm leading-relaxed text-black/60 md:text-lg">{capability.description}</p>
               </div>
               <div className={`relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-[#1d1d1d] ${index % 2 ? 'md:order-1' : ''}`}>
-                <div className="absolute inset-0 opacity-90" style={{ background: `radial-gradient(circle at 65% 35%, ${capability.accent}, transparent 34%), linear-gradient(145deg, #181818, #3a302c)` }} />
-                <span className="absolute -right-2 -bottom-12 font-display text-[12rem] font-bold leading-none tracking-tighter text-white/10 md:text-[15rem]">{capability.number}</span>
-                <div className="absolute top-7 left-7 flex size-14 items-center justify-center rounded-full bg-white text-[#171717] md:top-8 md:left-8 md:size-16">
-                  <Icon className="size-6 md:size-7" aria-hidden="true" />
-                </div>
+                {index === 0 ? (
+                  <ImagesThatConvertCarousel />
+                ) : (
+                  <>
+                    <div className="absolute inset-0 opacity-90" style={{ background: `radial-gradient(circle at 65% 35%, ${capability.accent}, transparent 34%), linear-gradient(145deg, #181818, #3a302c)` }} />
+                    <span className="absolute -right-2 -bottom-12 font-display text-[12rem] font-bold leading-none tracking-tighter text-white/10 md:text-[15rem]">{capability.number}</span>
+                    <div className="absolute top-7 left-7 flex size-14 items-center justify-center rounded-full bg-white text-[#171717] md:top-8 md:left-8 md:size-16">
+                      <Icon className="size-6 md:size-7" aria-hidden="true" />
+                    </div>
+                  </>
+                )}
               </div>
             </article>
           )
