@@ -7,7 +7,6 @@ import {
   ArrowUpRight,
   Box,
   Camera,
-  ExternalLink,
   Layers3,
   Sparkles,
   Video,
@@ -23,6 +22,7 @@ import {
 } from 'framer-motion'
 import { track } from '@vercel/analytics'
 import { useEffect, useRef, useState } from 'react'
+import { BrandScroller } from '@/components/ui/brand-scroller'
 import { withBasePath } from '@/lib/base-path'
 import {
   AMZ_CREATIVE_PROJECTS,
@@ -45,36 +45,36 @@ const CAPABILITIES: Capability[] = [
   {
     number: '01',
     eyebrow: 'Imágenes que convierten',
-    title: 'Diseñamos para vender, no solo para decorar.',
+    title: 'Tu producto tiene segundos para convencer.',
     description:
-      'Creamos imágenes principales, infografías, comparativas, storytelling visual y contenido A+ pensado para comunicar rápido y mejorar la percepción del producto.',
+      'Creamos imágenes principales, infografías, comparativas y contenido A+ que captan la atención, explican el valor del producto y resuelven las dudas clave antes de la compra.',
     icon: Camera,
     accent: '#ff6846',
   },
   {
     number: '02',
     eyebrow: 'Vídeos que venden',
-    title: 'Convertimos características en historias visuales.',
+    title: 'Hay ventajas que una imagen no puede demostrar.',
     description:
-      'Producimos vídeos de producto, anuncios, demostraciones, contenido para listings y piezas adaptadas a campañas y redes sociales.',
+      'Creamos vídeos de producto, demostraciones y anuncios que enseñan cómo funciona, resuelven dudas y ayudan al comprador a imaginar el producto en su día a día.',
     icon: Video,
     accent: '#ff9d78',
   },
   {
     number: '03',
     eyebrow: 'Producción real y modelos',
-    title: 'Escenas creíbles para productos reales.',
+    title: 'El comprador no solo quiere verlo. Quiere imaginarlo en su vida.',
     description:
-      'Trabajamos con fotografía de producto, lifestyle y modelos para mostrar el uso, la escala y el contexto de cada producto de una forma más humana.',
+      'Creamos fotografías lifestyle y producciones con modelos que muestran cómo se usa, qué escala tiene y cómo encaja el producto en situaciones reales.',
     icon: Layers3,
     accent: '#ff6846',
   },
   {
     number: '04',
     eyebrow: 'IA, 3D y producción híbrida',
-    title: 'Usamos cada tecnología donde aporta valor.',
+    title: 'La técnica cambia. El objetivo no: hacer que el producto convenza.',
     description:
-      'Combinamos producción tradicional, inteligencia artificial, animación y render 3D para ampliar las posibilidades creativas sin perder coherencia ni realismo.',
+      'Combinamos fotografía real, modelos, vídeo, render 3D e inteligencia artificial para crear la solución visual que mejor explique y eleve cada producto, sin perder coherencia ni realismo.',
     icon: Box,
     accent: '#ff9d78',
   },
@@ -234,6 +234,19 @@ function ReducedMotionPortal() {
 }
 
 function AmzProjectsGrid() {
+  const brands = AMZ_CREATIVE_PROJECTS.map((project) => {
+    const amazonUrl = getValidAmazonUrl(project.amazonUrl)
+
+    return {
+      name: project.brand,
+      logo: project.logoSrc,
+      width: project.logoWidth,
+      height: project.logoHeight,
+      href: amazonUrl?.href,
+      ariaLabel: project.ariaLabel,
+    }
+  })
+
   return (
     <section
       aria-labelledby="amz-projects-heading"
@@ -255,70 +268,20 @@ function AmzProjectsGrid() {
         </p>
       </div>
 
-      <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5">
-        {AMZ_CREATIVE_PROJECTS.map((project) => {
-          const amazonUrl = getValidAmazonUrl(project.amazonUrl)
-          const marketplace = project.marketplace ?? amazonUrl?.hostname ?? ''
-          const cardContent = (
-            <>
-              <div className="flex min-h-24 flex-1 items-center justify-center p-5 md:min-h-28 md:p-6">
-                <Image
-                  src={withBasePath(project.logoSrc)}
-                  alt={`Logo de ${project.brand}`}
-                  width={project.logoWidth}
-                  height={project.logoHeight}
-                  className="max-h-14 w-auto max-w-full object-contain md:max-h-16"
-                />
-              </div>
-              <div className="flex min-h-14 items-end justify-between gap-3 border-t border-white/10 px-4 py-3 text-left">
-                <div className="min-w-0">
-                  <span className="block truncate text-xs font-semibold text-white">
-                    {project.brand}
-                  </span>
-                  {project.productName && (
-                    <span className="mt-0.5 block truncate text-[11px] text-white/45">
-                      {project.productName}
-                    </span>
-                  )}
-                  {amazonUrl && (
-                    <span className="mt-1 hidden text-[10px] font-semibold tracking-wide text-[#ff9d78] uppercase md:block">
-                      Ver en Amazon
-                    </span>
-                  )}
-                </div>
-                {amazonUrl && (
-                  <ExternalLink
-                    className="size-3.5 shrink-0 text-white/55 transition-colors group-hover:text-[#ff9d78]"
-                    aria-hidden="true"
-                  />
-                )}
-              </div>
-            </>
-          )
-
-          return amazonUrl ? (
-            <a
-              key={project.id}
-              href={amazonUrl.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={project.ariaLabel}
-              title={`${project.brand}${project.productName ? ` · ${project.productName}` : ''} · Ver en Amazon`}
-              onClick={() => handleProjectClick(project, marketplace)}
-              className="group flex min-h-40 flex-col overflow-hidden rounded-2xl border border-black/10 bg-[#1d1d1d] transition duration-300 hover:-translate-y-1 hover:scale-[1.025] hover:border-[#ff6846]/55 focus-visible:ring-2 focus-visible:ring-[#ff6846] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f3f0eb] focus-visible:outline-none"
-            >
-              {cardContent}
-            </a>
-          ) : (
-            <div
-              key={project.id}
-              className="flex min-h-40 flex-col overflow-hidden rounded-2xl border border-black/10 bg-[#1d1d1d]/90 opacity-60"
-              title={`${project.brand} · Enlace de Amazon pendiente`}
-            >
-              {cardContent}
-            </div>
-          )
-        })}
+      <div className="relative mt-12 -mx-5 overflow-hidden md:-mx-8">
+        <BrandScroller
+          brands={brands}
+          duration={38}
+          variant="amz"
+          onBrandClick={(brand) => {
+            const project = AMZ_CREATIVE_PROJECTS.find(
+              (candidate) => candidate.brand === brand.name
+            )
+            if (project) {
+              handleProjectClick(project, project.marketplace ?? 'Amazon ES')
+            }
+          }}
+        />
       </div>
 
       <div className="mt-6 flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
@@ -345,11 +308,13 @@ function AmzEditorialContent() {
           <span className="text-xs font-bold tracking-[0.22em] text-[#ff6846] uppercase">AMZ Creatives</span>
           <Image src={withBasePath('/amz-creatives-logo.png')} alt="AMZ Creatives" width={4773} height={713} className="h-6 w-auto md:h-8" />
         </div>
-        <h3 className="mt-12 max-w-5xl font-display text-[clamp(3rem,7vw,7rem)] font-bold leading-[0.92] tracking-[-0.055em] text-balance">
-          Creatividad diseñada para destacar dentro de Amazon.
+        <h3 className="mt-12 max-w-5xl font-display text-[clamp(1.95rem,7vw,7rem)] font-bold leading-[0.96] tracking-[-0.055em]">
+          <span className="block whitespace-nowrap">En Amazon,</span>
+          <span className="block whitespace-nowrap">lo que no se entiende,</span>
+          <span className="block whitespace-nowrap text-[#ff6846]">no se elige.</span>
         </h3>
         <p className="mt-8 max-w-2xl text-base leading-relaxed text-black/60 md:text-xl">
-          Unimos estrategia, diseño y producción para mejorar cómo se percibe, se entiende y se compra un producto.
+          Convertimos las ventajas de tu producto en imágenes, vídeos y contenido de marca que atraen el clic, explican su valor y generan confianza para comprar.
         </p>
       </div>
 

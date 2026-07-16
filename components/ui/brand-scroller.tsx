@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { ExternalLink } from 'lucide-react'
 import { useRef, type CSSProperties } from 'react'
 import { cn } from '@/lib/utils'
 import { withBasePath } from '@/lib/base-path'
@@ -10,6 +11,8 @@ export type Brand = {
   logo: string
   width?: number
   height?: number
+  href?: string
+  ariaLabel?: string
 }
 
 // `logo` must already be a white-ink-on-transparent PNG/SVG — this component
@@ -25,6 +28,8 @@ interface BrandScrollerProps {
   direction?: 'left' | 'right'
   duration?: number
   className?: string
+  variant?: 'default' | 'amz'
+  onBrandClick?: (brand: Brand) => void
 }
 
 // Below this count a looping marquee reads as padding, not motion — show a
@@ -39,6 +44,8 @@ export function BrandScroller({
   direction = 'left',
   duration = 56,
   className,
+  variant = 'default',
+  onBrandClick,
 }: BrandScrollerProps) {
   const trackRef = useRef<HTMLDivElement>(null)
 
@@ -70,7 +77,7 @@ export function BrandScroller({
       <div
         ref={trackRef}
         className={cn(
-          'flex w-max items-center gap-14 md:gap-20',
+          'flex w-max items-center',
           shouldAnimate &&
             direction === 'left' &&
             'motion-safe:chr-brand-marquee motion-reduce:w-full motion-reduce:flex-wrap motion-reduce:justify-center',
@@ -91,22 +98,61 @@ export function BrandScroller({
           // is reduced, since the row no longer scrolls).
           const isDuplicate = shouldAnimate && index >= brands.length
 
-          return (
-            <div
-              key={`${brand.name}-${index}`}
-              className={cn(
-                'flex h-20 shrink-0 items-center justify-center px-4 md:h-24 md:px-5',
-                isDuplicate && 'motion-reduce:hidden'
-              )}
-              aria-hidden={isDuplicate || undefined}
-            >
+          const content = (
+            <>
               <Image
                 src={withBasePath(brand.logo)}
-                alt={isDuplicate ? '' : brand.name}
+                alt={isDuplicate ? '' : `Logo de ${brand.name}`}
                 width={brand.width ?? 120}
                 height={brand.height ?? 36}
-                className="max-h-14 w-auto max-w-[190px] object-contain opacity-80 transition-opacity duration-300 hover:opacity-100 md:max-h-16 md:max-w-[230px]"
+                className={cn(
+                  'w-auto object-contain transition-opacity duration-300',
+                  variant === 'default' &&
+                    'max-h-14 max-w-[190px] opacity-80 hover:opacity-100 md:max-h-16 md:max-w-[230px]',
+                  variant === 'amz' &&
+                    'max-h-16 max-w-[150px] brightness-0 md:max-h-20 md:max-w-[190px]'
+                )}
               />
+              {variant === 'amz' && brand.href && (
+                <ExternalLink
+                  className="absolute top-4 right-4 size-3.5 text-black/35 transition-colors group-hover:text-[#ff6846]"
+                  aria-hidden="true"
+                />
+              )}
+            </>
+          )
+
+          const itemClassName = cn(
+            'relative flex shrink-0 items-center justify-center',
+            variant === 'default' && 'mx-7 h-20 px-4 md:mx-10 md:h-24 md:px-5',
+            variant === 'amz' &&
+              'group mx-2 h-32 w-[210px] rounded-2xl border border-black/10 bg-white/65 px-7 shadow-[0_12px_40px_rgba(25,25,25,0.04)] md:mx-3 md:h-36 md:w-[260px] md:px-9',
+            variant === 'amz' && brand.href &&
+              'transition duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-[#ff6846]/60 focus-visible:ring-2 focus-visible:ring-[#ff6846] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f3f0eb] focus-visible:outline-none',
+            isDuplicate && 'motion-reduce:hidden'
+          )
+
+          return brand.href ? (
+            <a
+              key={`${brand.name}-${index}`}
+              href={brand.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={isDuplicate ? undefined : brand.ariaLabel}
+              aria-hidden={isDuplicate || undefined}
+              tabIndex={isDuplicate ? -1 : undefined}
+              className={itemClassName}
+              onClick={() => onBrandClick?.(brand)}
+            >
+              {content}
+            </a>
+          ) : (
+            <div
+              key={`${brand.name}-${index}`}
+              className={itemClassName}
+              aria-hidden={isDuplicate || undefined}
+            >
+              {content}
             </div>
           )
         })}
