@@ -55,11 +55,15 @@ export function CreativePortfolioCarousel({
 
     const measure = () => {
       const styles = window.getComputedStyle(firstCard)
-      const cardWidth = firstCard.getBoundingClientRect().width
+      // offsetWidth/clientWidth deliberately ignore Framer Motion transforms.
+      // Measuring getBoundingClientRect() here included the inactive card's
+      // scale(0.84), making every carousel step too short and accumulating a
+      // visible horizontal drift as the active index increased.
+      const cardWidth = firstCard.offsetWidth
       const marginLeft = Number.parseFloat(styles.marginLeft) || 0
       const marginRight = Number.parseFloat(styles.marginRight) || 0
       setStep(cardWidth + marginLeft + marginRight)
-      setCenterOffset((viewport.getBoundingClientRect().width - cardWidth) / 2)
+      setCenterOffset((viewport.clientWidth - cardWidth) / 2)
     }
 
     measure()
