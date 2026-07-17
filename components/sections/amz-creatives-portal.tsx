@@ -7,12 +7,8 @@ import {
   ArrowUpRight,
   Box,
   Camera,
-  CircleHelp,
-  Eye,
   GripVertical,
   Layers3,
-  ScanText,
-  Sparkles,
   Video,
   type LucideIcon,
 } from 'lucide-react'
@@ -93,36 +89,33 @@ const CAPABILITIES: Capability[] = [
 
 const CREATIVE_BENEFITS = [
   {
-    title: 'Capta la atención desde la primera imagen',
-    description:
-      'El producto destaca dentro de la categoría sin perder claridad ni incumplir las normas de Amazon.',
-    icon: Eye,
+    number: '01',
+    title: 'CAPTA EL CLIC',
+    description: 'Destaca desde la primera imagen sin perder claridad.',
   },
   {
-    title: 'Explica su valor en segundos',
+    number: '02',
+    title: 'EXPLICA EL VALOR',
     description:
-      'Los beneficios importantes se entienden rápido, sin obligar al comprador a descifrar el listing.',
-    icon: ScanText,
+      'Convierte características en beneficios fáciles de entender.',
   },
   {
-    title: 'Resuelve dudas antes de la compra',
-    description:
-      'Las imágenes, el vídeo y el contenido A+ responden las objeciones que podrían frenar la decisión.',
-    icon: CircleHelp,
+    number: '03',
+    title: 'REDUCE LAS DUDAS',
+    description: 'Responde las objeciones que pueden frenar la compra.',
   },
   {
-    title: 'Eleva la percepción de marca',
-    description:
-      'Todo el contenido transmite más coherencia, confianza y calidad.',
-    icon: Sparkles,
+    number: '04',
+    title: 'ELEVA LA MARCA',
+    description: 'Transmite más coherencia, confianza y calidad.',
   },
 ]
 
 const CREATIVE_CHANGES = [
   'Jerarquía visual más clara',
-  'Beneficios fáciles de identificar',
-  'Producto mostrado con más contexto',
-  'Identidad visual más coherente',
+  'Beneficios más visibles',
+  'Mejor contexto de uso',
+  'Marca más coherente',
 ]
 
 // TODO: Sustituir por la imagen original del listing en
@@ -452,96 +445,108 @@ function BeforeAfterComparison() {
   const [position, setPosition] = useState(50)
 
   return (
-    <div className="mt-14 border-t border-black/25 pt-12 md:mt-20 md:pt-16">
-      <div className="max-w-3xl">
-        <span className="text-xs font-bold tracking-[0.2em] uppercase">
-          Antes y después
-        </span>
-        <h4 className="mt-5 font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-5xl">
-          El mismo producto. Una forma completamente distinta de presentarlo.
-        </h4>
-        <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/65 md:text-base">
-          Compara cómo cambia la percepción cuando la información, la fotografía y la jerarquía visual trabajan juntas.
-        </p>
-      </div>
+    <section
+      className="border-t border-black/10 bg-[#ff6846] px-5 py-24 md:px-8 md:py-32"
+      aria-labelledby="amz-before-after-title"
+    >
+      <div className="mx-auto max-w-6xl">
+        <div className="max-w-4xl">
+          <span className="text-xs font-bold tracking-[0.2em] uppercase">
+            ANTES Y DESPUÉS
+          </span>
+          <h3
+            id="amz-before-after-title"
+            className="mt-5 font-display text-4xl font-bold leading-[1.02] tracking-tight md:text-6xl"
+          >
+            <span className="block">El mismo producto.</span>
+            <span className="block">Una forma completamente distinta</span>
+            <span className="block font-extrabold underline decoration-black/25 decoration-2 underline-offset-[0.16em]">
+              de competir.
+            </span>
+          </h3>
+          <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/65 md:text-base">
+            Desliza para comprobar cómo cambian la claridad, la percepción y la fuerza visual cuando cada elemento responde a una estrategia.
+          </p>
+        </div>
 
-      <div className="relative mt-10 aspect-[4/3] w-full overflow-hidden rounded-[1.5rem] border border-black/20 bg-[#f3f0eb] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-black has-[:focus-visible]:ring-offset-4 has-[:focus-visible]:ring-offset-[#ff6846] md:aspect-[16/9] md:rounded-[2rem]">
-        {AFTER_IMAGE_SRC ? (
-          <Image
-            src={withBasePath(AFTER_IMAGE_SRC)}
-            alt="Creativo final desarrollado por AMZ Creatives"
-            fill
-            sizes="(max-width: 768px) 100vw, 1152px"
-            className="object-cover"
+        <div className="relative mt-10 aspect-[4/3] w-full overflow-hidden rounded-[1.5rem] border border-black/20 bg-[#f3f0eb] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-black has-[:focus-visible]:ring-offset-4 has-[:focus-visible]:ring-offset-[#ff6846] md:aspect-[16/9] md:rounded-[2rem]">
+          {AFTER_IMAGE_SRC ? (
+            <Image
+              src={withBasePath(AFTER_IMAGE_SRC)}
+              alt="Creativo final desarrollado por AMZ Creatives"
+              fill
+              sizes="(max-width: 768px) 100vw, 1152px"
+              className="object-cover"
+            />
+          ) : (
+            <ComparisonFallback final />
+          )}
+
+          <div
+            className="absolute inset-y-0 left-0 overflow-hidden"
+            style={{ width: `${position}%` }}
+            aria-hidden="true"
+          >
+            <div className="absolute inset-y-0 left-0 w-[calc(100vw-2.5rem)] max-w-6xl md:w-[calc(100vw-4rem)]">
+              {BEFORE_IMAGE_SRC ? (
+                <Image
+                  src={withBasePath(BEFORE_IMAGE_SRC)}
+                  alt="Creativo anterior del producto"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 1152px"
+                  className="object-cover"
+                />
+              ) : (
+                <ComparisonFallback />
+              )}
+            </div>
+          </div>
+
+          <span className="absolute top-4 left-4 rounded-full bg-[#191919] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-white uppercase md:top-6 md:left-6">
+            Antes
+          </span>
+          <span className="absolute top-4 right-4 rounded-full bg-[#ff6846] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-black uppercase md:top-6 md:right-6">
+            Después
+          </span>
+
+          <div
+            className="pointer-events-none absolute inset-y-0 z-10 w-px bg-black/70"
+            style={{ left: `${position}%` }}
+            aria-hidden="true"
+          >
+            <span className="absolute top-1/2 left-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-black/20 bg-white text-black shadow-sm md:size-12">
+              <GripVertical className="size-5" />
+            </span>
+          </div>
+
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={position}
+            onChange={(event) => setPosition(Number(event.target.value))}
+            aria-label="Comparar el creativo anterior con el creativo final de AMZ Creatives"
+            className="absolute inset-0 z-20 size-full cursor-ew-resize opacity-0 [touch-action:pan-y]"
           />
-        ) : (
-          <ComparisonFallback final />
-        )}
+        </div>
 
-        <div
-          className="absolute inset-y-0 left-0 overflow-hidden"
-          style={{ width: `${position}%` }}
-          aria-hidden="true"
-        >
-          <div className="absolute inset-y-0 left-0 w-[calc(100vw-2.5rem)] max-w-6xl md:w-[calc(100vw-4rem)]">
-            {BEFORE_IMAGE_SRC ? (
-              <Image
-                src={withBasePath(BEFORE_IMAGE_SRC)}
-                alt="Creativo anterior del producto"
-                fill
-                sizes="(max-width: 768px) 100vw, 1152px"
-                className="object-cover"
-              />
-            ) : (
-              <ComparisonFallback />
-            )}
+        <div className="mt-8">
+          <p className="text-xs font-bold tracking-[0.18em] uppercase">
+            QUÉ HEMOS TRABAJADO
+          </p>
+          <div className="mt-4 grid border-t border-black/25 sm:grid-cols-2 lg:grid-cols-4">
+            {CREATIVE_CHANGES.map((change) => (
+              <div
+                key={change}
+                className="border-b border-black/20 py-5 text-sm font-semibold sm:px-5 sm:first:pl-0 lg:border-r lg:last:border-r-0"
+              >
+                {change}
+              </div>
+            ))}
           </div>
         </div>
-
-        <span className="absolute top-4 left-4 rounded-full bg-[#191919] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-white uppercase md:top-6 md:left-6">
-          Antes
-        </span>
-        <span className="absolute top-4 right-4 rounded-full bg-[#ff6846] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-black uppercase md:top-6 md:right-6">
-          Después
-        </span>
-
-        <div
-          className="pointer-events-none absolute inset-y-0 z-10 w-px bg-black/70"
-          style={{ left: `${position}%` }}
-          aria-hidden="true"
-        >
-          <span className="absolute top-1/2 left-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-black/20 bg-white text-black shadow-sm md:size-12">
-            <GripVertical className="size-5" />
-          </span>
-        </div>
-
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={position}
-          onChange={(event) => setPosition(Number(event.target.value))}
-          aria-label="Comparar el creativo anterior con el creativo final de AMZ Creatives"
-          className="absolute inset-0 z-20 size-full cursor-ew-resize opacity-0 [touch-action:pan-y]"
-        />
       </div>
-
-      <div className="mt-8">
-        <p className="text-xs font-bold tracking-[0.18em] uppercase">
-          Qué hemos trabajado
-        </p>
-        <div className="mt-4 grid border-t border-black/25 sm:grid-cols-2 lg:grid-cols-4">
-          {CREATIVE_CHANGES.map((change) => (
-            <div
-              key={change}
-              className="border-b border-black/20 py-5 text-sm font-semibold sm:px-5 sm:first:pl-0 lg:border-r lg:last:border-r-0"
-            >
-              {change}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    </section>
   )
 }
 
@@ -567,7 +572,14 @@ function AmzEditorialContent() {
         {CAPABILITIES.map((capability, index) => {
           const Icon = capability.icon
           return (
-            <article key={capability.number} className="grid gap-8 border-t border-black/15 py-16 md:grid-cols-2 md:items-center md:gap-20 md:py-24">
+            <article
+              key={capability.number}
+              className={`grid gap-8 border-t border-black/15 py-16 md:items-center md:py-24 ${
+                index === 2
+                  ? 'md:grid-cols-[0.78fr_1.22fr] md:gap-12'
+                  : 'md:grid-cols-2 md:gap-20'
+              }`}
+            >
               <div className={index % 2 ? 'md:order-2' : undefined}>
                 <div className="flex items-center gap-4">
                   <span className="font-display text-5xl font-bold text-[#ff6846] md:text-7xl">{capability.number}</span>
@@ -604,45 +616,55 @@ function AmzEditorialContent() {
 
       <AmzProjectsGrid />
 
-      <div className="bg-[#ff6846] px-5 py-24 md:px-8 md:py-32">
+      <section
+        className="border-t border-black/10 bg-[#f3f0eb] px-5 py-24 md:px-8 md:py-32"
+        aria-labelledby="amz-creative-change-title"
+      >
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-12 md:grid-cols-2 md:items-start md:gap-16">
             <div>
-              <span className="text-xs font-bold tracking-[0.2em] uppercase">
-                Lo que cambia
+              <span className="text-xs font-bold tracking-[0.2em] text-[#ff6846] uppercase">
+                LO QUE CAMBIA
               </span>
-              <h3 className="mt-5 font-display text-4xl font-bold leading-tight tracking-tight text-balance md:text-6xl">
-                Cuando el creativo tiene estrategia, el producto deja de parecer uno más.
+              <h3
+                id="amz-creative-change-title"
+                className="mt-5 font-display text-4xl font-bold leading-[1.02] tracking-tight md:text-6xl"
+              >
+                <span className="block">Un buen creativo</span>
+                <span className="block">no solo mejora la imagen.</span>
+                <span className="block text-[#ff6846]">Mejora la decisión.</span>
               </h3>
               <p className="mt-6 max-w-xl text-sm leading-relaxed text-black/65 md:text-base">
-                No se trata de añadir diseño. Se trata de ordenar la información, anticipar objeciones y hacer visible el valor del producto antes de que el comprador termine comparando solo por precio.
+                Ordenamos la información, destacamos los beneficios y resolvemos objeciones para que el comprador entienda rápidamente por qué debería elegir tu producto.
               </p>
             </div>
-            <div className="grid gap-x-8 sm:grid-cols-2">
-              {CREATIVE_BENEFITS.map((benefit) => {
-                const Icon = benefit.icon
-
-                return (
-                  <article
-                    key={benefit.title}
-                    className="border-t border-black/25 py-6"
-                  >
-                    <Icon className="size-5" aria-hidden="true" />
-                    <h4 className="mt-5 font-display text-xl font-bold leading-tight">
-                      {benefit.title}
-                    </h4>
-                    <p className="mt-3 text-sm leading-relaxed text-black/65">
-                      {benefit.description}
-                    </p>
-                  </article>
-                )
-              })}
+            <div className="grid md:grid-cols-2">
+              {CREATIVE_BENEFITS.map((benefit, index) => (
+                <article
+                  key={benefit.title}
+                  className={`border-t border-black/20 py-7 md:py-8 ${
+                    index % 2 === 0
+                      ? 'md:pr-8'
+                      : 'md:border-l md:pl-8'
+                  }`}
+                >
+                  <span className="font-display text-5xl font-bold leading-none text-[#ff6846] md:text-6xl">
+                    {benefit.number}
+                  </span>
+                  <h4 className="mt-5 text-sm font-bold tracking-[0.14em] text-[#191919] uppercase">
+                    {benefit.title}
+                  </h4>
+                  <p className="mt-3 max-w-xs text-sm leading-relaxed text-black/60">
+                    {benefit.description}
+                  </p>
+                </article>
+              ))}
             </div>
           </div>
-
-          <BeforeAfterComparison />
         </div>
-      </div>
+      </section>
+
+      <BeforeAfterComparison />
 
       <div className="starfield relative bg-[#020817] px-5 py-28 text-white md:px-8 md:py-36">
         <div className="mx-auto max-w-6xl">
