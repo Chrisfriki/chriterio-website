@@ -143,6 +143,26 @@ const IMAGES_THAT_CONVERT: CreativeSlide[] = Array.from(
   })
 )
 
+const REAL_PRODUCTION_AND_MODELS: CreativeSlide[] = [
+  { id: 'production-01', src: '/amz-creatives/real-production-and-models/ALV02240.webp', alt: 'Fotografía lifestyle de un perro realizada por AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-02', src: '/amz-creatives/real-production-and-models/BAÑERA BLANCA JIRAFFITY-22.webp', alt: 'Producción lifestyle de producto infantil realizada por AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-03', src: '/amz-creatives/real-production-and-models/DECAP PINZAS-23.webp', alt: 'Fotografía de producto en uso realizada por AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-04', src: '/amz-creatives/real-production-and-models/DECAP PINZAS-40.webp', alt: 'Detalle de producción real con producto realizada por AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-05', src: '/amz-creatives/real-production-and-models/KIT BORDADOCaptura 2026-03-10 094212_5.8.1.webp', alt: 'Escena lifestyle de kit de bordado realizada por AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-06', src: '/amz-creatives/real-production-and-models/KIT BORDADO_G2A3749.webp', alt: 'Modelo utilizando un kit de bordado en una producción de AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-07', src: '/amz-creatives/real-production-and-models/KIT BORDADO_G2A3863.webp', alt: 'Detalle de uso de un kit de bordado fotografiado por AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-08', src: '/amz-creatives/real-production-and-models/KIT TE MATCHA-47.webp', alt: 'Producción lifestyle de un kit de té matcha realizada por AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-09', src: '/amz-creatives/real-production-and-models/KIT TE MATCHA-49.webp', alt: 'Detalle del uso de un kit de té matcha fotografiado por AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-10', src: '/amz-creatives/real-production-and-models/RAMPA PERROS-039.webp', alt: 'Perro utilizando una rampa en una producción lifestyle de AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-11', src: '/amz-creatives/real-production-and-models/REPOSACABEZAS-33.webp', alt: 'Modelo mostrando un reposacabezas en una producción de AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-12', src: '/amz-creatives/real-production-and-models/REPOSACABEZAS-47.webp', alt: 'Fotografía lifestyle de un reposacabezas realizada por AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-13', src: '/amz-creatives/real-production-and-models/_G2A0080.webp', alt: 'Producción real con modelo realizada por AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-14', src: '/amz-creatives/real-production-and-models/_G2A7579.webp', alt: 'Fotografía de producto con modelo realizada por AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-15', src: '/amz-creatives/real-production-and-models/_MG_0205.webp', alt: 'Escena de uso real de producto fotografiada por AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-16', src: '/amz-creatives/real-production-and-models/_MG_0871.webp', alt: 'Producción lifestyle con producto realizada por AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-17', src: '/amz-creatives/real-production-and-models/_MG_5602.webp', alt: 'Modelo presentando un producto en una fotografía de AMZ Creatives', type: 'lifestyle' },
+]
+
 const AMAZON_MARKETPLACE_HOSTS = new Set([
   'amazon.es',
   'amazon.com',
@@ -556,11 +576,17 @@ function AmzEditorialContent() {
                 <h4 className="mt-7 font-display text-3xl font-bold leading-tight tracking-tight md:text-5xl">{capability.title}</h4>
                 <p className="mt-6 max-w-xl text-sm leading-relaxed text-black/60 md:text-lg">{capability.description}</p>
               </div>
-              <div className={`relative min-w-0 ${index === 0 ? '' : 'aspect-[4/3] overflow-hidden rounded-[2rem] bg-[#1d1d1d]'} ${index % 2 ? 'md:order-1' : ''}`}>
+              <div className={`relative min-w-0 ${index === 0 || index === 2 ? '' : 'aspect-[4/3] overflow-hidden rounded-[2rem] bg-[#1d1d1d]'} ${index % 2 ? 'md:order-1' : ''}`}>
                 {index === 0 ? (
                   <CreativePortfolioCarousel slides={IMAGES_THAT_CONVERT} />
                 ) : index === 1 ? (
                   <VideosThatSellShowcase />
+                ) : index === 2 ? (
+                  <CreativePortfolioCarousel
+                    slides={REAL_PRODUCTION_AND_MODELS}
+                    aspectRatio="landscape"
+                    imageFit="cover"
+                  />
                 ) : (
                   <>
                     <div className="absolute inset-0 opacity-90" style={{ background: `radial-gradient(circle at 65% 35%, ${capability.accent}, transparent 34%), linear-gradient(145deg, #181818, #3a302c)` }} />

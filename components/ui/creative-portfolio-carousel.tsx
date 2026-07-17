@@ -20,6 +20,8 @@ export interface CreativeSlide {
 interface CreativePortfolioCarouselProps {
   slides: CreativeSlide[]
   className?: string
+  aspectRatio?: 'square' | 'landscape'
+  imageFit?: 'contain' | 'cover'
 }
 
 const SWIPE_DISTANCE = 45
@@ -28,6 +30,8 @@ const SWIPE_VELOCITY = 450
 export function CreativePortfolioCarousel({
   slides,
   className,
+  aspectRatio = 'square',
+  imageFit = 'contain',
 }: CreativePortfolioCarouselProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
   const firstCardRef = useRef<HTMLElement>(null)
@@ -142,7 +146,7 @@ export function CreativePortfolioCarousel({
               <motion.article
                 ref={index === 0 ? firstCardRef : undefined}
                 key={`${slide.id}-${index}`}
-                className="mx-1.5 aspect-square w-[92%] shrink-0 overflow-hidden rounded-[1.75rem] border bg-white sm:mx-2 sm:w-[92%]"
+                className={`mx-1.5 w-[92%] shrink-0 overflow-hidden rounded-[1.75rem] border bg-white sm:mx-2 sm:w-[92%] ${aspectRatio === 'landscape' ? 'aspect-[3/2]' : 'aspect-square'}`}
                 animate={{
                   scale: isActive ? 1 : 0.84,
                   opacity: isActive ? 1 : 0.28,
@@ -162,7 +166,7 @@ export function CreativePortfolioCarousel({
                     alt={isClone ? '' : slide.alt}
                     fill
                     sizes="(max-width: 767px) 92vw, 46vw"
-                    className="object-contain"
+                    className={imageFit === 'cover' ? 'object-cover' : 'object-contain'}
                     draggable={false}
                   />
                 </div>
