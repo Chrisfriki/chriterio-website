@@ -118,13 +118,8 @@ const CREATIVE_CHANGES = [
   'Marca más coherente',
 ]
 
-// TODO: Sustituir por la imagen original del listing en
-// /public/amz-creatives/before-after/before.webp.
-const BEFORE_IMAGE_SRC: string | null = null
-
-// TODO: Sustituir por el creativo final de AMZ Creatives en
-// /public/amz-creatives/before-after/after.webp.
-const AFTER_IMAGE_SRC: string | null = null
+const BEFORE_IMAGE_SRC = '/amz-creatives/before-after/before.webp'
+const AFTER_IMAGE_SRC = '/amz-creatives/before-after/after.webp'
 
 const IMAGES_THAT_CONVERT: CreativeSlide[] = Array.from(
   { length: 11 },
@@ -137,23 +132,23 @@ const IMAGES_THAT_CONVERT: CreativeSlide[] = Array.from(
 )
 
 const REAL_PRODUCTION_AND_MODELS: CreativeSlide[] = [
-  { id: 'production-01', src: '/amz-creatives/real-production-and-models/ALV02240.webp', alt: 'Fotografía lifestyle de un perro realizada por AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-02', src: '/amz-creatives/real-production-and-models/BAÑERA BLANCA JIRAFFITY-22.webp', alt: 'Producción lifestyle de producto infantil realizada por AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-03', src: '/amz-creatives/real-production-and-models/DECAP PINZAS-23.webp', alt: 'Fotografía de producto en uso realizada por AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-04', src: '/amz-creatives/real-production-and-models/DECAP PINZAS-40.webp', alt: 'Detalle de producción real con producto realizada por AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-05', src: '/amz-creatives/real-production-and-models/KIT BORDADOCaptura 2026-03-10 094212_5.8.1.webp', alt: 'Escena lifestyle de kit de bordado realizada por AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-06', src: '/amz-creatives/real-production-and-models/KIT BORDADO_G2A3749.webp', alt: 'Modelo utilizando un kit de bordado en una producción de AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-07', src: '/amz-creatives/real-production-and-models/KIT BORDADO_G2A3863.webp', alt: 'Detalle de uso de un kit de bordado fotografiado por AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-08', src: '/amz-creatives/real-production-and-models/KIT TE MATCHA-47.webp', alt: 'Producción lifestyle de un kit de té matcha realizada por AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-09', src: '/amz-creatives/real-production-and-models/KIT TE MATCHA-49.webp', alt: 'Detalle del uso de un kit de té matcha fotografiado por AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-10', src: '/amz-creatives/real-production-and-models/RAMPA PERROS-039.webp', alt: 'Perro utilizando una rampa en una producción lifestyle de AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-11', src: '/amz-creatives/real-production-and-models/REPOSACABEZAS-33.webp', alt: 'Modelo mostrando un reposacabezas en una producción de AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-12', src: '/amz-creatives/real-production-and-models/REPOSACABEZAS-47.webp', alt: 'Fotografía lifestyle de un reposacabezas realizada por AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-13', src: '/amz-creatives/real-production-and-models/_G2A0080.webp', alt: 'Producción real con modelo realizada por AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-14', src: '/amz-creatives/real-production-and-models/_G2A7579.webp', alt: 'Fotografía de producto con modelo realizada por AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-15', src: '/amz-creatives/real-production-and-models/_MG_0205.webp', alt: 'Escena de uso real de producto fotografiada por AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-16', src: '/amz-creatives/real-production-and-models/_MG_0871.webp', alt: 'Producción lifestyle con producto realizada por AMZ Creatives', type: 'lifestyle' },
-  { id: 'production-17', src: '/amz-creatives/real-production-and-models/_MG_5602.webp', alt: 'Modelo presentando un producto en una fotografía de AMZ Creatives', type: 'lifestyle' },
+  { id: 'production-01', src: '/amz-creatives/real-production-and-models/dog-behind-gate.webp', alt: 'Perro detrás de una barrera de seguridad', type: 'lifestyle' },
+  { id: 'production-02', src: '/amz-creatives/real-production-and-models/baby-in-bath.webp', alt: 'Bebé utilizando un cojín de bañera', type: 'lifestyle' },
+  { id: 'production-03', src: '/amz-creatives/real-production-and-models/padel-training.webp', alt: 'Jugador entrenando pádel con una pelota elástica', type: 'lifestyle' },
+  { id: 'production-04', src: '/amz-creatives/real-production-and-models/tennis-ball-closeup.webp', alt: 'Detalle de una pelota de tenis sobre la pista', type: 'lifestyle' },
+  { id: 'production-05', src: '/amz-creatives/real-production-and-models/baby-on-changing-table.webp', alt: 'Bebé sobre un cambiador Toral', type: 'lifestyle' },
+  { id: 'production-06', src: '/amz-creatives/real-production-and-models/embroidery-instructions.webp', alt: 'Modelo siguiendo las instrucciones de un kit de bordado', type: 'lifestyle' },
+  { id: 'production-07', src: '/amz-creatives/real-production-and-models/embroidery-kit.webp', alt: 'Presentación completa de un kit de bordado', type: 'lifestyle' },
+  { id: 'production-08', src: '/amz-creatives/real-production-and-models/matcha-kit-bright.webp', alt: 'Kit de té matcha en una escena luminosa', type: 'lifestyle' },
+  { id: 'production-09', src: '/amz-creatives/real-production-and-models/matcha-kit-warm.webp', alt: 'Kit de té matcha en una escena cálida', type: 'lifestyle' },
+  { id: 'production-10', src: '/amz-creatives/real-production-and-models/dog-using-bed-ramp.webp', alt: 'Perro utilizando una rampa para subir a la cama', type: 'lifestyle' },
+  { id: 'production-11', src: '/amz-creatives/real-production-and-models/car-headrest-teen.webp', alt: 'Adolescente utilizando un reposacabezas en el coche', type: 'lifestyle' },
+  { id: 'production-12', src: '/amz-creatives/real-production-and-models/car-headrest-child.webp', alt: 'Niño descansando con un reposacabezas en el coche', type: 'lifestyle' },
+  { id: 'production-13', src: '/amz-creatives/real-production-and-models/senior-pedal-exerciser.webp', alt: 'Persona mayor utilizando un ejercitador de pedales', type: 'lifestyle' },
+  { id: 'production-14', src: '/amz-creatives/real-production-and-models/dashboard-cleaner.webp', alt: 'Aplicación de un limpiador sobre el salpicadero del coche', type: 'lifestyle' },
+  { id: 'production-15', src: '/amz-creatives/real-production-and-models/pop-up-tent.webp', alt: 'Montaje de una tienda de campaña desplegable', type: 'lifestyle' },
+  { id: 'production-16', src: '/amz-creatives/real-production-and-models/kitchen-salt-cellar.webp', alt: 'Salero con tapa de bambú sobre una encimera', type: 'lifestyle' },
+  { id: 'production-17', src: '/amz-creatives/real-production-and-models/pool-paint-bucket.webp', alt: 'Modelo transportando un cubo de pintura para piscinas', type: 'lifestyle' },
 ]
 
 const AMAZON_MARKETPLACE_HOSTS = new Set([
