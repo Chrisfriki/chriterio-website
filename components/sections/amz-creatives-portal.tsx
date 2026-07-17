@@ -415,27 +415,6 @@ function AmzProjectsGrid() {
   )
 }
 
-function ComparisonFallback({ final }: { final?: boolean }) {
-  return (
-    <div
-      className={`absolute inset-0 flex items-center justify-center border-2 border-dashed p-6 text-center ${
-        final
-          ? 'border-[#ff6846]/35 bg-[#fff7f3]'
-          : 'border-black/15 bg-[#e9e5df]'
-      }`}
-    >
-      <div>
-        <span className="text-[10px] font-bold tracking-[0.2em] text-black/40 uppercase">
-          Recurso pendiente
-        </span>
-        <p className="mt-3 font-display text-xl font-bold text-black/55 md:text-3xl">
-          {final ? 'Añadir imagen final' : 'Añadir imagen anterior'}
-        </p>
-      </div>
-    </div>
-  )
-}
-
 function BeforeAfterComparison() {
   const [position, setPosition] = useState(50)
 
@@ -445,84 +424,76 @@ function BeforeAfterComparison() {
       aria-labelledby="amz-before-after-title"
     >
       <div className="mx-auto max-w-6xl">
-        <div className="max-w-4xl">
-          <span className="text-xs font-bold tracking-[0.2em] uppercase">
-            ANTES Y DESPUÉS
-          </span>
-          <h3
-            id="amz-before-after-title"
-            className="mt-5 font-display text-4xl font-bold leading-[1.02] tracking-tight md:text-6xl"
-          >
-            <span className="block">El mismo producto.</span>
-            <span className="block">Una forma completamente distinta</span>
-            <span className="block font-extrabold underline decoration-black/25 decoration-2 underline-offset-[0.16em]">
-              de competir.
+        <div className="grid gap-10 md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-14 lg:gap-20">
+          <div>
+            <span className="text-xs font-bold tracking-[0.2em] uppercase">
+              ANTES Y DESPUÉS
             </span>
-          </h3>
-          <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/65 md:text-base">
-            Desliza para comprobar cómo cambian la claridad, la percepción y la fuerza visual cuando cada elemento responde a una estrategia.
-          </p>
-        </div>
+            <h3
+              id="amz-before-after-title"
+              className="mt-5 font-display text-4xl font-bold leading-[1.02] tracking-tight md:text-5xl lg:text-6xl"
+            >
+              <span className="block">El mismo producto.</span>
+              <span className="block">Una forma completamente distinta</span>
+              <span className="block font-extrabold text-[#f3f0eb]">
+                de competir.
+              </span>
+            </h3>
+            <p className="mt-6 max-w-xl text-sm leading-relaxed text-black/65 md:text-base">
+              Desliza para comprobar cómo cambian la claridad, la percepción y la fuerza visual cuando cada elemento responde a una estrategia.
+            </p>
+          </div>
 
-        <div className="relative mt-10 aspect-[4/3] w-full overflow-hidden rounded-[1.5rem] border border-black/20 bg-[#f3f0eb] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-black has-[:focus-visible]:ring-offset-4 has-[:focus-visible]:ring-offset-[#ff6846] md:aspect-[16/9] md:rounded-[2rem]">
-          {AFTER_IMAGE_SRC ? (
+          <div className="relative aspect-square w-full overflow-hidden rounded-[1.5rem] border border-black/20 bg-[#f3f0eb] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-black has-[:focus-visible]:ring-offset-4 has-[:focus-visible]:ring-offset-[#ff6846] md:rounded-[2rem]">
             <Image
               src={withBasePath(AFTER_IMAGE_SRC)}
               alt="Creativo final desarrollado por AMZ Creatives"
               fill
-              sizes="(max-width: 768px) 100vw, 1152px"
+              sizes="(max-width: 767px) calc(100vw - 2.5rem), 55vw"
               className="object-cover"
             />
-          ) : (
-            <ComparisonFallback final />
-          )}
 
-          <div
-            className="absolute inset-y-0 left-0 overflow-hidden"
-            style={{ width: `${position}%` }}
-            aria-hidden="true"
-          >
-            <div className="absolute inset-y-0 left-0 w-[calc(100vw-2.5rem)] max-w-6xl md:w-[calc(100vw-4rem)]">
-              {BEFORE_IMAGE_SRC ? (
-                <Image
-                  src={withBasePath(BEFORE_IMAGE_SRC)}
-                  alt="Creativo anterior del producto"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 1152px"
-                  className="object-cover"
-                />
-              ) : (
-                <ComparisonFallback />
-              )}
+            <div
+              className="absolute inset-0"
+              style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
+              aria-hidden="true"
+            >
+              <Image
+                src={withBasePath(BEFORE_IMAGE_SRC)}
+                alt="Creativo anterior del producto"
+                fill
+                sizes="(max-width: 767px) calc(100vw - 2.5rem), 55vw"
+                className="object-cover"
+              />
             </div>
-          </div>
 
-          <span className="absolute top-4 left-4 rounded-full bg-[#191919] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-white uppercase md:top-6 md:left-6">
-            Antes
-          </span>
-          <span className="absolute top-4 right-4 rounded-full bg-[#ff6846] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-black uppercase md:top-6 md:right-6">
-            Después
-          </span>
-
-          <div
-            className="pointer-events-none absolute inset-y-0 z-10 w-px bg-black/70"
-            style={{ left: `${position}%` }}
-            aria-hidden="true"
-          >
-            <span className="absolute top-1/2 left-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-black/20 bg-white text-black shadow-sm md:size-12">
-              <GripVertical className="size-5" />
+            <span className="absolute top-4 left-4 rounded-full bg-[#191919] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-white uppercase md:top-6 md:left-6">
+              Antes
             </span>
-          </div>
+            <span className="absolute top-4 right-4 rounded-full bg-[#ff6846] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-black uppercase md:top-6 md:right-6">
+              Después
+            </span>
 
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={position}
-            onChange={(event) => setPosition(Number(event.target.value))}
-            aria-label="Comparar el creativo anterior con el creativo final de AMZ Creatives"
-            className="absolute inset-0 z-20 size-full cursor-ew-resize opacity-0 [touch-action:pan-y]"
-          />
+            <div
+              className="pointer-events-none absolute inset-y-0 z-10 w-px bg-black/70"
+              style={{ left: `${position}%` }}
+              aria-hidden="true"
+            >
+              <span className="absolute top-1/2 left-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-black/20 bg-white text-black shadow-sm md:size-12">
+                <GripVertical className="size-5" />
+              </span>
+            </div>
+
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={position}
+              onChange={(event) => setPosition(Number(event.target.value))}
+              aria-label="Comparar el creativo anterior con el creativo final de AMZ Creatives"
+              className="absolute inset-0 z-20 size-full cursor-ew-resize opacity-0 [touch-action:pan-y]"
+            />
+          </div>
         </div>
 
         <div className="mt-8">
