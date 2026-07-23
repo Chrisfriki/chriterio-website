@@ -417,102 +417,160 @@ function AmzProjectsGrid() {
 
 function BeforeAfterComparison() {
   const [position, setPosition] = useState(50)
+  const sectionRef = useRef<HTMLElement>(null)
+  const prefersReducedMotion = useReducedMotion()
+  const isMobile = useMobileViewport()
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+  const mediaScale = useTransform(
+    scrollYProgress,
+    [0.6, 1],
+    [1, isMobile ? 0.95 : 0.91]
+  )
+  const mediaY = useTransform(
+    scrollYProgress,
+    [0.6, 1],
+    [0, isMobile ? -12 : -28]
+  )
+  const mediaRadius = useTransform(
+    scrollYProgress,
+    [0.6, 1],
+    [isMobile ? 24 : 32, isMobile ? 32 : 48]
+  )
+  const mediaOpacity = useTransform(scrollYProgress, [0.6, 1], [1, 0.94])
+  const darkSectionY = useTransform(
+    scrollYProgress,
+    [0.6, 1],
+    [isMobile ? 32 : 64, 0]
+  )
 
   return (
-    <section
-      className="border-t border-black/10 bg-[#ff6846] px-5 py-24 md:px-8 md:py-32"
-      aria-labelledby="amz-before-after-title"
-    >
-      <div className="mx-auto max-w-6xl">
-        <div className="grid gap-10 md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-14 lg:gap-20">
-          <div>
-            <span className="text-xs font-bold tracking-[0.2em] uppercase">
-              ANTES Y DESPUÉS
-            </span>
-            <h3
-              id="amz-before-after-title"
-              className="mt-5 font-display text-4xl font-bold leading-[1.02] tracking-tight md:text-5xl lg:text-6xl"
-            >
-              <span className="block">El mismo producto.</span>
-              <span className="block">Una forma completamente distinta</span>
-              <span className="block font-extrabold text-[#f3f0eb]">
-                de competir.
+    <div className="relative overflow-x-clip bg-[#ff6846]">
+      <section
+        ref={sectionRef}
+        className="relative z-10 border-t border-black/10 px-5 pt-24 pb-32 md:px-8 md:pt-32 md:pb-48"
+        aria-labelledby="amz-before-after-title"
+      >
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-10 md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-14 lg:gap-20">
+            <div>
+              <span className="text-xs font-bold tracking-[0.2em] uppercase">
+                ANTES Y DESPUÉS
               </span>
-            </h3>
-            <p className="mt-6 max-w-xl text-sm leading-relaxed text-black/65 md:text-base">
-              Desliza para comprobar cómo cambian la claridad, la percepción y la fuerza visual cuando cada elemento responde a una estrategia.
-            </p>
-          </div>
+              <h3
+                id="amz-before-after-title"
+                className="mt-5 font-display text-4xl font-bold leading-[1.02] tracking-tight md:text-5xl lg:text-6xl"
+              >
+                <span className="block">El mismo producto.</span>
+                <span className="block">Una forma completamente distinta</span>
+                <span className="block font-extrabold text-[#f3f0eb]">
+                  de competir.
+                </span>
+              </h3>
+              <p className="mt-6 max-w-xl text-sm leading-relaxed text-black/65 md:text-base">
+                Desliza para comprobar cómo cambian la claridad, la percepción y la fuerza visual cuando cada elemento responde a una estrategia.
+              </p>
+            </div>
 
-          <div className="relative aspect-square w-full overflow-hidden rounded-[1.5rem] border border-black/20 bg-[#f3f0eb] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-black has-[:focus-visible]:ring-offset-4 has-[:focus-visible]:ring-offset-[#ff6846] md:rounded-[2rem]">
-            <Image
-              src={withBasePath(AFTER_IMAGE_SRC)}
-              alt="Creativo final desarrollado por AMZ Creatives"
-              fill
-              sizes="(max-width: 767px) calc(100vw - 2.5rem), 55vw"
-              className="object-cover"
-            />
-
-            <div
-              className="absolute inset-0"
-              style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
-              aria-hidden="true"
+            <motion.div
+              className="relative aspect-square w-full origin-center overflow-hidden border border-black/20 bg-[#f3f0eb] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-black has-[:focus-visible]:ring-offset-4 has-[:focus-visible]:ring-offset-[#ff6846]"
+              style={
+                prefersReducedMotion
+                  ? { borderRadius: isMobile ? 24 : 32 }
+                  : {
+                      scale: mediaScale,
+                      y: mediaY,
+                      borderRadius: mediaRadius,
+                      opacity: mediaOpacity,
+                      translateZ: 0,
+                    }
+              }
             >
               <Image
-                src={withBasePath(BEFORE_IMAGE_SRC)}
-                alt="Creativo anterior del producto"
+                src={withBasePath(AFTER_IMAGE_SRC)}
+                alt="Creativo final desarrollado por AMZ Creatives"
                 fill
                 sizes="(max-width: 767px) calc(100vw - 2.5rem), 55vw"
                 className="object-cover"
               />
-            </div>
 
-            <span className="absolute top-4 left-4 rounded-full bg-[#191919] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-white uppercase md:top-6 md:left-6">
-              Antes
-            </span>
-            <span className="absolute top-4 right-4 rounded-full bg-[#ff6846] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-black uppercase md:top-6 md:right-6">
-              Después
-            </span>
-
-            <div
-              className="pointer-events-none absolute inset-y-0 z-10 w-px bg-black/70"
-              style={{ left: `${position}%` }}
-              aria-hidden="true"
-            >
-              <span className="absolute top-1/2 left-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-black/20 bg-white text-black shadow-sm md:size-12">
-                <GripVertical className="size-5" />
-              </span>
-            </div>
-
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={position}
-              onChange={(event) => setPosition(Number(event.target.value))}
-              aria-label="Comparar el creativo anterior con el creativo final de AMZ Creatives"
-              className="absolute inset-0 z-20 size-full cursor-ew-resize opacity-0 [touch-action:pan-y]"
-            />
-          </div>
-        </div>
-
-        <div className="mt-8">
-          <p className="text-xs font-bold tracking-[0.18em] uppercase">
-            QUÉ HEMOS TRABAJADO
-          </p>
-          <div className="mt-4 grid border-t border-black/25 sm:grid-cols-2 lg:grid-cols-4">
-            {CREATIVE_CHANGES.map((change) => (
               <div
-                key={change}
-                className="border-b border-black/20 py-5 text-sm font-semibold sm:px-5 sm:first:pl-0 lg:border-r lg:last:border-r-0"
+                className="absolute inset-0"
+                style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
+                aria-hidden="true"
               >
-                {change}
+                <Image
+                  src={withBasePath(BEFORE_IMAGE_SRC)}
+                  alt="Creativo anterior del producto"
+                  fill
+                  sizes="(max-width: 767px) calc(100vw - 2.5rem), 55vw"
+                  className="object-cover"
+                />
               </div>
-            ))}
+
+              <span className="absolute top-4 left-4 rounded-full bg-[#191919] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-white uppercase md:top-6 md:left-6">
+                Antes
+              </span>
+              <span className="absolute top-4 right-4 rounded-full bg-[#ff6846] px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-black uppercase md:top-6 md:right-6">
+                Después
+              </span>
+
+              <div
+                className="pointer-events-none absolute inset-y-0 z-10 w-px bg-black/70"
+                style={{ left: `${position}%` }}
+                aria-hidden="true"
+              >
+                <span className="absolute top-1/2 left-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-black/20 bg-white text-black shadow-sm md:size-12">
+                  <GripVertical className="size-5" />
+                </span>
+              </div>
+
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={position}
+                onChange={(event) => setPosition(Number(event.target.value))}
+                aria-label="Comparar el creativo anterior con el creativo final de AMZ Creatives"
+                className="absolute inset-0 z-20 size-full cursor-ew-resize opacity-0 [touch-action:pan-y]"
+              />
+            </motion.div>
+          </div>
+
+          <div className="mt-8">
+            <p className="text-xs font-bold tracking-[0.18em] uppercase">
+              QUÉ HEMOS TRABAJADO
+            </p>
+            <div className="mt-4 grid border-t border-black/25 sm:grid-cols-2 lg:grid-cols-4">
+              {CREATIVE_CHANGES.map((change) => (
+                <div
+                  key={change}
+                  className="border-b border-black/20 py-5 text-sm font-semibold sm:px-5 sm:first:pl-0 lg:border-r lg:last:border-r-0"
+                >
+                  {change}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <motion.div
+        className="starfield relative z-20 -mt-16 rounded-t-[2rem] bg-[#020817] px-5 py-28 text-white md:-mt-24 md:rounded-t-[3rem] md:px-8 md:py-36"
+        style={prefersReducedMotion ? undefined : { y: darkSectionY, translateZ: 0 }}
+      >
+        <div className="mx-auto max-w-6xl">
+          <span className="text-xs font-semibold tracking-widest text-electric uppercase">Un mismo criterio</span>
+          <h3 className="mt-5 max-w-4xl font-display text-[clamp(2.75rem,6vw,6rem)] font-bold leading-[0.98] tracking-tight text-balance">Estrategia y ejecución, conectadas.</h3>
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-xl">CHRITERIO detecta qué necesita tu cuenta. AMZ Creatives lo convierte en una solución visual preparada para competir.</p>
+          <Link href={CREATIVE_PROJECTS_URL} className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10">
+            Ver proyectos creativos <ArrowUpRight className="size-4" aria-hidden="true" />
+          </Link>
+        </div>
+      </motion.div>
+    </div>
   )
 }
 
@@ -631,17 +689,6 @@ function AmzEditorialContent() {
       </section>
 
       <BeforeAfterComparison />
-
-      <div className="starfield relative bg-[#020817] px-5 py-28 text-white md:px-8 md:py-36">
-        <div className="mx-auto max-w-6xl">
-          <span className="text-xs font-semibold tracking-widest text-electric uppercase">Un mismo criterio</span>
-          <h3 className="mt-5 max-w-4xl font-display text-[clamp(2.75rem,6vw,6rem)] font-bold leading-[0.98] tracking-tight text-balance">Estrategia y ejecución, conectadas.</h3>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-xl">CHRITERIO detecta qué necesita tu cuenta. AMZ Creatives lo convierte en una solución visual preparada para competir.</p>
-          <Link href={CREATIVE_PROJECTS_URL} className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10">
-            Ver proyectos creativos <ArrowUpRight className="size-4" aria-hidden="true" />
-          </Link>
-        </div>
-      </div>
     </div>
   )
 }

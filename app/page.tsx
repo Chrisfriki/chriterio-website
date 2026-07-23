@@ -2,7 +2,6 @@ import { Hero } from '@/components/home/hero'
 import { TrustedBrands } from '@/components/home/trusted-brands'
 import { ServicesSection } from '@/components/services/services-section'
 import { AmzCreativesPortal } from '@/components/sections/amz-creatives-portal'
-import { CaseHighlight } from '@/components/home/case-highlight'
 import { FinalCta } from '@/components/final-cta'
 
 export default function HomePage() {
@@ -22,7 +21,6 @@ export default function HomePage() {
           <ServicesSection />
           <TrustedBrands />
           <AmzCreativesPortal />
-          <CaseHighlight />
           <FinalCta className="bg-transparent" />
         </div>
       </div>
