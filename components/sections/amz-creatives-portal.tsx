@@ -7,6 +7,7 @@ import {
   ArrowUpRight,
   Box,
   Camera,
+  Check,
   GripVertical,
   Layers3,
   Video,
@@ -430,6 +431,10 @@ function StrategyExecutionVisual({
   const executionY = useTransform(progress, [0.68, 0.78], [24, 0])
   const resultOpacity = useTransform(progress, [0.72, 0.83], [0, 1])
   const resultY = useTransform(progress, [0.72, 0.83], [24, 0])
+  const resultScale = useTransform(progress, [0.72, 0.83], [0.98, 1])
+  const resultGlowOpacity = useTransform(progress, [0.74, 0.86], [0, 1])
+  const activeBadgeOpacity = useTransform(progress, [0.78, 0.86], [0, 1])
+  const activeBadgeY = useTransform(progress, [0.78, 0.86], [8, 0])
   const connectionScale = useTransform(progress, [0.65, 0.81], [0, 1])
   const lightY = useTransform(progress, [0.66, 0.81], [0, 72])
   const lightOpacity = useTransform(
@@ -536,26 +541,79 @@ function StrategyExecutionVisual({
 
       <div
         aria-hidden="true"
-        className="mx-auto h-10 w-px bg-gradient-to-b from-[#ff6846]/55 to-white/15"
+        className="mx-auto h-10 w-px bg-gradient-to-b from-[#ff6846]/55 via-[#76c893]/50 to-[#76c893]/80"
       />
 
       <motion.div
-        className="relative overflow-hidden rounded-[1.25rem] border border-white/15 bg-white/[0.055] px-5 py-5 text-center shadow-[0_20px_55px_-35px_rgba(255,255,255,0.35)] backdrop-blur-md sm:px-6"
+        className="relative overflow-hidden rounded-[1.5rem] border border-[#76c893]/40 bg-[#061c18]/85 px-5 py-7 shadow-[0_24px_75px_-32px_rgba(65,184,131,0.55)] backdrop-blur-md sm:px-7 sm:py-8"
         style={
           prefersReducedMotion
             ? undefined
-            : { opacity: resultOpacity, y: resultY, translateZ: 0 }
+            : {
+                opacity: resultOpacity,
+                y: resultY,
+                scale: resultScale,
+                translateZ: 0,
+              }
         }
       >
-        <p className="text-xs font-bold tracking-[0.16em] text-white uppercase sm:text-sm">
-          Cuenta preparada para competir
-        </p>
-        <div className="mt-4 flex flex-wrap justify-center gap-2">
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_10%,rgba(118,200,147,0.16),transparent_42%)]"
+          style={
+            prefersReducedMotion ? undefined : { opacity: resultGlowOpacity }
+          }
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-12 top-0 h-px bg-gradient-to-r from-transparent via-[#8addaa]/90 to-transparent"
+        />
+
+        <div className="relative flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <p className="max-w-md text-left text-sm font-bold tracking-[0.14em] text-white uppercase sm:text-base">
+            Cuenta preparada para competir
+          </p>
+          <motion.span
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#8addaa]/35 bg-[#76c893]/12 px-3 py-1.5 text-[9px] font-bold tracking-[0.16em] text-[#a5e6ba] uppercase sm:text-[10px]"
+            style={
+              prefersReducedMotion
+                ? undefined
+                : {
+                    opacity: activeBadgeOpacity,
+                    y: activeBadgeY,
+                    translateZ: 0,
+                  }
+            }
+          >
+            <Check className="size-3" strokeWidth={2} aria-hidden="true" />
+            Activada
+          </motion.span>
+        </div>
+
+        <div className="relative mt-7 grid grid-cols-2 items-center gap-x-5 gap-y-5 border-y border-[#a5e6ba]/10 py-6 sm:grid-cols-5 sm:gap-x-4 sm:gap-y-6">
+          {AMZ_CREATIVE_PROJECTS.map((brand) => (
+            <div
+              key={brand.id}
+              className="flex h-8 min-w-0 items-center justify-center"
+            >
+              <Image
+                src={withBasePath(brand.logoSrc)}
+                alt={brand.brand}
+                width={brand.logoWidth}
+                height={brand.logoHeight}
+                className="max-h-7 w-auto max-w-full object-contain brightness-0 invert opacity-80 transition-[opacity,filter] duration-300 hover:opacity-100 hover:drop-shadow-[0_0_8px_rgba(165,230,186,0.25)]"
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="relative mt-5 flex flex-wrap gap-2">
           {['Listing', 'A+', 'PPC', 'Vídeo'].map((label) => (
             <span
               key={label}
-              className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-[9px] font-semibold tracking-[0.14em] text-white/55 uppercase"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#8addaa]/20 bg-[#76c893]/8 px-3 py-1.5 text-[9px] font-semibold tracking-[0.13em] text-[#b8d8c2] uppercase"
             >
+              <Check className="size-2.5 text-[#8addaa]" strokeWidth={2} aria-hidden="true" />
               {label}
             </span>
           ))}
