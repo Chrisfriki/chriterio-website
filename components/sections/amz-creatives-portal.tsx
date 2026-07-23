@@ -440,22 +440,24 @@ function BeforeAfterComparison() {
     [isMobile ? 24 : 32, isMobile ? 32 : 48]
   )
   const mediaOpacity = useTransform(scrollYProgress, [0.6, 1], [1, 0.94])
-  const darkSectionY = useTransform(
+  const darkEyebrowOpacity = useTransform(
     scrollYProgress,
-    [0.6, 1],
-    [isMobile ? 32 : 60, 0]
+    [0.58, 0.7],
+    [0, 1]
   )
-  const darkSectionOpacity = useTransform(
+  const darkEyebrowY = useTransform(scrollYProgress, [0.58, 0.7], [40, 0])
+  const darkContentOpacity = useTransform(
     scrollYProgress,
-    [0.6, 1],
-    [0.96, 1]
+    [0.62, 0.76],
+    [0, 1]
   )
+  const darkContentY = useTransform(scrollYProgress, [0.62, 0.76], [40, 0])
 
   return (
     <div className="relative overflow-x-clip bg-[#ff6846]">
       <section
         ref={sectionRef}
-        className="relative border-t border-black/10 px-5 pt-24 pb-[6.5rem] md:px-8 md:pt-32 md:pb-[10.5rem]"
+        className="relative border-t border-black/10 px-5 pt-24 pb-14 md:px-8 md:pt-32 md:pb-18 lg:pb-22"
         aria-labelledby="amz-before-after-title"
       >
         <div className="mx-auto max-w-6xl">
@@ -562,27 +564,41 @@ function BeforeAfterComparison() {
         </div>
       </section>
 
-      <motion.div
-        className="starfield relative z-20 -mt-16 w-full bg-[#020817] px-5 pt-24 pb-28 text-white md:-mt-24 md:px-8 md:pt-40 md:pb-36"
-        style={
-          prefersReducedMotion
-            ? undefined
-            : {
-                y: darkSectionY,
-                opacity: darkSectionOpacity,
-                translateZ: 0,
-              }
-        }
-      >
+      <div className="starfield relative z-20 w-full bg-[#020817] px-5 pt-20 pb-28 text-white md:px-8 md:pt-24 md:pb-36 lg:pt-28">
         <div className="mx-auto max-w-6xl">
-          <span className="text-xs font-semibold tracking-widest text-electric uppercase">Un mismo criterio</span>
-          <h3 className="mt-5 max-w-4xl font-display text-[clamp(2.75rem,6vw,6rem)] font-bold leading-[0.98] tracking-tight text-balance">Estrategia y ejecución, conectadas.</h3>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-xl">CHRITERIO detecta qué necesita tu cuenta. AMZ Creatives lo convierte en una solución visual preparada para competir.</p>
-          <Link href={CREATIVE_PROJECTS_URL} className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10">
-            Ver proyectos creativos <ArrowUpRight className="size-4" aria-hidden="true" />
-          </Link>
+          <motion.span
+            className="block text-xs font-semibold tracking-widest text-electric uppercase"
+            style={
+              prefersReducedMotion
+                ? undefined
+                : {
+                    opacity: darkEyebrowOpacity,
+                    y: darkEyebrowY,
+                    translateZ: 0,
+                  }
+            }
+          >
+            Un mismo criterio
+          </motion.span>
+          <motion.div
+            style={
+              prefersReducedMotion
+                ? undefined
+                : {
+                    opacity: darkContentOpacity,
+                    y: darkContentY,
+                    translateZ: 0,
+                  }
+            }
+          >
+            <h3 className="mt-5 max-w-4xl font-display text-[clamp(2.75rem,6vw,6rem)] font-bold leading-[0.98] tracking-tight text-balance">Estrategia y ejecución, conectadas.</h3>
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-xl">CHRITERIO detecta qué necesita tu cuenta. AMZ Creatives lo convierte en una solución visual preparada para competir.</p>
+            <Link href={CREATIVE_PROJECTS_URL} className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10">
+              Ver proyectos creativos <ArrowUpRight className="size-4" aria-hidden="true" />
+            </Link>
+          </motion.div>
         </div>
-      </motion.div>
+      </div>
     </div>
   )
 }
