@@ -590,21 +590,31 @@ function StrategyExecutionVisual({
           </motion.span>
         </div>
 
-        <div className="relative mt-7 grid grid-cols-2 items-center gap-x-5 gap-y-5 border-y border-[#a5e6ba]/10 py-6 sm:grid-cols-5 sm:gap-x-4 sm:gap-y-6">
-          {AMZ_CREATIVE_PROJECTS.map((brand) => (
-            <div
-              key={brand.id}
-              className="flex h-8 min-w-0 items-center justify-center"
-            >
-              <Image
-                src={withBasePath(brand.logoSrc)}
-                alt={brand.brand}
-                width={brand.logoWidth}
-                height={brand.logoHeight}
-                className="max-h-7 w-auto max-w-full object-contain brightness-0 invert opacity-80 transition-[opacity,filter] duration-300 hover:opacity-100 hover:drop-shadow-[0_0_8px_rgba(165,230,186,0.25)]"
-              />
-            </div>
-          ))}
+        <div className="relative mt-7 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 border-y border-[#a5e6ba]/10 py-7 sm:gap-7 sm:py-8">
+          <div className="flex min-w-0 items-center justify-center">
+            <Image
+              src={withBasePath('/chriterio-logo-white.png')}
+              alt="Chriterio"
+              width={1433}
+              height={249}
+              className="h-auto max-h-8 w-full max-w-[210px] object-contain opacity-85 transition-[opacity,filter] duration-300 hover:opacity-100 hover:drop-shadow-[0_0_9px_rgba(165,230,186,0.25)]"
+            />
+          </div>
+          <span
+            aria-hidden="true"
+            className="text-sm font-light text-[#a5e6ba]/55 sm:text-base"
+          >
+            ×
+          </span>
+          <div className="flex min-w-0 items-center justify-center">
+            <Image
+              src={withBasePath('/amz-creatives-logo.png')}
+              alt="AMZ Creatives"
+              width={4773}
+              height={713}
+              className="h-auto max-h-8 w-full max-w-[230px] object-contain brightness-0 invert opacity-85 transition-[opacity,filter] duration-300 hover:opacity-100 hover:drop-shadow-[0_0_9px_rgba(165,230,186,0.25)]"
+            />
+          </div>
         </div>
 
         <div className="relative mt-5 flex flex-wrap gap-2">
