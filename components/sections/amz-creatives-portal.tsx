@@ -617,6 +617,23 @@ function StrategyExecutionVisual({
           </div>
         </div>
 
+        <div className="relative mt-6 grid grid-cols-2 items-center gap-x-5 gap-y-5 sm:grid-cols-5 sm:gap-x-4 sm:gap-y-6">
+          {AMZ_CREATIVE_PROJECTS.map((brand) => (
+            <div
+              key={brand.id}
+              className="flex h-8 min-w-0 items-center justify-center"
+            >
+              <Image
+                src={withBasePath(brand.logoSrc)}
+                alt={brand.brand}
+                width={brand.logoWidth}
+                height={brand.logoHeight}
+                className="max-h-7 w-auto max-w-full object-contain brightness-0 invert opacity-75 transition-[opacity,filter] duration-300 hover:opacity-100 hover:drop-shadow-[0_0_8px_rgba(165,230,186,0.22)]"
+              />
+            </div>
+          ))}
+        </div>
+
         <div className="relative mt-5 flex flex-wrap gap-2">
           {['Listing', 'A+', 'PPC', 'Vídeo'].map((label) => (
             <span
