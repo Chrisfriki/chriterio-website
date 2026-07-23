@@ -478,10 +478,14 @@ function StrategyExecutionVisual({
           className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-electric/70 to-transparent"
         />
         <div className="relative flex items-start justify-between gap-5">
-          <div>
-            <p className="font-display text-xl font-bold tracking-[-0.02em] text-white sm:text-2xl">
-              CHRITERIO
-            </p>
+          <div className="min-w-0">
+            <Image
+              src={withBasePath('/chriterio-logo-white.png')}
+              alt="Chriterio"
+              width={1433}
+              height={249}
+              className="h-auto max-h-6 w-full max-w-[190px] object-contain object-left sm:max-h-7 sm:max-w-[220px]"
+            />
             <p className="mt-2 text-xs leading-relaxed text-white/55 sm:text-sm">
               Estrategia · Rentabilidad · Publicidad
             </p>
@@ -525,10 +529,14 @@ function StrategyExecutionVisual({
           className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-[#ff6846]/80 to-transparent"
         />
         <div className="relative flex items-start justify-between gap-5">
-          <div>
-            <p className="font-display text-xl font-bold tracking-[-0.02em] text-white sm:text-2xl">
-              AMZ CREATIVES
-            </p>
+          <div className="min-w-0">
+            <Image
+              src={withBasePath('/amz-creatives-logo.png')}
+              alt="AMZ Creatives"
+              width={4773}
+              height={713}
+              className="h-auto max-h-6 w-full max-w-[210px] object-contain object-left brightness-0 invert sm:max-h-7 sm:max-w-[240px]"
+            />
             <p className="mt-2 text-xs leading-relaxed text-white/55 sm:text-sm">
               Fotografía · Diseño · Contenido
             </p>
@@ -590,34 +598,7 @@ function StrategyExecutionVisual({
           </motion.span>
         </div>
 
-        <div className="relative mt-7 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 border-y border-[#a5e6ba]/10 py-7 sm:gap-7 sm:py-8">
-          <div className="flex min-w-0 items-center justify-center">
-            <Image
-              src={withBasePath('/chriterio-logo-white.png')}
-              alt="Chriterio"
-              width={1433}
-              height={249}
-              className="h-auto max-h-8 w-full max-w-[210px] object-contain opacity-85 transition-[opacity,filter] duration-300 hover:opacity-100 hover:drop-shadow-[0_0_9px_rgba(165,230,186,0.25)]"
-            />
-          </div>
-          <span
-            aria-hidden="true"
-            className="text-sm font-light text-[#a5e6ba]/55 sm:text-base"
-          >
-            ×
-          </span>
-          <div className="flex min-w-0 items-center justify-center">
-            <Image
-              src={withBasePath('/amz-creatives-logo.png')}
-              alt="AMZ Creatives"
-              width={4773}
-              height={713}
-              className="h-auto max-h-8 w-full max-w-[230px] object-contain brightness-0 invert opacity-85 transition-[opacity,filter] duration-300 hover:opacity-100 hover:drop-shadow-[0_0_9px_rgba(165,230,186,0.25)]"
-            />
-          </div>
-        </div>
-
-        <div className="relative mt-6 grid grid-cols-2 items-center gap-x-5 gap-y-5 sm:grid-cols-5 sm:gap-x-4 sm:gap-y-6">
+        <div className="relative mt-7 grid grid-cols-2 items-center gap-x-5 gap-y-5 border-y border-[#a5e6ba]/10 py-6 sm:grid-cols-5 sm:gap-x-4 sm:gap-y-6">
           {AMZ_CREATIVE_PROJECTS.map((brand) => (
             <div
               key={brand.id}
