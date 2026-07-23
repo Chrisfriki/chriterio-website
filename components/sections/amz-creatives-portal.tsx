@@ -443,14 +443,19 @@ function BeforeAfterComparison() {
   const darkSectionY = useTransform(
     scrollYProgress,
     [0.6, 1],
-    [isMobile ? 32 : 64, 0]
+    [isMobile ? 32 : 60, 0]
+  )
+  const darkSectionOpacity = useTransform(
+    scrollYProgress,
+    [0.6, 1],
+    [0.96, 1]
   )
 
   return (
     <div className="relative overflow-x-clip bg-[#ff6846]">
       <section
         ref={sectionRef}
-        className="relative z-10 border-t border-black/10 px-5 pt-24 pb-32 md:px-8 md:pt-32 md:pb-48"
+        className="relative border-t border-black/10 px-5 pt-24 pb-[6.5rem] md:px-8 md:pt-32 md:pb-[10.5rem]"
         aria-labelledby="amz-before-after-title"
       >
         <div className="mx-auto max-w-6xl">
@@ -475,7 +480,7 @@ function BeforeAfterComparison() {
             </div>
 
             <motion.div
-              className="relative aspect-square w-full origin-center overflow-hidden border border-black/20 bg-[#f3f0eb] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-black has-[:focus-visible]:ring-offset-4 has-[:focus-visible]:ring-offset-[#ff6846]"
+              className="relative z-30 aspect-square w-full origin-center overflow-hidden border border-black/20 bg-[#f3f0eb] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-black has-[:focus-visible]:ring-offset-4 has-[:focus-visible]:ring-offset-[#ff6846]"
               style={
                 prefersReducedMotion
                   ? { borderRadius: isMobile ? 24 : 32 }
@@ -558,8 +563,16 @@ function BeforeAfterComparison() {
       </section>
 
       <motion.div
-        className="starfield relative z-20 -mt-16 rounded-t-[2rem] bg-[#020817] px-5 py-28 text-white md:-mt-24 md:rounded-t-[3rem] md:px-8 md:py-36"
-        style={prefersReducedMotion ? undefined : { y: darkSectionY, translateZ: 0 }}
+        className="starfield relative z-20 -mt-16 w-full bg-[#020817] px-5 pt-24 pb-28 text-white md:-mt-24 md:px-8 md:pt-40 md:pb-36"
+        style={
+          prefersReducedMotion
+            ? undefined
+            : {
+                y: darkSectionY,
+                opacity: darkSectionOpacity,
+                translateZ: 0,
+              }
+        }
       >
         <div className="mx-auto max-w-6xl">
           <span className="text-xs font-semibold tracking-widest text-electric uppercase">Un mismo criterio</span>
