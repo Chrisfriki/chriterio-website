@@ -415,6 +415,156 @@ function AmzProjectsGrid() {
   )
 }
 
+function StrategyExecutionVisual({
+  progress,
+  prefersReducedMotion,
+}: {
+  progress: MotionValue<number>
+  prefersReducedMotion: boolean
+}) {
+  const compositionOpacity = useTransform(progress, [0.62, 0.76], [0, 1])
+  const compositionY = useTransform(progress, [0.62, 0.76], [40, 0])
+  const strategyOpacity = useTransform(progress, [0.63, 0.72], [0, 1])
+  const strategyY = useTransform(progress, [0.63, 0.72], [24, 0])
+  const executionOpacity = useTransform(progress, [0.68, 0.78], [0, 1])
+  const executionY = useTransform(progress, [0.68, 0.78], [24, 0])
+  const resultOpacity = useTransform(progress, [0.72, 0.83], [0, 1])
+  const resultY = useTransform(progress, [0.72, 0.83], [24, 0])
+  const connectionScale = useTransform(progress, [0.65, 0.81], [0, 1])
+  const lightY = useTransform(progress, [0.66, 0.81], [0, 72])
+  const lightOpacity = useTransform(
+    progress,
+    [0.65, 0.68, 0.79, 0.82],
+    [0, 1, 1, 0]
+  )
+
+  const cardClassName =
+    'relative overflow-hidden rounded-[1.5rem] border border-[#8da6c7]/20 bg-[#07172f]/75 px-5 py-5 shadow-[0_24px_70px_-35px_rgba(70,132,218,0.45)] backdrop-blur-md sm:px-6 sm:py-6'
+
+  return (
+    <motion.div
+      className="relative mx-auto w-full max-w-[700px]"
+      style={
+        prefersReducedMotion
+          ? undefined
+          : {
+              opacity: compositionOpacity,
+              y: compositionY,
+              translateZ: 0,
+            }
+      }
+      aria-label="Conexión entre la estrategia de Chriterio y la ejecución de AMZ Creatives"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-[8%_12%] bg-[radial-gradient(circle_at_center,rgba(72,133,218,0.14),transparent_68%)]"
+      />
+
+      <motion.div
+        className={cardClassName}
+        style={
+          prefersReducedMotion
+            ? undefined
+            : { opacity: strategyOpacity, y: strategyY, translateZ: 0 }
+        }
+      >
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-electric/70 to-transparent"
+        />
+        <div className="relative flex items-start justify-between gap-5">
+          <div>
+            <p className="font-display text-xl font-bold tracking-[-0.02em] text-white sm:text-2xl">
+              CHRITERIO
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-white/55 sm:text-sm">
+              Estrategia · Rentabilidad · Publicidad
+            </p>
+          </div>
+          <span className="shrink-0 rounded-full border border-electric/25 bg-electric/10 px-3 py-1.5 text-[9px] font-bold tracking-[0.18em] text-electric uppercase sm:text-[10px]">
+            Diagnóstico
+          </span>
+        </div>
+      </motion.div>
+
+      <div className="relative mx-auto flex h-24 w-full items-center justify-center">
+        <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-white/10" />
+        <motion.div
+          className="absolute inset-y-0 left-1/2 w-px origin-top -translate-x-1/2 bg-gradient-to-b from-electric/80 via-electric to-[#ff6846]/70"
+          style={
+            prefersReducedMotion ? undefined : { scaleY: connectionScale }
+          }
+        />
+        {!prefersReducedMotion && (
+          <motion.span
+            aria-hidden="true"
+            className="absolute top-2 left-1/2 size-2 -translate-x-1/2 rounded-full bg-electric shadow-[0_0_16px_4px_rgba(72,133,218,0.65)]"
+            style={{ y: lightY, opacity: lightOpacity, translateZ: 0 }}
+          />
+        )}
+        <span className="relative z-10 rounded-full border border-white/10 bg-[#06142b] px-4 py-2 text-[10px] font-semibold tracking-[0.14em] text-white/65 uppercase">
+          Una misma dirección
+        </span>
+      </div>
+
+      <motion.div
+        className={`${cardClassName} border-[#ff6846]/25`}
+        style={
+          prefersReducedMotion
+            ? undefined
+            : { opacity: executionOpacity, y: executionY, translateZ: 0 }
+        }
+      >
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-[#ff6846]/80 to-transparent"
+        />
+        <div className="relative flex items-start justify-between gap-5">
+          <div>
+            <p className="font-display text-xl font-bold tracking-[-0.02em] text-white sm:text-2xl">
+              AMZ CREATIVES
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-white/55 sm:text-sm">
+              Fotografía · Diseño · Contenido
+            </p>
+          </div>
+          <span className="shrink-0 rounded-full border border-[#ff6846]/30 bg-[#ff6846]/10 px-3 py-1.5 text-[9px] font-bold tracking-[0.18em] text-[#ff8a70] uppercase sm:text-[10px]">
+            Ejecución
+          </span>
+        </div>
+      </motion.div>
+
+      <div
+        aria-hidden="true"
+        className="mx-auto h-10 w-px bg-gradient-to-b from-[#ff6846]/55 to-white/15"
+      />
+
+      <motion.div
+        className="relative overflow-hidden rounded-[1.25rem] border border-white/15 bg-white/[0.055] px-5 py-5 text-center shadow-[0_20px_55px_-35px_rgba(255,255,255,0.35)] backdrop-blur-md sm:px-6"
+        style={
+          prefersReducedMotion
+            ? undefined
+            : { opacity: resultOpacity, y: resultY, translateZ: 0 }
+        }
+      >
+        <p className="text-xs font-bold tracking-[0.16em] text-white uppercase sm:text-sm">
+          Cuenta preparada para competir
+        </p>
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
+          {['Listing', 'A+', 'PPC', 'Vídeo'].map((label) => (
+            <span
+              key={label}
+              className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-[9px] font-semibold tracking-[0.14em] text-white/55 uppercase"
+            >
+              {label}
+            </span>
+          ))}
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
 function BeforeAfterComparison() {
   const [position, setPosition] = useState(50)
   const sectionRef = useRef<HTMLElement>(null)
@@ -564,39 +714,46 @@ function BeforeAfterComparison() {
         </div>
       </section>
 
-      <div className="starfield relative z-20 w-full bg-[#020817] px-5 pt-20 pb-28 text-white md:px-8 md:pt-24 md:pb-36 lg:pt-28">
-        <div className="mx-auto max-w-6xl">
-          <motion.span
-            className="block text-xs font-semibold tracking-widest text-electric uppercase"
-            style={
-              prefersReducedMotion
-                ? undefined
-                : {
-                    opacity: darkEyebrowOpacity,
-                    y: darkEyebrowY,
-                    translateZ: 0,
-                  }
-            }
-          >
-            Un mismo criterio
-          </motion.span>
-          <motion.div
-            style={
-              prefersReducedMotion
-                ? undefined
-                : {
-                    opacity: darkContentOpacity,
-                    y: darkContentY,
-                    translateZ: 0,
-                  }
-            }
-          >
-            <h3 className="mt-5 max-w-4xl font-display text-[clamp(2.75rem,6vw,6rem)] font-bold leading-[0.98] tracking-tight text-balance">Estrategia y ejecución, conectadas.</h3>
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-xl">CHRITERIO detecta qué necesita tu cuenta. AMZ Creatives lo convierte en una solución visual preparada para competir.</p>
-            <Link href={CREATIVE_PROJECTS_URL} className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10">
-              Ver proyectos creativos <ArrowUpRight className="size-4" aria-hidden="true" />
-            </Link>
-          </motion.div>
+      <div className="starfield relative z-20 w-full bg-[#020817] px-5 py-24 text-white md:px-8 md:py-28 lg:py-32">
+        <div className="mx-auto grid max-w-[1600px] items-center gap-16 lg:grid-cols-[minmax(0,0.46fr)_minmax(0,0.54fr)] lg:gap-16 xl:gap-24">
+          <div className="min-w-0">
+            <motion.span
+              className="block text-xs font-semibold tracking-widest text-electric uppercase"
+              style={
+                prefersReducedMotion
+                  ? undefined
+                  : {
+                      opacity: darkEyebrowOpacity,
+                      y: darkEyebrowY,
+                      translateZ: 0,
+                    }
+              }
+            >
+              Un mismo criterio
+            </motion.span>
+            <motion.div
+              style={
+                prefersReducedMotion
+                  ? undefined
+                  : {
+                      opacity: darkContentOpacity,
+                      y: darkContentY,
+                      translateZ: 0,
+                    }
+              }
+            >
+              <h3 className="mt-5 max-w-[700px] font-display text-[clamp(2.75rem,6vw,6rem)] font-bold leading-[0.98] tracking-tight text-balance">Estrategia y ejecución, conectadas.</h3>
+              <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-xl">CHRITERIO detecta qué necesita tu cuenta. AMZ Creatives lo convierte en una solución visual preparada para competir.</p>
+              <Link href={CREATIVE_PROJECTS_URL} className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10">
+                Ver proyectos creativos <ArrowUpRight className="size-4" aria-hidden="true" />
+              </Link>
+            </motion.div>
+          </div>
+
+          <StrategyExecutionVisual
+            progress={scrollYProgress}
+            prefersReducedMotion={Boolean(prefersReducedMotion)}
+          />
         </div>
       </div>
     </div>
