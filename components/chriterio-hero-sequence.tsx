@@ -125,7 +125,8 @@ export function ChriterioHeroSequence({
   const targetFrameFloatRef = useRef(0) // where the scroll *wants* the playhead to be
   const displayedFrameFloatRef = useRef(0) // where the playhead actually, smoothly is
   const lastDrawnFrameIndexRef = useRef(-1) // last frame index actually painted to the canvas
-  const sequenceCompleteRef = useRef<boolean | null>(null)
+  const sequenceStateRef = useRef<string | null>(null)
+  const reducedFrameReadyRef = useRef(false)
   const lastScrollYRef = useRef(0)
   // Cached, document-relative geometry. Re-measured only on mount/resize, never
   // on every scroll tick — see measureGeometry() for why.
@@ -140,12 +141,13 @@ export function ChriterioHeroSequence({
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null)
   const [firstFrameReady, setFirstFrameReady] = useState(false)
 
-  const publishSequenceState = (complete: boolean) => {
-    if (sequenceCompleteRef.current === complete) return
-    sequenceCompleteRef.current = complete
+  const publishSequenceState = (complete: boolean, exited = false) => {
+    const stateKey = `${Number(complete)}:${Number(exited)}`
+    if (sequenceStateRef.current === stateKey) return
+    sequenceStateRef.current = stateKey
     window.dispatchEvent(
       new CustomEvent<HeroSequenceStateDetail>(HERO_SEQUENCE_STATE_EVENT, {
-        detail: { complete },
+        detail: { complete, exited },
       }),
     )
   }
@@ -160,9 +162,28 @@ export function ChriterioHeroSequence({
 
   useEffect(() => {
     if (reducedMotion === null) return
-    publishSequenceState(false)
+    reducedFrameReadyRef.current = false
+    publishSequenceState(false, false)
     return () => {
-      sequenceCompleteRef.current = null
+      sequenceStateRef.current = null
+      reducedFrameReadyRef.current = false
+    }
+  }, [reducedMotion])
+
+  useEffect(() => {
+    if (!reducedMotion) return
+
+    const publishReducedState = () => {
+      if (!reducedFrameReadyRef.current) return
+      const section = sectionRef.current
+      publishSequenceState(true, Boolean(section && section.getBoundingClientRect().bottom <= 0))
+    }
+
+    window.addEventListener('scroll', publishReducedState, { passive: true })
+    window.addEventListener('resize', publishReducedState)
+    return () => {
+      window.removeEventListener('scroll', publishReducedState)
+      window.removeEventListener('resize', publishReducedState)
     }
   }, [reducedMotion])
 
@@ -401,11 +422,11 @@ export function ChriterioHeroSequence({
     }
 
     applyStages(progressRef.current)
-    publishSequenceState(
+    const sequenceComplete =
       statusRef.current[HERO_FRAME_COUNT - 1] === 'loaded' &&
         lastDrawnFrameIndexRef.current === HERO_FRAME_COUNT - 1 &&
-        displayedFrameFloatRef.current >= HERO_FRAME_COUNT - 1 - 0.001,
-    )
+      displayedFrameFloatRef.current >= HERO_FRAME_COUNT - 1 - 0.001
+    publishSequenceState(sequenceComplete, sequenceComplete && progressRef.current >= 0.995)
 
     const settled = Math.abs(targetFrameFloatRef.current - displayedFrameFloatRef.current) < 0.001
     if (!blockedByDirection && (!settled || !advanced)) {
@@ -653,6 +674,7 @@ export function ChriterioHeroSequence({
     return (
       <section
         id={id}
+        ref={sectionRef}
         className={`relative h-[100svh] min-h-[640px] w-full overflow-hidden bg-[#050d1f] ${className ?? ''}`}
       >
         <img
@@ -660,10 +682,20 @@ export function ChriterioHeroSequence({
           alt="Cohete Chriterio en órbita"
           aria-hidden="true"
           className="absolute inset-0 h-full w-full origin-[5%_35%] scale-[1.6] object-cover"
-          onLoad={() => publishSequenceState(true)}
+          onLoad={() => {
+            reducedFrameReadyRef.current = true
+            publishSequenceState(
+              true,
+              Boolean(
+                sectionRef.current &&
+                  sectionRef.current.getBoundingClientRect().bottom <= 0,
+              ),
+            )
+          }}
           onError={() => {
             console.error('Error cargando fotograma:', lastFrame)
-            publishSequenceState(true)
+            reducedFrameReadyRef.current = true
+            publishSequenceState(true, false)
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#050d1f]/78 via-[#050d1f]/25 to-transparent" />

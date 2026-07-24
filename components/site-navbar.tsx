@@ -23,20 +23,29 @@ export function SiteNavbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [heroComplete, setHeroComplete] = useState(!isHome)
+  const [heroExited, setHeroExited] = useState(!isHome)
   const [direction, setDirection] = useState<'up' | 'down' | null>(null)
   const lastScrollYRef = useRef(0)
+  const upwardDistanceRef = useRef(0)
+  const downwardDistanceRef = useRef(0)
 
   useEffect(() => {
     setOpen(false)
     setHeroComplete(!isHome)
+    setHeroExited(!isHome)
     setDirection(null)
     lastScrollYRef.current = window.scrollY
+    upwardDistanceRef.current = 0
+    downwardDistanceRef.current = 0
   }, [isHome, pathname])
 
   useEffect(() => {
     const onHeroSequenceState = (event: Event) => {
-      const { complete } = (event as CustomEvent<HeroSequenceStateDetail>).detail
+      const { complete, exited } = (
+        event as CustomEvent<HeroSequenceStateDetail>
+      ).detail
       setHeroComplete(complete)
+      setHeroExited(exited)
     }
 
     window.addEventListener(HERO_SEQUENCE_STATE_EVENT, onHeroSequenceState)
@@ -49,11 +58,22 @@ export function SiteNavbar() {
       const nextScrollY = window.scrollY
       const delta = nextScrollY - lastScrollYRef.current
       setScrolled(nextScrollY > 20)
+      lastScrollYRef.current = nextScrollY
 
-      // Ignore sub-pixel and trackpad noise so the navigation does not flicker.
-      if (Math.abs(delta) >= 4) {
-        setDirection(delta > 0 ? 'down' : 'up')
-        lastScrollYRef.current = nextScrollY
+      if (delta > 0) {
+        upwardDistanceRef.current = 0
+        downwardDistanceRef.current += delta
+        if (downwardDistanceRef.current >= 72) {
+          setDirection('down')
+          downwardDistanceRef.current = 0
+        }
+      } else if (delta < 0) {
+        downwardDistanceRef.current = 0
+        upwardDistanceRef.current += Math.abs(delta)
+        if (upwardDistanceRef.current >= 8) {
+          setDirection('up')
+          upwardDistanceRef.current = 0
+        }
       }
     }
 
@@ -63,7 +83,10 @@ export function SiteNavbar() {
   }, [])
 
   const navVisible =
-    open || ((!isHome || heroComplete) && direction !== 'down')
+    open ||
+    (isHome
+      ? heroComplete && (!heroExited || direction !== 'down')
+      : direction !== 'down')
 
   return (
     <>
