@@ -23,7 +23,7 @@ export default function ServiciosPage() {
           className="pointer-events-none absolute top-0 left-1/2 h-[46rem] w-[80rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(46,91,255,0.14),transparent_66%)]"
         />
 
-        <header className="relative px-5 pt-32 pb-16 md:px-8 md:pt-40 md:pb-20">
+        <header className="relative px-5 pt-32 pb-10 md:px-8 md:pt-36 md:pb-12">
           <div className="mx-auto max-w-6xl text-center">
             <Reveal>
               <span className="text-xs font-semibold tracking-widest text-electric uppercase">
@@ -36,7 +36,7 @@ export default function ServiciosPage() {
               </h1>
             </Reveal>
             <Reveal delay={0.12}>
-              <p className="mx-auto mt-7 max-w-2xl text-base leading-relaxed text-white/60 text-pretty md:text-lg">
+              <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/60 text-pretty md:text-base">
                 Desde la dirección estratégica hasta la gestión completa de tu
                 cuenta. Tú decides cuánto quieres delegar.
               </p>
@@ -44,7 +44,7 @@ export default function ServiciosPage() {
           </div>
         </header>
 
-        <section className="relative px-5 pt-4 pb-28 md:px-8 md:pt-8 md:pb-36">
+        <section className="relative px-5 pt-2 pb-20 md:px-8 md:pt-4 md:pb-24">
           <div className="mx-auto max-w-6xl">
             <PricingGlass />
           </div>
