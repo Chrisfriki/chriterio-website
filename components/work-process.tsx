@@ -24,7 +24,14 @@ function ProcessVisual({
   if (phase.image) {
     return (
       <div className="relative overflow-hidden rounded-[2rem] border border-white/14 bg-white/[0.045] shadow-[0_28px_90px_-45px_rgba(46,91,255,0.55)]">
-        <div className="relative aspect-[4/4.6] min-h-[25rem]">
+        <div
+          className={cn(
+            'relative',
+            phase.image.aspect === 'portrait'
+              ? 'aspect-[2/3]'
+              : 'aspect-[3/2]',
+          )}
+        >
           <Image
             src={withBasePath(phase.image.src)}
             alt={phase.image.alt}
@@ -36,11 +43,10 @@ function ProcessVisual({
           <div className="absolute inset-0 bg-gradient-to-t from-[#06142b]/85 via-transparent to-transparent" />
           <div className="absolute inset-x-5 bottom-5 rounded-2xl border border-white/12 bg-[#06142b]/75 px-5 py-4 backdrop-blur-md">
             <p className="text-[10px] font-bold tracking-[0.18em] text-electric uppercase">
-              Trabajo directo
+              {phase.image.eyebrow}
             </p>
             <p className="mt-2 text-sm leading-relaxed text-white/70">
-              Contexto, preguntas y datos reales antes de recomendar una sola
-              acción.
+              {phase.image.caption}
             </p>
           </div>
         </div>

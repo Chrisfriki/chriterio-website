@@ -11,6 +11,9 @@ export type WorkPhase = {
     src: string
     alt: string
     position?: string
+    aspect: 'portrait' | 'landscape'
+    eyebrow: string
+    caption: string
   }
   modes?: WorkMode[]
 }
@@ -24,9 +27,13 @@ export const WORK_PHASES: WorkPhase[] = [
       'A partir de ahí analizamos en profundidad el mercado, la competencia, las fugas de ventas, la conversión, el posicionamiento, las palabras clave, el PPC, la rentabilidad y los puntos críticos que están frenando el crecimiento.',
     ],
     image: {
-      src: '/christian.png',
-      alt: 'Christian, consultor de Amazon y fundador de CHRITERIO',
-      position: '50% 28%',
+      src: '/images/about/audit-work.jpg',
+      alt: 'Christian trabajando en el análisis de una cuenta de Amazon',
+      position: '50% 50%',
+      aspect: 'portrait',
+      eyebrow: 'Auditoría real',
+      caption:
+        'Contexto, preguntas y datos reales antes de recomendar una sola acción.',
     },
   },
   {
@@ -55,6 +62,15 @@ export const WORK_PHASES: WorkPhase[] = [
           'Entramos directamente en la cuenta y ejecutamos nosotros las prioridades definidas para avanzar más rápido y con mayor control.',
       },
     ],
+    image: {
+      src: '/images/about/team-work.jpg',
+      alt: 'Equipo de CHRITERIO y AMZ Creatives trabajando en la oficina',
+      position: '50% 50%',
+      aspect: 'landscape',
+      eyebrow: 'Trabajo coordinado',
+      caption:
+        'Estrategia, ejecución y producción conectadas dentro del mismo equipo.',
+    },
   },
   {
     number: '04',

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { PageHeader } from '@/components/page-header'
 import { FinalCta } from '@/components/final-cta'
 import { Reveal } from '@/components/reveal'
@@ -18,11 +19,13 @@ export default function SobreMiPage() {
       <section className="bg-background px-5 py-20">
         <div className="mx-auto grid max-w-6xl items-start gap-10 md:grid-cols-2 md:gap-16">
           <Reveal>
-            <div className="overflow-hidden rounded-3xl border border-border bg-light">
-              <img
-                src={withBasePath('/christian.png')}
+            <div className="relative aspect-[3/2] overflow-hidden rounded-3xl border border-border bg-light">
+              <Image
+                src={withBasePath('/images/about/christian-about.jpg')}
                 alt="Christian, consultor de Amazon y seller activo en Amazon.es"
-                className="aspect-4/5 h-full w-full object-cover"
+                fill
+                sizes="(max-width: 767px) calc(100vw - 2.5rem), 50vw"
+                className="object-cover"
               />
             </div>
           </Reveal>
