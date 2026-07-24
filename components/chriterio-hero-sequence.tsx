@@ -3,6 +3,10 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { withBasePath } from '@/lib/base-path'
+import {
+  HERO_SEQUENCE_STATE_EVENT,
+  type HeroSequenceStateDetail,
+} from '@/lib/hero-sequence-events'
 
 /**
  * The source export contains three backward loops: 049 repeats 047, 069–077
@@ -121,6 +125,7 @@ export function ChriterioHeroSequence({
   const targetFrameFloatRef = useRef(0) // where the scroll *wants* the playhead to be
   const displayedFrameFloatRef = useRef(0) // where the playhead actually, smoothly is
   const lastDrawnFrameIndexRef = useRef(-1) // last frame index actually painted to the canvas
+  const sequenceCompleteRef = useRef<boolean | null>(null)
   const lastScrollYRef = useRef(0)
   // Cached, document-relative geometry. Re-measured only on mount/resize, never
   // on every scroll tick — see measureGeometry() for why.
@@ -135,6 +140,16 @@ export function ChriterioHeroSequence({
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null)
   const [firstFrameReady, setFirstFrameReady] = useState(false)
 
+  const publishSequenceState = (complete: boolean) => {
+    if (sequenceCompleteRef.current === complete) return
+    sequenceCompleteRef.current = complete
+    window.dispatchEvent(
+      new CustomEvent<HeroSequenceStateDetail>(HERO_SEQUENCE_STATE_EVENT, {
+        detail: { complete },
+      }),
+    )
+  }
+
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
     setReducedMotion(mq.matches)
@@ -142,6 +157,14 @@ export function ChriterioHeroSequence({
     mq.addEventListener('change', onChange)
     return () => mq.removeEventListener('change', onChange)
   }, [])
+
+  useEffect(() => {
+    if (reducedMotion === null) return
+    publishSequenceState(false)
+    return () => {
+      sequenceCompleteRef.current = null
+    }
+  }, [reducedMotion])
 
   // Nearest already-loaded frame to `target`, searching both directions.
   // Used only to bootstrap the very first paint (lastDrawnFrameIndex === -1)
@@ -378,6 +401,11 @@ export function ChriterioHeroSequence({
     }
 
     applyStages(progressRef.current)
+    publishSequenceState(
+      statusRef.current[HERO_FRAME_COUNT - 1] === 'loaded' &&
+        lastDrawnFrameIndexRef.current === HERO_FRAME_COUNT - 1 &&
+        displayedFrameFloatRef.current >= HERO_FRAME_COUNT - 1 - 0.001,
+    )
 
     const settled = Math.abs(targetFrameFloatRef.current - displayedFrameFloatRef.current) < 0.001
     if (!blockedByDirection && (!settled || !advanced)) {
@@ -632,7 +660,11 @@ export function ChriterioHeroSequence({
           alt="Cohete Chriterio en órbita"
           aria-hidden="true"
           className="absolute inset-0 h-full w-full origin-[5%_35%] scale-[1.6] object-cover"
-          onError={() => console.error('Error cargando fotograma:', lastFrame)}
+          onLoad={() => publishSequenceState(true)}
+          onError={() => {
+            console.error('Error cargando fotograma:', lastFrame)
+            publishSequenceState(true)
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#050d1f]/78 via-[#050d1f]/25 to-transparent" />
         <div

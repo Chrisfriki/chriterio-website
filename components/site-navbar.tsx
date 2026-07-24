@@ -1,39 +1,86 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { NAV_LINKS, CALENDLY_URL, WHATSAPP_URL } from '@/lib/site'
 import { Wordmark } from '@/components/wordmark'
 import { LinkButton } from '@/components/link-button'
 import { withBasePath } from '@/lib/base-path'
+import {
+  HERO_SEQUENCE_STATE_EVENT,
+  type HeroSequenceStateDetail,
+} from '@/lib/hero-sequence-events'
 
 export function SiteNavbar() {
   const pathname = usePathname()
+  const isHome = pathname === '/'
+  const reduceMotion = useReducedMotion()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const [heroComplete, setHeroComplete] = useState(!isHome)
+  const [direction, setDirection] = useState<'up' | 'down' | null>(null)
+  const lastScrollYRef = useRef(0)
 
   useEffect(() => {
     setOpen(false)
-  }, [pathname])
+    setHeroComplete(!isHome)
+    setDirection(null)
+    lastScrollYRef.current = window.scrollY
+  }, [isHome, pathname])
 
-  // Consistently dark glass regardless of page/hero, so there's no more
-  // color-swap state to manage — only a very slight refinement (a touch more
-  // opaque, a touch more shadow) once the page has actually scrolled.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
+    const onHeroSequenceState = (event: Event) => {
+      const { complete } = (event as CustomEvent<HeroSequenceStateDetail>).detail
+      setHeroComplete(complete)
+    }
+
+    window.addEventListener(HERO_SEQUENCE_STATE_EVENT, onHeroSequenceState)
+    return () =>
+      window.removeEventListener(HERO_SEQUENCE_STATE_EVENT, onHeroSequenceState)
+  }, [])
+
+  useEffect(() => {
+    const onScroll = () => {
+      const nextScrollY = window.scrollY
+      const delta = nextScrollY - lastScrollYRef.current
+      setScrolled(nextScrollY > 20)
+
+      // Ignore sub-pixel and trackpad noise so the navigation does not flicker.
+      if (Math.abs(delta) >= 4) {
+        setDirection(delta > 0 ? 'down' : 'up')
+        lastScrollYRef.current = nextScrollY
+      }
+    }
+
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  const navVisible =
+    open || ((!isHome || heroComplete) && direction !== 'down')
+
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 flex justify-start px-4 pt-5 md:px-6 md:pt-6">
+      <motion.header
+        initial={false}
+        animate={{
+          y: navVisible ? 0 : '-140%',
+          opacity: navVisible ? 1 : 0,
+        }}
+        transition={{
+          duration: reduceMotion ? 0 : 0.32,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        aria-hidden={!navVisible}
+        inert={!navVisible ? true : undefined}
+        className="fixed inset-x-0 top-0 z-50 flex justify-start px-4 pt-5 md:px-6 md:pt-6"
+      >
         <nav
           aria-label="Principal"
           className={cn(
@@ -86,7 +133,7 @@ export function SiteNavbar() {
             <Menu className="size-5" />
           </button>
         </nav>
-      </header>
+      </motion.header>
 
       <AnimatePresence>
         {open && (
