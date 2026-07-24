@@ -150,8 +150,11 @@ export default function SobreNosotrosPage() {
                     fill
                     priority
                     sizes="(max-width: 1023px) 50vw, 28vw"
-                    className="object-cover"
-                    style={{ objectPosition: '53% 42%' }}
+                    className="scale-[1.12] object-cover"
+                    style={{
+                      objectPosition: '52% 35%',
+                      transformOrigin: 'center 42%',
+                    }}
                   />
                 </div>
                 <div className="relative overflow-hidden">
