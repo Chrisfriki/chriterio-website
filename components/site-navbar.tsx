@@ -23,8 +23,9 @@ export function SiteNavbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [heroComplete, setHeroComplete] = useState(!isHome)
-  const [heroExited, setHeroExited] = useState(!isHome)
+  const [compactZone, setCompactZone] = useState(false)
   const [direction, setDirection] = useState<'up' | 'down' | null>(null)
+  const headerRef = useRef<HTMLElement>(null)
   const lastScrollYRef = useRef(0)
   const upwardDistanceRef = useRef(0)
   const downwardDistanceRef = useRef(0)
@@ -32,7 +33,7 @@ export function SiteNavbar() {
   useEffect(() => {
     setOpen(false)
     setHeroComplete(!isHome)
-    setHeroExited(!isHome)
+    setCompactZone(false)
     setDirection(null)
     lastScrollYRef.current = window.scrollY
     upwardDistanceRef.current = 0
@@ -41,11 +42,10 @@ export function SiteNavbar() {
 
   useEffect(() => {
     const onHeroSequenceState = (event: Event) => {
-      const { complete, exited } = (
+      const { complete } = (
         event as CustomEvent<HeroSequenceStateDetail>
       ).detail
       setHeroComplete(complete)
-      setHeroExited(exited)
     }
 
     window.addEventListener(HERO_SEQUENCE_STATE_EVENT, onHeroSequenceState)
@@ -59,6 +59,20 @@ export function SiteNavbar() {
       const delta = nextScrollY - lastScrollYRef.current
       setScrolled(nextScrollY > 20)
       lastScrollYRef.current = nextScrollY
+
+      if (isHome) {
+        const compactStart = document.querySelector<HTMLElement>(
+          '[data-navbar-compact-start]',
+        )
+        const headerBottom =
+          headerRef.current?.getBoundingClientRect().bottom ?? 0
+        setCompactZone(
+          Boolean(
+            compactStart &&
+              compactStart.getBoundingClientRect().top <= headerBottom,
+          ),
+        )
+      }
 
       if (delta > 0) {
         upwardDistanceRef.current = 0
@@ -79,18 +93,23 @@ export function SiteNavbar() {
 
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [isHome])
 
-  const navVisible =
-    open ||
-    (isHome
-      ? heroComplete && (!heroExited || direction !== 'down')
-      : direction !== 'down')
+  const navVisible = open || !isHome || heroComplete
+  const compact =
+    !open &&
+    direction === 'down' &&
+    (isHome ? compactZone : scrolled)
 
   return (
     <>
       <motion.header
+        ref={headerRef}
         initial={false}
         animate={{
           y: navVisible ? 0 : '-140%',
@@ -107,7 +126,10 @@ export function SiteNavbar() {
         <nav
           aria-label="Principal"
           className={cn(
-            'inline-flex items-center gap-8 rounded-full border border-white/12 bg-navy-dark/60 px-4 py-2.5 shadow-[0_20px_50px_-18px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-[background-color,box-shadow] duration-300 md:gap-10 md:px-5 md:py-3',
+            'inline-flex items-center rounded-full border border-white/12 bg-navy-dark/60 shadow-[0_20px_50px_-18px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-[gap,padding,background-color,box-shadow] duration-300 ease-out',
+            compact
+              ? 'gap-3 px-2.5 py-1.5 md:gap-6 md:px-3.5 md:py-2'
+              : 'gap-8 px-4 py-2.5 md:gap-10 md:px-5 md:py-3',
             scrolled && 'bg-navy-dark/78 shadow-[0_20px_50px_-14px_rgba(0,0,0,0.7)]',
           )}
         >
@@ -122,18 +144,32 @@ export function SiteNavbar() {
               width={414}
               height={477}
               priority
-              className="h-8 w-auto md:h-9"
+              className={cn(
+                'w-auto transition-[height] duration-300 ease-out',
+                compact ? 'h-7 md:h-8' : 'h-8 md:h-9',
+              )}
             />
           </Link>
 
-          <div className="hidden items-center gap-8 md:flex">
-            <ul className="flex items-center gap-7">
+          <div
+            className={cn(
+              'hidden items-center transition-[gap] duration-300 ease-out md:flex',
+              compact ? 'gap-6' : 'gap-8',
+            )}
+          >
+            <ul
+              className={cn(
+                'flex items-center transition-[gap] duration-300 ease-out',
+                compact ? 'gap-5' : 'gap-7',
+              )}
+            >
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
                     className={cn(
-                      'text-sm font-medium tracking-tight text-white/75 transition-colors hover:text-white',
+                      'font-medium tracking-tight text-white/75 transition-[color,font-size] duration-300 hover:text-white',
+                      compact ? 'text-xs' : 'text-sm',
                       pathname === link.href && 'text-white',
                     )}
                   >
@@ -142,7 +178,14 @@ export function SiteNavbar() {
                 </li>
               ))}
             </ul>
-            <LinkButton href={CALENDLY_URL} external className="px-5 py-2.5 text-sm">
+            <LinkButton
+              href={CALENDLY_URL}
+              external
+              className={cn(
+                'transition-[padding,font-size] duration-300',
+                compact ? 'px-4 py-2 text-xs' : 'px-5 py-2.5 text-sm',
+              )}
+            >
               Solicitar auditoría
             </LinkButton>
           </div>
