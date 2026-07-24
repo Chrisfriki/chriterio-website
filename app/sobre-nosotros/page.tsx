@@ -25,18 +25,18 @@ const TEAM = [
     role: 'Estrategia, gestión y crecimiento en Amazon',
     description:
       'Se incorporó al proyecto en 2023 y desde entonces trabaja directamente en cuentas, listings, campañas PPC, análisis de rentabilidad y operativa. Su función dentro de CHRITERIO es detectar qué está frenando el crecimiento, ordenar las prioridades y convertir el análisis en un plan ejecutable.',
-    image: '/images/about/christian-about.jpg',
-    alt: 'Christian, responsable de estrategia, gestión y crecimiento en Amazon',
-    position: '50% 42%',
+    image: '/images/about/christian-trabajando.jpg',
+    alt: 'Christian trabajando en estrategia, gestión y crecimiento en Amazon',
+    position: '68% 45%',
   },
   {
     name: 'Rafa',
     role: 'Estrategia creativa y marketplaces',
     description:
       'Vende en diferentes marketplaces desde 2020. Combina experiencia comercial, conocimiento de producto y dirección creativa para transformar la estrategia en imágenes, vídeos y contenidos que ayuden a mejorar la percepción y la conversión de las marcas.',
-    image: '/images/about/team-work.jpg',
-    alt: 'Rafa trabajando junto al equipo de CHRITERIO y AMZ Creatives',
-    position: '50% 50%',
+    image: '/images/about/rafa-trabajando.jpg',
+    alt: 'Rafa trabajando en estrategia creativa y marketplaces',
+    position: '64% 44%',
   },
 ] as const
 
@@ -142,15 +142,29 @@ export default function SobreNosotrosPage() {
             </div>
 
             <Reveal delay={0.1}>
-              <div className="relative aspect-[3/2] overflow-hidden rounded-[2rem] border border-white/14 bg-white/[0.04] shadow-[0_32px_100px_-48px_rgba(46,91,255,0.65)]">
-                <Image
-                  src={withBasePath('/images/about/team-work.jpg')}
-                  alt="Christian y Rafa trabajando junto al equipo"
-                  fill
-                  priority
-                  sizes="(max-width: 1023px) calc(100vw - 2.5rem), 55vw"
-                  className="object-cover"
-                />
+              <div className="relative grid aspect-[3/2] grid-cols-2 overflow-hidden rounded-[2rem] border border-white/14 bg-white/[0.04] shadow-[0_32px_100px_-48px_rgba(46,91,255,0.65)]">
+                <div className="relative overflow-hidden border-r border-white/12">
+                  <Image
+                    src={withBasePath('/images/about/christian-about.jpg')}
+                    alt="Christian sonriendo"
+                    fill
+                    priority
+                    sizes="(max-width: 1023px) 50vw, 28vw"
+                    className="object-cover"
+                    style={{ objectPosition: '53% 42%' }}
+                  />
+                </div>
+                <div className="relative overflow-hidden">
+                  <Image
+                    src={withBasePath('/images/about/rafa-sonriendo.jpg')}
+                    alt="Rafa sonriendo"
+                    fill
+                    priority
+                    sizes="(max-width: 1023px) 50vw, 28vw"
+                    className="object-cover"
+                    style={{ objectPosition: '50% 35%' }}
+                  />
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-[#06142b]/55 via-transparent to-transparent" />
               </div>
             </Reveal>
