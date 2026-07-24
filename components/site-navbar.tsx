@@ -23,9 +23,8 @@ export function SiteNavbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [heroComplete, setHeroComplete] = useState(!isHome)
-  const [compactZone, setCompactZone] = useState(false)
+  const [heroExited, setHeroExited] = useState(!isHome)
   const [direction, setDirection] = useState<'up' | 'down' | null>(null)
-  const headerRef = useRef<HTMLElement>(null)
   const lastScrollYRef = useRef(0)
   const upwardDistanceRef = useRef(0)
   const downwardDistanceRef = useRef(0)
@@ -33,7 +32,7 @@ export function SiteNavbar() {
   useEffect(() => {
     setOpen(false)
     setHeroComplete(!isHome)
-    setCompactZone(false)
+    setHeroExited(!isHome)
     setDirection(null)
     lastScrollYRef.current = window.scrollY
     upwardDistanceRef.current = 0
@@ -42,10 +41,11 @@ export function SiteNavbar() {
 
   useEffect(() => {
     const onHeroSequenceState = (event: Event) => {
-      const { complete } = (
+      const { complete, exited } = (
         event as CustomEvent<HeroSequenceStateDetail>
       ).detail
       setHeroComplete(complete)
+      setHeroExited(exited)
     }
 
     window.addEventListener(HERO_SEQUENCE_STATE_EVENT, onHeroSequenceState)
@@ -59,20 +59,6 @@ export function SiteNavbar() {
       const delta = nextScrollY - lastScrollYRef.current
       setScrolled(nextScrollY > 20)
       lastScrollYRef.current = nextScrollY
-
-      if (isHome) {
-        const compactStart = document.querySelector<HTMLElement>(
-          '[data-navbar-compact-start]',
-        )
-        const headerBottom =
-          headerRef.current?.getBoundingClientRect().bottom ?? 0
-        setCompactZone(
-          Boolean(
-            compactStart &&
-              compactStart.getBoundingClientRect().top <= headerBottom,
-          ),
-        )
-      }
 
       if (delta > 0) {
         upwardDistanceRef.current = 0
@@ -98,18 +84,17 @@ export function SiteNavbar() {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
     }
-  }, [isHome])
+  }, [])
 
   const navVisible = open || !isHome || heroComplete
   const compact =
     !open &&
     direction === 'down' &&
-    (isHome ? compactZone : scrolled)
+    (isHome ? heroExited : scrolled)
 
   return (
     <>
       <motion.header
-        ref={headerRef}
         initial={false}
         animate={{
           y: navVisible ? 0 : '-140%',

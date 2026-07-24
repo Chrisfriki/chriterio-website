@@ -14,7 +14,6 @@ export function TrustedBrands() {
   return (
     <section
       aria-labelledby="trusted-brands-heading"
-      data-navbar-compact-start
       className="relative overflow-hidden bg-transparent"
     >
       <div
