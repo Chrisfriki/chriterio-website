@@ -145,7 +145,7 @@ export default function SobreNosotrosPage() {
               <div className="relative grid aspect-[3/2] grid-cols-2 overflow-hidden rounded-[2rem] border border-white/14 bg-white/[0.04] shadow-[0_32px_100px_-48px_rgba(46,91,255,0.65)]">
                 <div className="relative overflow-hidden border-r border-white/12">
                   <Image
-                    src={withBasePath('/images/about/christian-about.jpg')}
+                    src={withBasePath('/images/about/christian-about.png')}
                     alt="Christian sonriendo"
                     fill
                     priority
