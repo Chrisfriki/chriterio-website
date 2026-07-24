@@ -37,6 +37,7 @@ export const PRICING_TIERS: TierType[] = [
       'Revisión de PPC, conversión y rentabilidad.',
       'Seguimiento de prioridades y avances.',
       'Soporte entre sesiones con límites definidos.',
+      'Formación del equipo encargado para que pueda ejecutar con criterio, orden y autonomía.',
     ],
     executionNote: 'Tu equipo ejecuta las acciones definidas.',
     ctaLabel: 'Quiero dirección estratégica',

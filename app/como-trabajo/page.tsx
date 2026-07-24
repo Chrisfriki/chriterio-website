@@ -1,70 +1,85 @@
 import type { Metadata } from 'next'
-import { Check } from 'lucide-react'
-import { PageHeader } from '@/components/page-header'
-import { FinalCta } from '@/components/final-cta'
+import { ArrowUpRight } from 'lucide-react'
+import { LinkButton } from '@/components/link-button'
 import { Reveal } from '@/components/reveal'
-import { PROCESS_STEPS, WHAT_I_CHECK } from '@/lib/data'
+import { WorkProcess } from '@/components/work-process'
+import { CALENDLY_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Cómo trabajo · CHRITERIO',
   description:
-    'El proceso paso a paso: llamada gratis de 15 min, una semana de análisis y un PDF con las causas y el plan de acción.',
+    'Auditoría, estrategia, ejecución y seguimiento para construir un plan de crecimiento de Amazon adaptado a cada cuenta.',
 }
 
 export default function ComoTrabajoPage() {
   return (
-    <main>
-      <PageHeader
-        eyebrow="Cómo trabajo"
-        title="Un proceso claro, sin humo"
-        subtitle="Tres pasos. Sin retainers, sin reuniones eternas. Del primer contacto al plan de acción en una semana."
-      />
+    <main className="overflow-x-clip">
+      <div className="relative overflow-hidden bg-[#020817] text-white">
+        <div
+          aria-hidden="true"
+          className="starfield pointer-events-none absolute inset-0 opacity-75"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-0 left-1/2 h-[48rem] w-[82rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(46,91,255,0.14),transparent_66%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-[52%] left-[-18rem] size-[42rem] rounded-full bg-electric/[0.055] blur-3xl"
+        />
 
-      <section className="bg-background px-5 py-20 md:py-28">
-        <div className="mx-auto flex max-w-5xl flex-col gap-16 md:gap-24">
-          {PROCESS_STEPS.map((step) => (
-            <Reveal key={step.n}>
-              <div className="flex flex-col gap-4 md:flex-row md:items-start md:gap-10">
-                <span className="font-display text-7xl font-bold leading-none tracking-tight text-navy/10 md:text-9xl">
-                  {step.n}
-                </span>
-                <div className="md:pt-3">
-                  <h2 className="max-w-xl font-display text-2xl font-bold tracking-tight text-navy text-balance md:text-3xl">
-                    {step.title}
-                  </h2>
-                  <p className="mt-4 max-w-lg text-base leading-relaxed text-muted-foreground text-pretty">
-                    {step.desc}
-                  </p>
-                </div>
-              </div>
+        <header className="relative px-5 pt-32 pb-20 md:px-8 md:pt-40 md:pb-28">
+          <div className="mx-auto max-w-6xl">
+            <Reveal>
+              <span className="text-xs font-semibold tracking-widest text-electric uppercase">
+                Cómo trabajo
+              </span>
             </Reveal>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-light px-5 py-20">
-        <div className="mx-auto max-w-5xl">
-          <Reveal>
-            <h2 className="font-display text-3xl font-bold tracking-tight text-navy text-balance md:text-4xl">
-              Qué miro exactamente
-            </h2>
-          </Reveal>
-          <div className="mt-10 grid grid-cols-1 gap-x-12 gap-y-4 sm:grid-cols-2">
-            {WHAT_I_CHECK.map((item, i) => (
-              <Reveal key={item} delay={i * 0.04}>
-                <div className="flex items-center gap-3 border-b border-border pb-4">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-electric/10 text-electric">
-                    <Check className="size-3.5" />
-                  </span>
-                  <span className="text-base font-medium text-navy">{item}</span>
-                </div>
-              </Reveal>
-            ))}
+            <Reveal delay={0.05}>
+              <h1 className="mt-5 max-w-5xl font-display text-4xl font-bold leading-[1.02] tracking-tight text-balance md:text-6xl lg:text-7xl">
+                Analizamos primero. Decidimos después. Ejecutamos con criterio.
+              </h1>
+            </Reveal>
+            <Reveal delay={0.12}>
+              <p className="mt-7 max-w-2xl text-base leading-relaxed text-white/62 text-pretty md:text-lg">
+                Todo empieza con una auditoría real de tu cuenta. Entendemos qué
+                está fallando, dónde están las oportunidades y qué plan tiene
+                más sentido para ti antes de empezar a trabajar juntos.
+              </p>
+            </Reveal>
           </div>
-        </div>
-      </section>
+        </header>
 
-      <FinalCta />
+        <div className="relative">
+          <WorkProcess />
+        </div>
+
+        <section className="relative border-t border-white/10 px-5 py-24 md:px-8 md:py-32">
+          <div className="mx-auto max-w-4xl rounded-[2rem] border border-white/12 bg-[#07172f]/72 px-6 py-12 text-center shadow-[0_32px_100px_-50px_rgba(46,91,255,0.55)] backdrop-blur-xl md:px-12 md:py-16">
+            <Reveal>
+              <span className="text-xs font-semibold tracking-widest text-electric uppercase">
+                El siguiente paso
+              </span>
+              <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-white text-balance md:text-5xl">
+                Si tiene sentido para ambos, empezamos.
+              </h2>
+              <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-white/58 text-pretty md:text-base">
+                La auditoría inicial nos sirve para entender tu cuenta y decirte
+                con honestidad cómo podemos ayudarte. Si vemos que encajamos,
+                definimos el plan y nos ponemos a trabajar.
+              </p>
+              <LinkButton
+                href={CALENDLY_URL}
+                external
+                className="mt-8"
+              >
+                Solicitar auditoría
+                <ArrowUpRight className="size-4" aria-hidden="true" />
+              </LinkButton>
+            </Reveal>
+          </div>
+        </section>
+      </div>
     </main>
   )
 }

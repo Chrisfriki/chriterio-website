@@ -23,35 +23,6 @@ export const FAQS = [
   },
 ]
 
-export const PROCESS_STEPS = [
-  {
-    n: '01',
-    title: 'Llamada gratis de 15 min',
-    desc: 'Me cuentas tu situación. Sin compromiso: si no puedo ayudarte, te lo digo.',
-  },
-  {
-    n: '02',
-    title: 'Analizo tu cuenta a fondo durante una semana',
-    desc: 'Reviso listings, PPC, keywords, competencia, precios e imágenes con criterio de seller.',
-  },
-  {
-    n: '03',
-    title: 'Recibes el PDF con las causas y el plan',
-    desc: 'Tú decides: lo ejecutas tú o lo producimos nosotros. El plan es tuyo.',
-  },
-]
-
-export const WHAT_I_CHECK = [
-  'Listings',
-  'PPC',
-  'Keywords',
-  'Competencia',
-  'Precios',
-  'Imágenes / A+',
-  'Reviews',
-  'Operativa',
-]
-
 export type MissionModule = {
   tag: string
   title: string
