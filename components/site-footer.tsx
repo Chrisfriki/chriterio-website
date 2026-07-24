@@ -12,8 +12,8 @@ export function SiteFooter() {
           <div className="max-w-xs">
             <Wordmark light />
             <p className="mt-5 text-sm leading-relaxed text-white/50">
-              Consultoría de Amazon con criterio de seller, no de agencia.
-              Análisis con el mismo criterio que uso con mi propio dinero.
+              Estrategia, gestión y creatividad conectadas para ayudar a crecer
+              marcas en Amazon con criterio.
             </p>
           </div>
 
@@ -67,7 +67,7 @@ export function SiteFooter() {
         <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-white/40 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-6">
             <span>© {new Date().getFullYear()} CHRITERIO · Todos los derechos reservados</span>
-            <span>Seller activo en Amazon.es · Estrategia y gestión con criterio</span>
+            <span>Experiencia real en Amazon · Estrategia y gestión con criterio</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-white/40">Diseñado por</span>
