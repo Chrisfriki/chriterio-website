@@ -1,65 +1,21 @@
 import type { Brand } from '@/components/ui/brand-scroller'
 
-export type Service = {
-  id: string
-  name: string
-  price: string
-  priceNote: string
-  audience: string
-  features: string[]
-  cta: string
-  featured?: boolean
-  badge?: string
-}
-
-export const SERVICES: Service[] = [
-  {
-    id: 'diagnostico',
-    name: 'Diagnóstico de cuenta',
-    price: '390€',
-    priceNote: 'entrega en 7 días',
-    audience: 'Para quien vende pero no sabe por qué no crece',
-    features: [
-      'Análisis de listings, PPC, keywords y competencia',
-      'PDF con las 5-7 causas priorizadas',
-      'Plan de acción paso a paso',
-      '50% al encargar, 50% al entregar',
-    ],
-    cta: 'Quiero mi diagnóstico',
-    featured: true,
-    badge: 'Más pedido',
-  },
-  {
-    id: 'sesiones',
-    name: 'Sesiones de trabajo 1:1',
-    price: '150€/hora',
-    priceNote: 'pack 4 sesiones: 450€',
-    audience: 'Para quien quiere gestionar su cuenta él mismo, con criterio',
-    features: [
-      'Sesión en directo sobre tu cuenta',
-      'Sales sabiendo exactamente qué tocar',
-      'Sin compromiso continuo',
-    ],
-    cta: 'Reservar sesión',
-  },
-]
-
 export const FAQS = [
   {
-    q: '¿Qué necesito darte para empezar?',
-    a: 'Acceso de lectura a tu Seller Central (o capturas de las secciones clave) y un contexto breve de tu producto y objetivos. Con eso arranco el análisis.',
+    q: '¿Qué diferencia hay entre Dirección estratégica y Gestión integral?',
+    a: 'En Dirección estratégica analizamos, priorizamos y hacemos seguimiento, pero tu equipo ejecuta. En Gestión integral trabajamos directamente dentro de Seller Central y ejecutamos las prioridades de la cuenta.',
   },
   {
-    q: '¿Cuánto tarda el diagnóstico?',
-    a: 'Siete días desde que tengo los accesos. Recibes un PDF con las 5-7 causas priorizadas y un plan de acción paso a paso.',
+    q: '¿Qué incluye la app privada?',
+    a: 'Centraliza la hoja de ruta, las prioridades, el seguimiento y los recursos del servicio para que siempre tengas visibilidad sobre el trabajo y los próximos pasos.',
   },
   {
-    q: '¿Qué pasa después del diagnóstico?',
-    a: 'Tú decides. Puedes ejecutar el plan por tu cuenta, contratar sesiones 1:1 para hacerlo conmigo, o que lo produzcamos nosotros. Sin permanencias.',
+    q: '¿La producción creativa está incluida?',
+    a: 'La optimización de listings y contenido existente sí puede formar parte de Gestión integral. La creación de nuevas fotografías, diseños, vídeos, renders o piezas de contenido se presupuesta por separado.',
   },
   {
-    q: '¿Qué formas de pago aceptas?',
-    a: 'Transferencia o tarjeta. En el diagnóstico: 50% al encargar y 50% al entregar. Precio cerrado, sin sorpresas.',
+    q: '¿Hay permanencia?',
+    a: 'La modalidad inicial tiene una permanencia mínima de 3 meses. También puedes elegir el plan anual, que incluye el equivalente a un mes.',
   },
   {
     q: '¿Trabajas con cualquier categoría?',
