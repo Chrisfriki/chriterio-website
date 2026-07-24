@@ -1,16 +1,12 @@
 import { CALENDLY_URL } from '@/lib/site'
 
-export type PricingMode = 'commitment' | 'annual'
-
 export type TierType = {
   id: string
   name: string
   description: string
-  priceCommitment: string
-  priceAnnual: string
-  originalPriceCommitment?: string
-  commitmentPriceNote: string
-  annualPriceNote: string
+  price: string
+  originalPrice?: string
+  priceNote: string
   commitmentNote: string
   launchOffer?: boolean
   isPopular?: boolean
@@ -28,12 +24,10 @@ export const PRICING_TIERS: TierType[] = [
     name: 'Dirección estratégica',
     description:
       'Para marcas que necesitan criterio, análisis y seguimiento, pero cuentan con equipo o capacidad para ejecutar.',
-    priceCommitment: '500 €',
-    priceAnnual: '550 €',
-    originalPriceCommitment: '600 €',
-    commitmentPriceNote:
+    price: '500 €',
+    originalPrice: '600 €',
+    priceNote:
       '500 €/mes durante los primeros 3 meses. Después, 600 €/mes.',
-    annualPriceNote: '6.600 € al año · equivalente a 1 mes incluido',
     commitmentNote: 'Permanencia mínima de 3 meses',
     launchOffer: true,
     features: [
@@ -53,12 +47,10 @@ export const PRICING_TIERS: TierType[] = [
     name: 'Gestión integral',
     description:
       'Para marcas que quieren delegar la gestión y que trabajemos directamente dentro de su cuenta de Amazon.',
-    priceCommitment: '997 €',
-    priceAnnual: '1.100 €',
-    originalPriceCommitment: '1.200 €',
-    commitmentPriceNote:
+    price: '997 €',
+    originalPrice: '1.200 €',
+    priceNote:
       '997 €/mes durante los primeros 3 meses. Después, 1.200 €/mes.',
-    annualPriceNote: '13.200 € al año · equivalente a 1 mes incluido',
     commitmentNote: 'Permanencia mínima de 3 meses',
     launchOffer: true,
     isPopular: true,

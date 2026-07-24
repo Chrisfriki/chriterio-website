@@ -16,11 +16,15 @@ export default function ServiciosPage() {
       <div className="relative overflow-hidden bg-[#020817] text-white">
         <div
           aria-hidden="true"
-          className="starfield pointer-events-none absolute inset-0 opacity-65"
+          className="starfield pointer-events-none absolute inset-0 opacity-80"
         />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute top-0 left-1/2 h-[46rem] w-[80rem] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(46,91,255,0.14),transparent_66%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-[55%] right-[-18rem] size-[48rem] rounded-full bg-electric/[0.065] blur-3xl"
         />
 
         <header className="relative px-5 pt-32 pb-10 md:px-8 md:pt-36 md:pb-12">

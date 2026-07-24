@@ -15,7 +15,7 @@ export const FAQS = [
   },
   {
     q: '¿Hay permanencia?',
-    a: 'La modalidad inicial tiene una permanencia mínima de 3 meses. También puedes elegir el plan anual, que incluye el equivalente a un mes.',
+    a: 'Los servicios tienen una permanencia mínima de 3 meses para poder analizar, ejecutar y medir avances con un horizonte de trabajo realista.',
   },
   {
     q: '¿Trabajas con cualquier categoría?',
