@@ -426,7 +426,13 @@ export function ChriterioHeroSequence({
       statusRef.current[HERO_FRAME_COUNT - 1] === 'loaded' &&
         lastDrawnFrameIndexRef.current === HERO_FRAME_COUNT - 1 &&
       displayedFrameFloatRef.current >= HERO_FRAME_COUNT - 1 - 0.001
-    publishSequenceState(sequenceComplete, sequenceComplete && progressRef.current >= 0.995)
+    const nextSectionFillsViewport =
+      window.scrollY >=
+      sectionOffsetTopRef.current + sectionHeightRef.current
+    publishSequenceState(
+      sequenceComplete,
+      sequenceComplete && nextSectionFillsViewport,
+    )
 
     const settled = Math.abs(targetFrameFloatRef.current - displayedFrameFloatRef.current) < 0.001
     if (!blockedByDirection && (!settled || !advanced)) {
