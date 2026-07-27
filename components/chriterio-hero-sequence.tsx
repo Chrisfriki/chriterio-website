@@ -267,13 +267,10 @@ export function ChriterioHeroSequence({
     const drawWidth = lowerImage.naturalWidth * scale
     const drawHeight = lowerImage.naturalHeight * scale
 
-    // Bias the crop right so the rocket sits clear of the centered text
-    // column instead of running straight through it. On mobile the extra
-    // zoom above makes the visible horizontal window much narrower, so the
-    // same bias needs a much smaller delta from center (0.5) or the rocket
-    // shifts out of frame entirely (verified visually — don't push this
-    // much past ~0.4 without re-checking screenshots).
-    const horizontalAnchor = isMobile ? 0.4 : 0
+    // The source sequence is composed around its horizontal midpoint. Keep
+    // that midpoint aligned with the viewport on mobile so the rocket does
+    // not drift towards the right edge as the narrow crop becomes stronger.
+    const horizontalAnchor = isMobile ? 0.5 : 0
     const verticalAnchor = isMobile ? 0.05 : 0.5
     const dx = (cssWidth - drawWidth) * horizontalAnchor
     const dy = (cssHeight - drawHeight) * verticalAnchor
@@ -757,12 +754,12 @@ export function ChriterioHeroSequence({
             rocket is free to read as the visual centerpiece through the rest
             of the frame below/behind it. Each piece fades/rises in on its
             own schedule via its own ref. */}
-        <div className="absolute inset-x-0 top-0 z-10 flex flex-col items-center gap-7 px-5 pt-28 text-center md:gap-8 md:pt-36">
-          <div ref={headlineRef} className="max-w-4xl" style={{ opacity: 0 }}>
+        <div className="absolute inset-x-0 top-0 z-10 flex flex-col items-center gap-6 px-6 pt-[clamp(6.5rem,15svh,8rem)] text-center sm:px-8 md:gap-8 md:pt-36">
+          <div ref={headlineRef} className="w-full max-w-4xl" style={{ opacity: 0 }}>
             {headline}
           </div>
 
-          <div ref={secondaryHeadlineRef} className="max-w-4xl" style={{ opacity: 0 }}>
+          <div ref={secondaryHeadlineRef} className="w-full max-w-4xl" style={{ opacity: 0 }}>
             {secondaryHeadline}
           </div>
 
