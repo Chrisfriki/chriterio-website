@@ -106,7 +106,7 @@ export function SiteNavbar() {
         }}
         aria-hidden={!navVisible}
         inert={!navVisible ? true : undefined}
-        className="fixed inset-x-0 top-0 z-50 flex justify-start px-4 pt-5 md:px-6 md:pt-6"
+        className="fixed inset-x-0 top-0 z-50 flex items-start justify-between gap-3 px-4 pt-5 md:px-6 md:pt-6"
       >
         <nav
           aria-label="Principal"
@@ -184,6 +184,29 @@ export function SiteNavbar() {
             <Menu className="size-5" />
           </button>
         </nav>
+
+        <button
+          type="button"
+          disabled
+          aria-label="Acceso a la app próximamente"
+          className={cn(
+            'inline-flex shrink-0 cursor-default items-center rounded-full border border-white/12 bg-navy-dark/60 shadow-[0_20px_50px_-18px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-[padding,background-color,box-shadow] duration-300 ease-out',
+            compact
+              ? 'px-3 py-2 md:px-4 md:py-2.5'
+              : 'px-4 py-2.5 md:px-5 md:py-3',
+            scrolled &&
+              'bg-navy-dark/78 shadow-[0_20px_50px_-14px_rgba(0,0,0,0.7)]',
+          )}
+        >
+          <span
+            className={cn(
+              'font-medium tracking-tight text-white/65 transition-[font-size] duration-300',
+              compact ? 'text-[11px] md:text-xs' : 'text-xs md:text-sm',
+            )}
+          >
+            Próximamente
+          </span>
+        </button>
       </motion.header>
 
       <AnimatePresence>
