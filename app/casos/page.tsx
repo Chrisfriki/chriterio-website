@@ -110,7 +110,7 @@ export default function CasosPage() {
                     </LinkButton>
                   </div>
                   <CaseMedia
-                    src="/images/casos/empapadores-adultos-portada.webp"
+                    src="/amz-creatives/images-that-convert/1.webp"
                     alt="Portada del caso de recuperación de ventas de empapadores para adultos en Amazon"
                     placeholder="Imagen principal del caso"
                     className="min-h-80 lg:min-h-[34rem]"
