@@ -47,7 +47,7 @@ export default function CasosPage() {
                 Casos
               </span>
               <h1 className="mt-5 max-w-4xl font-display text-4xl font-bold leading-[1.02] tracking-tight text-balance md:text-6xl lg:text-7xl">
-                Casos reales, sin adornos
+                Casos reales
               </h1>
               <p className="mt-7 max-w-3xl text-sm leading-relaxed text-white/62 text-pretty md:text-lg">
                 Problemas reales, análisis de cuentas de Amazon y decisiones
