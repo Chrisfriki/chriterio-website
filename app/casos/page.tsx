@@ -59,14 +59,14 @@ export default function CasosPage() {
         </header>
 
         <section className="relative border-t border-white/8 px-5 py-16 md:px-8 md:py-24">
-          <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[2fr_1fr]">
+          <div className="mx-auto grid max-w-6xl gap-6">
             <Reveal className="h-full">
               <article className="group relative h-full overflow-hidden rounded-[2rem] border border-electric/25 bg-[#07172f]/78 p-4 shadow-[0_34px_100px_-58px_rgba(46,91,255,0.95)] backdrop-blur-xl transition-colors duration-500 hover:border-electric/45 md:p-5">
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-x-16 top-0 h-px bg-gradient-to-r from-transparent via-[#7895ff]/70 to-transparent"
                 />
-                <div className="grid h-full gap-8 lg:grid-cols-[1.04fr_0.96fr] lg:items-stretch">
+                <div className="grid h-full gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
                   <div className="flex flex-col p-3 md:p-5">
                     <span className="text-[10px] font-bold tracking-[0.14em] text-[#91a9ff] uppercase">
                       Caso destacado · Empapadores para adultos
@@ -113,14 +113,14 @@ export default function CasosPage() {
                     src="/amz-creatives/images-that-convert/1.webp"
                     alt="Portada del caso de recuperación de ventas de empapadores para adultos en Amazon"
                     placeholder="Imagen principal del caso"
-                    className="min-h-80 lg:min-h-[34rem]"
+                    className="aspect-square w-full self-center"
                     imageClassName="group-hover:scale-[1.025]"
                   />
                 </div>
               </article>
             </Reveal>
 
-            <div className="grid gap-6">
+            <div className="grid gap-6 md:grid-cols-2">
               {UPCOMING_CASES.map((item, index) => (
                 <Reveal key={item.title} delay={0.08 + index * 0.07}>
                   <article className="flex h-full min-h-64 flex-col rounded-[1.75rem] border border-white/10 bg-white/[0.025] p-6 opacity-75 md:p-7">
