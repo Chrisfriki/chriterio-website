@@ -69,11 +69,11 @@ export default function CasosPage() {
                 <div className="grid h-full gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
                   <div className="flex flex-col p-3 md:p-5">
                     <span className="text-[10px] font-bold tracking-[0.14em] text-[#91a9ff] uppercase">
-                      Caso destacado · Empapadores para adultos
+                      Caso destacado · T2ND
                     </span>
                     <h2 className="mt-5 font-display text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl">
-                      De una caída de facturación a volver a competir entre los
-                      más vendidos
+                      De una caída de facturación a convertirse en el más
+                      vendido en Amazon
                     </h2>
                     <p className="mt-5 text-sm leading-relaxed text-white/56">
                       La cuenta llevaba meses perdiendo ventas, posicionamiento

@@ -102,7 +102,7 @@ export default function EmpapadoresAdultosAmazonCasePage() {
               </Link>
               <div className="mt-9 flex flex-wrap items-center gap-3">
                 <span className="rounded-full border border-electric/25 bg-electric/10 px-3 py-1 text-[10px] font-bold tracking-[0.14em] text-[#9bb0ff] uppercase">
-                  Caso real · Empapadores para adultos
+                  Caso real · T2ND
                 </span>
                 <span className="inline-flex items-center gap-2 text-[10px] tracking-wide text-white/38">
                   <ShieldCheck className="size-3.5" aria-hidden="true" />
@@ -110,8 +110,8 @@ export default function EmpapadoresAdultosAmazonCasePage() {
                 </span>
               </div>
               <h1 className="mt-7 max-w-5xl font-display text-4xl font-bold leading-[1.04] tracking-tight text-balance md:text-6xl">
-                De una caída de facturación a recuperar posicionamiento,
-                estabilidad y ventas en Amazon
+                De una caída de facturación a convertirse en el más vendido en
+                Amazon
               </h1>
               <p className="mt-7 max-w-4xl text-sm leading-relaxed text-white/60 md:text-lg">
                 El cliente acudió a nosotros después de experimentar una
