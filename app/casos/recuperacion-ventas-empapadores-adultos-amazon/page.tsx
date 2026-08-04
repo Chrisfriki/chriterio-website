@@ -47,18 +47,28 @@ const SUMMARY = [
     title: 'La facturación llevaba meses cayendo.',
     text: 'El producto estaba perdiendo terreno frente a nuevos competidores y mantenía un gasto elevado en PPC sin obtener la rentabilidad esperada.',
     icon: TriangleAlert,
+    cardClass: 'border-red-400/30',
+    labelClass: 'text-red-300',
+    iconClass: 'border-red-400/25 bg-red-400/10 text-red-300',
   },
   {
     label: 'Hallazgo',
     title: 'La cuenta estaba perdiendo competitividad por varios frentes.',
     text: 'Detectamos nuevos packs más diferenciados, pérdida de posicionamiento orgánico, una estrategia PPC poco eficiente, una imagen principal menos competitiva y una supresión de búsqueda que limitaba la visibilidad.',
     icon: Search,
+    cardClass: 'border-amber-300/30',
+    labelClass: 'text-amber-200',
+    iconClass: 'border-amber-300/25 bg-amber-300/10 text-amber-200',
   },
   {
     label: 'Resultado',
     title: 'El producto recuperó visibilidad, estabilidad y posiciones destacadas.',
     text: 'Primero volvió a posicionarse en búsquedas prioritarias y, tras incorporar la nueva imagen principal, aceleró sus ventas y regresó a posiciones relevantes entre los más vendidos.',
     icon: TrendingUp,
+    cardClass: 'border-emerald-400/30',
+    labelClass: 'text-emerald-300',
+    iconClass:
+      'border-emerald-400/25 bg-emerald-400/10 text-emerald-300',
   },
 ] as const
 
@@ -139,12 +149,18 @@ export default function EmpapadoresAdultosAmazonCasePage() {
                   const Icon = item.icon
                   return (
                     <Reveal key={item.label} delay={index * 0.07} className="h-full">
-                      <section className="h-full rounded-[1.75rem] border border-white/12 bg-[#07172f]/72 p-6 backdrop-blur-xl md:p-7">
+                      <section
+                        className={`h-full rounded-[1.75rem] border bg-[#07172f]/72 p-6 backdrop-blur-xl md:p-7 ${item.cardClass}`}
+                      >
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-bold tracking-[0.16em] text-[#91a9ff] uppercase">
+                          <span
+                            className={`text-[10px] font-bold tracking-[0.16em] uppercase ${item.labelClass}`}
+                          >
                             {item.label}
                           </span>
-                          <span className="flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/55">
+                          <span
+                            className={`flex size-9 items-center justify-center rounded-full border ${item.iconClass}`}
+                          >
                             <Icon className="size-4" aria-hidden="true" />
                           </span>
                         </div>
