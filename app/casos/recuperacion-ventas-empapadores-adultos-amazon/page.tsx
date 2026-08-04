@@ -342,7 +342,7 @@ export default function EmpapadoresAdultosAmazonCasePage() {
                       Antes
                     </span>
                     <CaseMedia
-                      src="/images/casos/empapadores-adultos-antes.webp"
+                      src="/images/casos/empapadores-adultos-antes.png"
                       alt="Imagen principal anterior del producto de empapadores para adultos"
                       placeholder="Imagen principal anterior"
                       className="aspect-square"
@@ -355,7 +355,7 @@ export default function EmpapadoresAdultosAmazonCasePage() {
                       Después
                     </span>
                     <CaseMedia
-                      src="/images/casos/empapadores-adultos-despues.webp"
+                      src="/amz-creatives/images-that-convert/1.webp"
                       alt="Nueva imagen principal optimizada del producto de empapadores para adultos"
                       placeholder="Nueva imagen principal"
                       className="aspect-square"
