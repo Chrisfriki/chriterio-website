@@ -180,10 +180,10 @@ export default function EmpapadoresAdultosAmazonCasePage() {
               </Reveal>
               <Reveal delay={0.08}>
                 <CaseMedia
-                  src="/images/casos/empapadores-adultos-reunion.webp"
-                  alt="Reunión de análisis del caso de empapadores para adultos en Amazon"
-                  placeholder="Fotografía de reunión y análisis del proyecto"
-                  className="aspect-[4/3]"
+                  src="/images/casos/empapadores-caida-ventas.webp"
+                  alt="Evolución de ventas durante el periodo de caída del producto en Amazon"
+                  placeholder="Gráfico de la caída de ventas"
+                  className="aspect-video"
                 />
               </Reveal>
             </div>
@@ -368,6 +368,12 @@ export default function EmpapadoresAdultosAmazonCasePage() {
                     en primera página y alcanzó posiciones destacadas dentro de
                     los más vendidos.
                   </p>
+                  <CaseMedia
+                    src="/images/casos/empapadores-resultado.webp"
+                    alt="Evolución de ventas durante la recuperación del producto en Amazon"
+                    placeholder="Gráfico del crecimiento de ventas"
+                    className="mt-10 aspect-video"
+                  />
                   <div className="mt-10 grid gap-3 sm:grid-cols-2">
                     {RESULTS.map((result) => (
                       <div
