@@ -234,24 +234,24 @@ export default function EmpapadoresAdultosAmazonCasePage() {
                   </h2>
                 </Reveal>
                 <Reveal delay={0.08}>
-                  <p className="text-sm leading-relaxed text-white/58 md:text-base">
-                    Primero trabajamos junto al cliente para eliminar la
-                    supresión de búsqueda. Después realizamos un nuevo estudio
-                    de palabras clave y definimos las búsquedas prioritarias
-                    para recuperar posicionamiento en Amazon. En paralelo,
-                    desarrollamos una nueva imagen principal.
-                  </p>
+                  <div>
+                    <p className="text-sm leading-relaxed text-white/58 md:text-base">
+                      Primero trabajamos junto al cliente para eliminar la
+                      supresión de búsqueda. Después realizamos un nuevo estudio
+                      de palabras clave y definimos las búsquedas prioritarias
+                      para recuperar posicionamiento en Amazon. En paralelo,
+                      desarrollamos una nueva imagen principal.
+                    </p>
+                    <CaseMedia
+                      src="/images/casos/empapadores-evolucion-ranking.webp"
+                      alt="Evolución del precio y del ranking del producto durante la recuperación"
+                      placeholder="Evolución del precio y del ranking"
+                      className="mt-8 aspect-[40/17] max-w-xl"
+                      caption="Evolución del precio y el ranking durante el periodo analizado."
+                    />
+                  </div>
                 </Reveal>
               </div>
-              <Reveal delay={0.12} className="mt-12">
-                <CaseMedia
-                  src="/images/casos/empapadores-adultos-evidencia.webp"
-                  alt="Evidencia de la evolución de posicionamiento y ventas del caso Amazon"
-                  placeholder="Evidencia de ventas, ranking o evolución de palabras clave"
-                  className="min-h-80 md:min-h-[30rem]"
-                  caption="Evidencia del caso. Pie de imagen editable al incorporar la captura definitiva."
-                />
-              </Reveal>
             </div>
           </section>
 
