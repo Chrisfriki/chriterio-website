@@ -33,7 +33,7 @@ const TEAM = [
     name: 'Rafa',
     role: 'Estrategia creativa y marketplaces',
     description:
-      'Vende en diferentes marketplaces desde 2020. Combina experiencia comercial, conocimiento de producto y dirección creativa para transformar la estrategia en imágenes, vídeos y contenidos que ayuden a mejorar la percepción y la conversión de las marcas.',
+      'Vende en diferentes marketplaces desde 2017. Combina experiencia comercial, conocimiento de producto y dirección creativa para transformar la estrategia en imágenes, vídeos y contenidos que ayuden a mejorar la percepción y la conversión de las marcas.',
     image: '/images/about/rafa-trabajando.jpg',
     alt: 'Rafa trabajando en estrategia creativa y marketplaces',
     position: '64% 44%',
@@ -42,34 +42,34 @@ const TEAM = [
 
 const TIMELINE = [
   {
-    label: '2020',
-    title: 'Rafa comienza a vender en marketplaces',
+    label: '2017',
+    title: 'Rafa empieza a vender en marketplaces',
     description:
-      'Primeros productos, operativa, aprendizaje comercial y experiencia directa con plataformas.',
+      'Comienza a operar en distintas plataformas y adquiere experiencia directa en producto, venta y gestión.',
+  },
+  {
+    label: '2022',
+    title: 'Rafa y Wil crean AMZ Creatives',
+    description:
+      'Unen experiencia en marketplaces y producción creativa para ayudar a las marcas a competir mejor en Amazon.',
   },
   {
     label: '2023',
-    title: 'Christian se incorpora al proyecto',
+    title: 'Christian se une como analista de productos',
     description:
-      'Se refuerzan la gestión, la estrategia, el PPC y el análisis de cuentas.',
+      'El equipo pasa a estar formado por los tres, conectando análisis, estrategia y creatividad. Desde entonces siguen trabajando juntos.',
   },
   {
-    label: 'AMZ CREATIVES',
-    title: 'Creatividad enfocada a conversión',
+    label: '2026',
+    title: 'Nace CHRITERIO',
     description:
-      'Fotografía, diseño, vídeo y contenido para marcas y vendedores de Amazon.',
-  },
-  {
-    label: 'CHRITERIO',
-    title: 'Estrategia, gestión y creatividad conectadas',
-    description:
-      'Todo el aprendizaje acumulado se convierte en una metodología más completa para ayudar a escalar cuentas.',
+      'Amplían el proyecto para acompañar a las empresas de forma 360º, uniendo estrategia, gestión, análisis y creatividad.',
   },
   {
     label: 'SIGUIENTE ETAPA',
-    title: 'Amazon 360º y expansión hacia TikTok Shop',
+    title: 'TikTok Shop',
     description:
-      'Nuevas herramientas, procesos y canales para acompañar el crecimiento de las marcas.',
+      'El siguiente paso es trasladar la experiencia acumulada a un nuevo canal de venta y crecimiento para las marcas.',
   },
 ] as const
 
