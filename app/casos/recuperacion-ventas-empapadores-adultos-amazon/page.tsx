@@ -9,6 +9,7 @@ import {
   TrendingUp,
   TriangleAlert,
 } from 'lucide-react'
+import { BeforeAfterComparison } from '@/components/cases/before-after-comparison'
 import { CaseMedia } from '@/components/cases/case-media'
 import { LinkButton } from '@/components/link-button'
 import { Reveal } from '@/components/reveal'
@@ -335,34 +336,14 @@ export default function EmpapadoresAdultosAmazonCasePage() {
                   recuperación.
                 </p>
               </Reveal>
-              <div className="mt-12 grid gap-6 md:grid-cols-2">
-                <Reveal>
-                  <div>
-                    <span className="mb-4 block text-[10px] font-bold tracking-[0.16em] text-white/40 uppercase">
-                      Antes
-                    </span>
-                    <CaseMedia
-                      src="/images/casos/empapadores-adultos-antes.png"
-                      alt="Imagen principal anterior del producto de empapadores para adultos"
-                      placeholder="Imagen principal anterior"
-                      className="aspect-square"
-                    />
-                  </div>
-                </Reveal>
-                <Reveal delay={0.08}>
-                  <div>
-                    <span className="mb-4 block text-[10px] font-bold tracking-[0.16em] text-[#91a9ff] uppercase">
-                      Después
-                    </span>
-                    <CaseMedia
-                      src="/amz-creatives/images-that-convert/1.webp"
-                      alt="Nueva imagen principal optimizada del producto de empapadores para adultos"
-                      placeholder="Nueva imagen principal"
-                      className="aspect-square"
-                    />
-                  </div>
-                </Reveal>
-              </div>
+              <Reveal delay={0.08} className="mx-auto mt-12 max-w-3xl">
+                <BeforeAfterComparison
+                  beforeSrc="/images/casos/empapadores-adultos-antes.png"
+                  beforeAlt="Imagen principal anterior del producto de empapadores para adultos"
+                  afterSrc="/amz-creatives/images-that-convert/1.webp"
+                  afterAlt="Nueva imagen principal optimizada del producto de empapadores para adultos"
+                />
+              </Reveal>
             </div>
           </section>
 
