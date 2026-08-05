@@ -319,16 +319,16 @@ export default function EmpapadoresAdultosAmazonCasePage() {
             </div>
           </section>
 
-          <section className="border-y border-white/8 bg-white/[0.025] px-5 py-20 md:px-8 md:py-28">
-            <div className="mx-auto max-w-6xl">
+          <section className="border-y border-white/8 bg-white/[0.025] px-5 py-20 md:px-8 md:py-24">
+            <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:gap-16">
               <Reveal>
                 <span className="text-xs font-semibold tracking-widest text-electric uppercase">
                   Optimización de listings
                 </span>
-                <h2 className="mt-4 max-w-4xl font-display text-3xl font-bold tracking-tight text-balance md:text-5xl">
+                <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-balance md:text-4xl">
                   Una imagen principal preparada para competir mejor
                 </h2>
-                <p className="mt-6 max-w-4xl text-sm leading-relaxed text-white/58 md:text-base">
+                <p className="mt-6 text-sm leading-relaxed text-white/58 md:text-base">
                   La nueva imagen principal se diseñó para mejorar la lectura
                   del pack, reforzar la diferenciación frente a los nuevos
                   competidores y aumentar la competitividad visual dentro de
@@ -336,7 +336,7 @@ export default function EmpapadoresAdultosAmazonCasePage() {
                   recuperación.
                 </p>
               </Reveal>
-              <Reveal delay={0.08} className="mx-auto mt-12 max-w-3xl">
+              <Reveal delay={0.08} className="mx-auto w-full max-w-xl">
                 <BeforeAfterComparison
                   beforeSrc="/images/casos/empapadores-adultos-antes.png"
                   beforeAlt="Imagen principal anterior del producto de empapadores para adultos"
