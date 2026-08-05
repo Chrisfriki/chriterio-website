@@ -369,28 +369,32 @@ export default function EmpapadoresAdultosAmazonCasePage() {
           <section className="px-5 py-20 md:px-8 md:py-28">
             <div className="mx-auto max-w-6xl">
               <Reveal>
-                <div className="rounded-[2rem] border border-electric/25 bg-[linear-gradient(135deg,rgba(46,91,255,0.15),rgba(7,23,47,0.78)_48%,rgba(7,23,47,0.55))] p-7 shadow-[0_36px_110px_-62px_rgba(46,91,255,0.95)] md:p-12">
-                  <span className="text-xs font-semibold tracking-widest text-[#91a9ff] uppercase">
-                    Resultado
-                  </span>
-                  <h2 className="mt-4 max-w-4xl font-display text-3xl font-bold tracking-tight text-balance md:text-5xl">
-                    Posicionamiento recuperado. Producto estabilizado. Ventas
-                    de nuevo en crecimiento.
-                  </h2>
-                  <p className="mt-6 max-w-4xl text-sm leading-relaxed text-white/60 md:text-base">
-                    Tras resolver la supresión de búsqueda, replantear el
-                    posicionamiento, trabajar las palabras clave prioritarias y
-                    reforzar la imagen principal, el producto volvió a competir
-                    en primera página y alcanzó posiciones destacadas dentro de
-                    los más vendidos.
-                  </p>
-                  <CaseMedia
-                    src="/images/casos/empapadores-resultado.webp"
-                    alt="Evolución de ventas durante la recuperación del producto en Amazon"
-                    placeholder="Gráfico del crecimiento de ventas"
-                    className="mt-10 aspect-video"
-                  />
-                  <div className="mt-10 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-[2rem] border border-electric/25 bg-[linear-gradient(135deg,rgba(46,91,255,0.15),rgba(7,23,47,0.78)_48%,rgba(7,23,47,0.55))] p-7 shadow-[0_36px_110px_-62px_rgba(46,91,255,0.95)] md:p-10">
+                  <div className="grid items-center gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:gap-10">
+                    <div>
+                      <span className="text-xs font-semibold tracking-widest text-[#91a9ff] uppercase">
+                        Resultado
+                      </span>
+                      <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-balance md:text-4xl">
+                        Posicionamiento recuperado. Producto estabilizado.
+                        Ventas de nuevo en crecimiento.
+                      </h2>
+                      <p className="mt-5 text-sm leading-relaxed text-white/60 md:text-base">
+                        Tras resolver la supresión de búsqueda, replantear el
+                        posicionamiento, trabajar las palabras clave prioritarias
+                        y reforzar la imagen principal, el producto volvió a
+                        competir en primera página y alcanzó posiciones destacadas
+                        dentro de los más vendidos.
+                      </p>
+                    </div>
+                    <CaseMedia
+                      src="/images/casos/empapadores-resultado.webp"
+                      alt="Evolución de ventas durante la recuperación del producto en Amazon"
+                      placeholder="Gráfico del crecimiento de ventas"
+                      className="aspect-video w-full"
+                    />
+                  </div>
+                  <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                     {RESULTS.map((result) => (
                       <div
                         key={result}
