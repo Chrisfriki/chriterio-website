@@ -24,10 +24,10 @@ export const PRICING_TIERS: TierType[] = [
     name: 'Dirección estratégica',
     description:
       'Para marcas que necesitan criterio, análisis y seguimiento, pero cuentan con equipo o capacidad para ejecutar.',
-    price: '500 €',
+    price: '497 €',
     originalPrice: '600 €',
     priceNote:
-      '500 €/mes durante los primeros 3 meses. Después, 600 €/mes.',
+      '497 €/mes durante los primeros 3 meses. Después, 600 €/mes.',
     commitmentNote: 'Permanencia mínima de 3 meses',
     launchOffer: true,
     features: [
