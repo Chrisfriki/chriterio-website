@@ -152,6 +152,14 @@ const REAL_PRODUCTION_AND_MODELS: CreativeSlide[] = [
   { id: 'production-17', src: '/amz-creatives/real-production-and-models/pool-paint-bucket.webp', alt: 'Modelo transportando un cubo de pintura para piscinas', type: 'lifestyle' },
 ]
 
+const AI_HYBRID_PRODUCTION: CreativeSlide[] = [
+  { id: 'ai-hybrid-01', src: '/amz-creatives/ai-hybrid/beach-chair.webp', alt: 'Silla de playa integrada en un entorno costero', type: 'lifestyle' },
+  { id: 'ai-hybrid-02', src: '/amz-creatives/ai-hybrid/pool-hammock.webp', alt: 'Hamaca presentada junto a una piscina', type: 'lifestyle' },
+  { id: 'ai-hybrid-03', src: '/amz-creatives/ai-hybrid/pool-loungers.webp', alt: 'Tumbonas integradas en una escena exterior con piscina', type: 'lifestyle' },
+  { id: 'ai-hybrid-04', src: '/amz-creatives/ai-hybrid/kitchen-stools.webp', alt: 'Taburetes plegables integrados en una cocina luminosa', type: 'lifestyle' },
+  { id: 'ai-hybrid-05', src: '/amz-creatives/ai-hybrid/kitchen-chairs.webp', alt: 'Sillas plegables presentadas en una cocina moderna', type: 'lifestyle' },
+]
+
 const AMAZON_MARKETPLACE_HOSTS = new Set([
   'amazon.es',
   'amazon.com',
@@ -531,7 +539,7 @@ function StrategyExecutionVisual({
         <div className="relative flex items-start justify-between gap-5">
           <div className="min-w-0">
             <Image
-              src={withBasePath('/amz-creatives-logo.png')}
+              src={withBasePath('/amz-creatives-logo.webp')}
               alt="AMZ Creatives"
               width={4773}
               height={713}
@@ -832,7 +840,7 @@ function AmzEditorialContent() {
       <div className="mx-auto max-w-6xl px-5 py-24 md:px-8 md:py-32">
         <div className="flex items-center justify-between gap-8">
           <span className="text-xs font-bold tracking-[0.22em] text-[#ff6846] uppercase">AMZ Creatives</span>
-          <Image src={withBasePath('/amz-creatives-logo.png')} alt="AMZ Creatives" width={4773} height={713} className="h-6 w-auto md:h-8" />
+          <Image src={withBasePath('/amz-creatives-logo.webp')} alt="AMZ Creatives" width={4773} height={713} className="h-6 w-auto md:h-8" />
         </div>
         <h3 className="mt-12 max-w-5xl font-display text-[clamp(1.95rem,7vw,7rem)] font-bold leading-[0.96] tracking-[-0.055em]">
           <span className="block whitespace-nowrap">En Amazon,</span>
@@ -846,7 +854,6 @@ function AmzEditorialContent() {
 
       <div className="mx-auto max-w-7xl px-5 pb-28 md:px-8 md:pb-40">
         {CAPABILITIES.map((capability, index) => {
-          const Icon = capability.icon
           return (
             <article
               key={capability.number}
@@ -876,13 +883,10 @@ function AmzEditorialContent() {
                     imageFit="cover"
                   />
                 ) : (
-                  <>
-                    <div className="absolute inset-0 opacity-90" style={{ background: `radial-gradient(circle at 65% 35%, ${capability.accent}, transparent 34%), linear-gradient(145deg, #181818, #3a302c)` }} />
-                    <span className="absolute -right-2 -bottom-12 font-display text-[12rem] font-bold leading-none tracking-tighter text-white/10 md:text-[15rem]">{capability.number}</span>
-                    <div className="absolute top-7 left-7 flex size-14 items-center justify-center rounded-full bg-white text-[#171717] md:top-8 md:left-8 md:size-16">
-                      <Icon className="size-6 md:size-7" aria-hidden="true" />
-                    </div>
-                  </>
+                  <CreativePortfolioCarousel
+                    slides={AI_HYBRID_PRODUCTION}
+                    imageFit="cover"
+                  />
                 )}
               </div>
             </article>

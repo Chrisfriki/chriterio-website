@@ -124,7 +124,7 @@ export function SiteNavbar() {
             className="flex shrink-0 items-center"
           >
             <Image
-              src={withBasePath('/chriterio-icon-white.png')}
+              src={withBasePath('/chriterio-icon-white.webp')}
               alt="CHRITERIO"
               width={414}
               height={477}

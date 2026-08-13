@@ -80,7 +80,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     shortDescription: 'Cómo te encuentran, cómo te perciben y cómo conviertes.',
     introduction:
       'Trabajamos los elementos que determinan cómo aparece tu producto, cómo atrae tráfico y cómo convierte las visitas en ventas.',
-    image: '/images/services/visibility-advertising.jpg',
+    image: '/images/services/visibility-advertising.webp',
     services: [
       {
         id: 'ppc',
@@ -114,7 +114,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     shortDescription: 'Entender qué ocurre antes de decidir qué hacer.',
     introduction:
       'Analizamos la cuenta y el mercado para detectar bloqueos, oportunidades y decisiones que afectan directamente al beneficio.',
-    image: '/images/services/analysis-profitability.jpg',
+    image: '/images/services/analysis-profitability.webp',
     services: [
       {
         id: 'auditoria',
@@ -154,7 +154,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     shortDescription: 'Avanzar por fases sin perder rentabilidad ni control.',
     introduction:
       'Diseñamos cómo avanzar desde la situación actual hacia nuevos niveles de facturación, productos y mercados sin perder control.',
-    image: '/images/services/growth-expansion.jpg',
+    image: '/images/services/growth-expansion.webp',
     services: [
       {
         id: 'crecimiento',
@@ -187,7 +187,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     shortDescription: 'Decisiones acompañadas, prioridades claras y seguimiento.',
     introduction:
       'Acompañamos la toma de decisiones para convertir los datos de la cuenta en prioridades claras y acciones ejecutables.',
-    image: '/images/services/strategic-direction.jpg',
+    image: '/images/services/strategic-direction.webp',
     services: [
       {
         id: 'mentoria',
@@ -210,22 +210,22 @@ export const SERVICE_AREAS: ServiceArea[] = [
 // Main-page brand marquee. Kept independent from the curated AMZ project
 // carousel so changing that ten-project selection cannot alter this list.
 export const TRUSTED_BRANDS: Brand[] = [
-  { name: 'Almar Baby', logo: '/brands/processed/almar-baby.png', width: 700, height: 448 },
-  { name: 'Anefort', logo: '/brands/processed/anefort.png', width: 700, height: 396 },
-  { name: 'Bebé Pituso', logo: '/brands/processed/bebe-pituso.png', width: 700, height: 251 },
-  { name: 'Detraps', logo: '/brands/processed/detraps.png', width: 607, height: 162 },
-  { name: 'Funny Baby', logo: '/brands/processed/funny-baby.png', width: 674, height: 604 },
-  { name: 'Kook Time', logo: '/brands/processed/kook-time.png', width: 700, height: 147 },
-  { name: 'Maternika', logo: '/brands/processed/maternika.png', width: 700, height: 102 },
-  { name: 'Maurenza', logo: '/brands/processed/maurenza.png', width: 632, height: 153 },
-  { name: 'Neergy', logo: '/brands/processed/neergy.png', width: 561, height: 264 },
-  { name: 'Norditex', logo: '/brands/processed/norditex.png', width: 273, height: 140 },
-  { name: 'Pinisi Home', logo: '/brands/processed/pinisi.png', width: 500, height: 248 },
-  { name: 'PodCase', logo: '/brands/processed/podcase.png', width: 700, height: 233 },
-  { name: 'Pure4Home', logo: '/brands/processed/pure4home.png', width: 700, height: 149 },
-  { name: 'Snappy Blue', logo: '/brands/processed/sauk.png', width: 700, height: 442 },
-  { name: 'Savia de Alma', logo: '/brands/processed/savia-alma.png', width: 680, height: 750 },
-  { name: 'Thinia Home', logo: '/brands/processed/thinia-home.png', width: 664, height: 411 },
-  { name: 'Umbra', logo: '/brands/processed/umbra.png', width: 669, height: 155 },
-  { name: 'Xpintar', logo: '/brands/processed/xpintar.png', width: 700, height: 184 },
+  { name: 'Almar Baby', logo: '/brands/processed/almar-baby.webp', width: 700, height: 448 },
+  { name: 'Anefort', logo: '/brands/processed/anefort.webp', width: 700, height: 396 },
+  { name: 'Bebé Pituso', logo: '/brands/processed/bebe-pituso.webp', width: 700, height: 251 },
+  { name: 'Detraps', logo: '/brands/processed/detraps.webp', width: 607, height: 162 },
+  { name: 'Funny Baby', logo: '/brands/processed/funny-baby.webp', width: 674, height: 604 },
+  { name: 'Kook Time', logo: '/brands/processed/kook-time.webp', width: 700, height: 147 },
+  { name: 'Maternika', logo: '/brands/processed/maternika.webp', width: 700, height: 102 },
+  { name: 'Maurenza', logo: '/brands/processed/maurenza.webp', width: 632, height: 153 },
+  { name: 'Neergy', logo: '/brands/processed/neergy.webp', width: 561, height: 264 },
+  { name: 'Norditex', logo: '/brands/processed/norditex.webp', width: 273, height: 140 },
+  { name: 'Pinisi Home', logo: '/brands/processed/pinisi.webp', width: 500, height: 248 },
+  { name: 'PodCase', logo: '/brands/processed/podcase.webp', width: 700, height: 233 },
+  { name: 'Pure4Home', logo: '/brands/processed/pure4home.webp', width: 700, height: 149 },
+  { name: 'Snappy Blue', logo: '/brands/processed/sauk.webp', width: 700, height: 442 },
+  { name: 'Savia de Alma', logo: '/brands/processed/savia-alma.webp', width: 680, height: 750 },
+  { name: 'Thinia Home', logo: '/brands/processed/thinia-home.webp', width: 664, height: 411 },
+  { name: 'Umbra', logo: '/brands/processed/umbra.webp', width: 669, height: 155 },
+  { name: 'Xpintar', logo: '/brands/processed/xpintar.webp', width: 700, height: 184 },
 ]

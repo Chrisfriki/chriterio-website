@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import { Space_Grotesk, Inter } from 'next/font/google'
 import { SiteNavbar } from '@/components/site-navbar'
 import { SiteFooter } from '@/components/site-footer'
+import { WhatsAppHelp } from '@/components/whatsapp-help'
 import './globals.css'
 
 const inter = Inter({
@@ -42,6 +43,7 @@ export default function RootLayout({
         <SiteNavbar />
         {children}
         <SiteFooter />
+        <WhatsAppHelp />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

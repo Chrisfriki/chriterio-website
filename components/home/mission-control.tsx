@@ -138,7 +138,7 @@ function AmzConnection() {
             className="flex shrink-0 items-center rounded-2xl bg-white px-6 py-4"
           >
             <Image
-              src={withBasePath('/amz-creatives-logo.png')}
+              src={withBasePath('/amz-creatives-logo.webp')}
               alt="AMZ Creatives"
               width={4773}
               height={713}

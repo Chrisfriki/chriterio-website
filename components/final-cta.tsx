@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 
 export function FinalCta({
   title = '¿Vemos qué está frenando tu cuenta?',
-  note = 'Julio-agosto es el momento: quien quiere llegar fuerte a Q4 se mueve ahora.',
+  note = 'Q4 se prepara con antelación: quien quiere llegar fuerte se mueve ahora.',
   className,
 }: {
   title?: string

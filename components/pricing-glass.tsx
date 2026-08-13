@@ -9,39 +9,6 @@ import { withBasePath } from '@/lib/base-path'
 import { CALENDLY_URL } from '@/lib/site'
 import { cn } from '@/lib/utils'
 
-function Price({ tier }: { tier: TierType }) {
-  return (
-    <div>
-      <div className="flex flex-wrap items-center gap-2">
-        {tier.launchOffer && (
-          <span className="rounded-full border border-electric/30 bg-electric/10 px-2.5 py-1 text-[9px] font-bold tracking-[0.16em] text-[#9db5ff] uppercase">
-            Oferta de lanzamiento
-          </span>
-        )}
-      </div>
-
-      <div className="mt-2.5 flex flex-wrap items-end gap-x-3 gap-y-1">
-        <span className="font-display text-4xl font-bold tracking-[-0.055em] text-white md:text-5xl">
-          {tier.price}
-        </span>
-        <span className="pb-1.5 text-sm text-white/50">/mes</span>
-        {tier.originalPrice && (
-          <span className="pb-1.5 text-sm text-white/35 line-through">
-            {tier.originalPrice} /mes
-          </span>
-        )}
-      </div>
-
-      <p className="mt-2.5 max-w-lg text-[11px] leading-relaxed text-white/50">
-        {tier.priceNote}
-      </p>
-      <p className="mt-1.5 text-[10px] font-medium tracking-wide text-white/38">
-        {tier.commitmentNote}
-      </p>
-    </div>
-  )
-}
-
 function PricingTierCard({ tier }: { tier: TierType }) {
   const reducedMotion = useReducedMotion()
 
@@ -98,11 +65,7 @@ function PricingTierCard({ tier }: { tier: TierType }) {
         </p>
       </div>
 
-      <div className="relative mt-5 border-y border-white/10 py-4">
-        <Price tier={tier} />
-      </div>
-
-      <ul className="relative mt-5 flex flex-col gap-2.5">
+      <ul className="relative mt-6 flex flex-col gap-2.5 border-t border-white/10 pt-5">
         {tier.features.map((feature) => (
           <li key={feature} className="flex items-start gap-3">
             <span
@@ -165,37 +128,37 @@ const TOTAL_MANAGEMENT_FEATURES = [
 const TOTAL_MANAGEMENT_BRANDS = [
   {
     name: 'Almar Baby',
-    src: '/brands/processed/almar-baby.png',
+    src: '/brands/processed/almar-baby.webp',
     width: 700,
     height: 448,
   },
   {
     name: 'Funny Baby',
-    src: '/brands/processed/funny-baby.png',
+    src: '/brands/processed/funny-baby.webp',
     width: 674,
     height: 604,
   },
   {
     name: 'Maternika',
-    src: '/brands/processed/maternika.png',
+    src: '/brands/processed/maternika.webp',
     width: 700,
     height: 102,
   },
   {
     name: 'Kook Time',
-    src: '/brands/processed/kook-time.png',
+    src: '/brands/processed/kook-time.webp',
     width: 700,
     height: 147,
   },
   {
     name: 'Pure4Home',
-    src: '/brands/processed/pure4home.png',
+    src: '/brands/processed/pure4home.webp',
     width: 700,
     height: 149,
   },
   {
     name: 'Pinisi Home',
-    src: '/brands/processed/pinisi.png',
+    src: '/brands/processed/pinisi.webp',
     width: 500,
     height: 248,
   },
@@ -242,7 +205,7 @@ function TotalManagementCard() {
               +
             </span>
             <Image
-              src={withBasePath('/amz-creatives-logo.png')}
+              src={withBasePath('/amz-creatives-logo.webp')}
               alt="AMZ Creatives"
               width={4773}
               height={713}
@@ -323,7 +286,7 @@ export function PricingGlass() {
     <div>
       <div className="mx-auto flex w-fit items-center gap-2 rounded-full border border-white/12 bg-[#07152c]/70 px-4 py-2 text-[10px] font-semibold tracking-[0.12em] text-white/48 uppercase backdrop-blur-xl">
         <Check className="size-3 text-[#8fa8ff]" aria-hidden="true" />
-        Permanencia mínima de 3 meses
+        El servicio adecuado se define en una reunión
       </div>
 
       <div className="mt-10 grid gap-6 lg:grid-cols-2 lg:items-stretch lg:gap-7">

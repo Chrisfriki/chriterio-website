@@ -60,6 +60,14 @@ export function SiteFooter() {
                   WhatsApp
                 </a>
               </li>
+              <li>
+                <a
+                  href="mailto:hola@chriterio.es"
+                  className="text-sm text-white/70 transition-colors hover:text-electric"
+                >
+                  Contacto: hola@chriterio.es
+                </a>
+              </li>
             </ul>
           </div>
         </div>
@@ -73,7 +81,7 @@ export function SiteFooter() {
             <span className="text-white/40">Diseñado por</span>
             <span className="flex items-center rounded-md bg-white px-2 py-1">
               <Image
-                src={withBasePath('/amz-creatives-logo.png')}
+                src={withBasePath('/amz-creatives-logo.webp')}
                 alt="AMZ Creatives"
                 width={4773}
                 height={713}

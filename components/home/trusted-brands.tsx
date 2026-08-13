@@ -44,7 +44,7 @@ export function TrustedBrands() {
             </span>
             <span className="inline-flex items-center rounded-lg bg-white px-3.5 py-2">
               <Image
-                src={withBasePath('/amz-creatives-logo.png')}
+                src={withBasePath('/amz-creatives-logo.webp')}
                 alt="AMZ Creatives"
                 width={4773}
                 height={713}

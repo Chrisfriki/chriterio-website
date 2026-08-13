@@ -4,11 +4,6 @@ export type TierType = {
   id: string
   name: string
   description: string
-  price: string
-  originalPrice?: string
-  priceNote: string
-  commitmentNote: string
-  launchOffer?: boolean
   isPopular?: boolean
   popularLabel?: string
   popularNote?: string
@@ -24,12 +19,6 @@ export const PRICING_TIERS: TierType[] = [
     name: 'Dirección estratégica',
     description:
       'Para marcas que necesitan criterio, análisis y seguimiento, pero cuentan con equipo o capacidad para ejecutar.',
-    price: '497 €',
-    originalPrice: '600 €',
-    priceNote:
-      '497 €/mes durante los primeros 3 meses. Después, 600 €/mes.',
-    commitmentNote: 'Permanencia mínima de 3 meses',
-    launchOffer: true,
     features: [
       '4 sesiones estratégicas mensuales.',
       'App privada, vídeos, recursos y newsletter.',
@@ -40,7 +29,7 @@ export const PRICING_TIERS: TierType[] = [
       'Formación del equipo encargado para que pueda ejecutar con criterio, orden y autonomía.',
     ],
     executionNote: 'Tu equipo ejecuta las acciones definidas.',
-    ctaLabel: 'Quiero dirección estratégica',
+    ctaLabel: 'Agendar reunión',
     ctaHref: CALENDLY_URL,
   },
   {
@@ -48,12 +37,6 @@ export const PRICING_TIERS: TierType[] = [
     name: 'Gestión integral',
     description:
       'Para marcas que quieren delegar la gestión y que trabajemos directamente dentro de su cuenta de Amazon.',
-    price: '997 €',
-    originalPrice: '1.200 €',
-    priceNote:
-      '997 €/mes durante los primeros 3 meses. Después, 1.200 €/mes.',
-    commitmentNote: 'Permanencia mínima de 3 meses',
-    launchOffer: true,
     isPopular: true,
     popularLabel: 'Más eficiente',
     popularNote: 'La opción más efectiva para delegar la ejecución.',
@@ -65,7 +48,7 @@ export const PRICING_TIERS: TierType[] = [
       'Seguimiento de posicionamiento y conversión.',
       'Incidencias, promociones y lanzamientos.',
     ],
-    ctaLabel: 'Quiero delegar mi cuenta',
+    ctaLabel: 'Agendar reunión',
     ctaHref: CALENDLY_URL,
   },
 ]

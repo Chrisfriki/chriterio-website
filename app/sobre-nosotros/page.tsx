@@ -25,7 +25,7 @@ const TEAM = [
     role: 'Estrategia, gestión y crecimiento en Amazon',
     description:
       'Se incorporó al proyecto en 2023 y desde entonces trabaja directamente en cuentas, listings, campañas PPC, análisis de rentabilidad y operativa. Su función dentro de CHRITERIO es detectar qué está frenando el crecimiento, ordenar las prioridades y convertir el análisis en un plan ejecutable.',
-    image: '/images/about/christian-trabajando.jpg',
+    image: '/images/about/christian-trabajando.webp',
     alt: 'Christian trabajando en estrategia, gestión y crecimiento en Amazon',
     position: '68% 45%',
   },
@@ -34,7 +34,7 @@ const TEAM = [
     role: 'Estrategia creativa y marketplaces',
     description:
       'Vende en diferentes marketplaces desde 2017. Combina experiencia comercial, conocimiento de producto y dirección creativa para transformar la estrategia en imágenes, vídeos y contenidos que ayuden a mejorar la percepción y la conversión de las marcas.',
-    image: '/images/about/rafa-trabajando.jpg',
+    image: '/images/about/rafa-trabajando.webp',
     alt: 'Rafa trabajando en estrategia creativa y marketplaces',
     position: '64% 44%',
   },
@@ -145,7 +145,7 @@ export default function SobreNosotrosPage() {
               <div className="relative grid aspect-[3/2] grid-cols-2 overflow-hidden rounded-[2rem] border border-white/14 bg-white/[0.04] shadow-[0_32px_100px_-48px_rgba(46,91,255,0.65)]">
                 <div className="relative overflow-hidden border-r border-white/12">
                   <Image
-                    src={withBasePath('/images/about/christian-about.png')}
+                    src={withBasePath('/images/about/christian-about.webp')}
                     alt="Christian sonriendo"
                     fill
                     priority
@@ -159,7 +159,7 @@ export default function SobreNosotrosPage() {
                 </div>
                 <div className="relative overflow-hidden">
                   <Image
-                    src={withBasePath('/images/about/rafa-sonriendo.jpg')}
+                    src={withBasePath('/images/about/rafa-sonriendo.webp')}
                     alt="Rafa sonriendo"
                     fill
                     priority
@@ -223,7 +223,7 @@ export default function SobreNosotrosPage() {
             <Reveal>
               <div className="relative aspect-[2/3] overflow-hidden rounded-[2rem] border border-white/14">
                 <Image
-                  src={withBasePath('/images/about/audit-work.jpg')}
+                  src={withBasePath('/images/about/audit-work.webp')}
                   alt="Christian trabajando frente a una cuenta de Amazon"
                   fill
                   sizes="(max-width: 1023px) calc(100vw - 2.5rem), 45vw"
@@ -272,7 +272,7 @@ export default function SobreNosotrosPage() {
                   +
                 </span>
                 <Image
-                  src={withBasePath('/amz-creatives-logo.png')}
+                  src={withBasePath('/amz-creatives-logo.webp')}
                   alt="AMZ Creatives"
                   width={4773}
                   height={713}
