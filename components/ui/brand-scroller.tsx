@@ -68,7 +68,7 @@ export function BrandScroller({
 
   return (
     <div
-      className={cn('relative w-full overflow-hidden', className)}
+      className={cn('brand-scroller-fade relative w-full overflow-hidden', className)}
       role="group"
       aria-label="Marcas que han trabajado con AMZ Creatives"
       onMouseEnter={() => setPlaybackRate(HOVER_PLAYBACK_RATE)}
