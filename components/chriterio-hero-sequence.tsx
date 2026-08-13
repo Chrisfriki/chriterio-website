@@ -754,7 +754,7 @@ export function ChriterioHeroSequence({
             rocket is free to read as the visual centerpiece through the rest
             of the frame below/behind it. Each piece fades/rises in on its
             own schedule via its own ref. */}
-        <div className="absolute inset-x-0 top-0 z-10 flex flex-col items-center gap-6 px-6 pt-[clamp(6.5rem,15svh,8rem)] text-center sm:px-8 md:gap-8 md:pt-36">
+        <div className="absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 flex-col items-center gap-6 px-6 text-center sm:top-0 sm:translate-y-0 sm:px-8 sm:pt-[clamp(6.5rem,15svh,8rem)] md:gap-8 md:pt-36">
           <div ref={headlineRef} className="w-full max-w-4xl" style={{ opacity: 0 }}>
             {headline}
           </div>

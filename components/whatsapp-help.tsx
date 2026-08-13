@@ -2,13 +2,21 @@
 
 import { MessageCircle, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { WHATSAPP_URL } from '@/lib/site'
 import { cn } from '@/lib/utils'
+import {
+  HERO_SEQUENCE_STATE_EVENT,
+  type HeroSequenceStateDetail,
+} from '@/lib/hero-sequence-events'
 
 const STORAGE_KEY = 'chriterio-whatsapp-help-dismissed'
 
 export function WhatsAppHelp() {
+  const pathname = usePathname()
+  const isHome = pathname === '/'
   const [visible, setVisible] = useState(false)
+  const [heroComplete, setHeroComplete] = useState(!isHome)
   const [compact, setCompact] = useState(false)
   const lastScrollYRef = useRef(0)
   const upwardDistanceRef = useRef(0)
@@ -16,6 +24,7 @@ export function WhatsAppHelp() {
 
   useEffect(() => {
     setVisible(window.sessionStorage.getItem(STORAGE_KEY) !== 'true')
+    setHeroComplete(!isHome)
     lastScrollYRef.current = window.scrollY
 
     const onScroll = () => {
@@ -44,6 +53,19 @@ export function WhatsAppHelp() {
 
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
+  }, [isHome, pathname])
+
+  useEffect(() => {
+    const onHeroSequenceState = (event: Event) => {
+      const { complete } = (
+        event as CustomEvent<HeroSequenceStateDetail>
+      ).detail
+      setHeroComplete(complete)
+    }
+
+    window.addEventListener(HERO_SEQUENCE_STATE_EVENT, onHeroSequenceState)
+    return () =>
+      window.removeEventListener(HERO_SEQUENCE_STATE_EVENT, onHeroSequenceState)
   }, [])
 
   const dismiss = () => {
@@ -51,7 +73,7 @@ export function WhatsAppHelp() {
     setVisible(false)
   }
 
-  if (!visible) return null
+  if (!visible || (isHome && !heroComplete)) return null
 
   return (
     <aside
