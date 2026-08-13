@@ -19,9 +19,25 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://chriterio.es'),
   title: 'CHRITERIO · Consultoría Amazon con criterio de seller',
   description:
     'Analizo tu cuenta de Amazon con el mismo criterio que uso con mi propio dinero. Diagnóstico en 7 días. Soy seller activo en Amazon.es.',
+  openGraph: {
+    type: 'website',
+    locale: 'es_ES',
+    url: 'https://chriterio.es',
+    siteName: 'CHRITERIO',
+    title: 'CHRITERIO · Estrategia y gestión para crecer en Amazon',
+    description:
+      'Estrategia, gestión y creatividad conectadas para ayudar a crecer marcas en Amazon con criterio.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CHRITERIO · Estrategia y gestión para crecer en Amazon',
+    description:
+      'Estrategia, gestión y creatividad conectadas para ayudar a crecer marcas en Amazon con criterio.',
+  },
   generator: 'v0.app',
 }
 
