@@ -871,7 +871,7 @@ function AmzEditorialContent() {
                 <h4 className="mt-7 font-display text-3xl font-bold leading-tight tracking-tight md:text-5xl">{capability.title}</h4>
                 <p className="mt-6 max-w-xl text-sm leading-relaxed text-black/60 md:text-lg">{capability.description}</p>
               </div>
-              <div className={`relative min-w-0 ${index === 0 || index === 2 ? '' : 'aspect-[4/3] overflow-hidden rounded-[2rem] bg-[#1d1d1d]'} ${index % 2 ? 'md:order-1' : ''}`}>
+              <div className={`relative min-w-0 ${index === 0 || index === 2 || index === 3 ? '' : 'aspect-[4/3] overflow-hidden rounded-[2rem] bg-[#1d1d1d]'} ${index % 2 ? 'md:order-1' : ''}`}>
                 {index === 0 ? (
                   <CreativePortfolioCarousel slides={IMAGES_THAT_CONVERT} />
                 ) : index === 1 ? (
