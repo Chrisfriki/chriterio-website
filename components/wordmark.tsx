@@ -12,7 +12,7 @@ export function Wordmark({
   return (
     <Image
       src={withBasePath(
-        light ? '/chriterio-logo-white.png' : '/chriterio-logo-navy.png',
+        light ? '/chriterio-logo-white.png' : '/chriterio-logo-navy.webp',
       )}
       alt="CHRITERIO"
       width={1433}

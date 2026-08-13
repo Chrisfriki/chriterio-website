@@ -16,7 +16,7 @@ export const AMZ_CREATIVE_PROJECTS: AmzCreativeProject[] = [
   {
     id: 'almar-baby',
     brand: 'Almar Baby',
-    logoSrc: '/brands/processed/almar-baby.png',
+    logoSrc: '/brands/processed/almar-baby.webp',
     logoWidth: 700,
     logoHeight: 448,
     amazonUrl:
@@ -27,7 +27,7 @@ export const AMZ_CREATIVE_PROJECTS: AmzCreativeProject[] = [
   {
     id: 'funny-baby',
     brand: 'Funny Baby',
-    logoSrc: '/brands/processed/funny-baby.png',
+    logoSrc: '/brands/processed/funny-baby.webp',
     logoWidth: 674,
     logoHeight: 604,
     amazonUrl:
@@ -38,7 +38,7 @@ export const AMZ_CREATIVE_PROJECTS: AmzCreativeProject[] = [
   {
     id: 'maternika',
     brand: 'Maternika',
-    logoSrc: '/brands/processed/maternika.png',
+    logoSrc: '/brands/processed/maternika.webp',
     logoWidth: 700,
     logoHeight: 102,
     amazonUrl:
@@ -71,7 +71,7 @@ export const AMZ_CREATIVE_PROJECTS: AmzCreativeProject[] = [
   {
     id: 'kook-time',
     brand: 'Kook Time',
-    logoSrc: '/brands/processed/kook-time.png',
+    logoSrc: '/brands/processed/kook-time.webp',
     logoWidth: 700,
     logoHeight: 147,
     amazonUrl:
@@ -82,7 +82,7 @@ export const AMZ_CREATIVE_PROJECTS: AmzCreativeProject[] = [
   {
     id: 'snappy-blue',
     brand: 'Snappy Blue',
-    logoSrc: '/brands/processed/sauk.png',
+    logoSrc: '/brands/processed/sauk.webp',
     logoWidth: 700,
     logoHeight: 442,
     amazonUrl:
@@ -93,7 +93,7 @@ export const AMZ_CREATIVE_PROJECTS: AmzCreativeProject[] = [
   {
     id: 'podcase',
     brand: 'PodCase',
-    logoSrc: '/brands/processed/podcase.png',
+    logoSrc: '/brands/processed/podcase.webp',
     logoWidth: 700,
     logoHeight: 233,
     amazonUrl:
@@ -104,7 +104,7 @@ export const AMZ_CREATIVE_PROJECTS: AmzCreativeProject[] = [
   {
     id: 'pure4home',
     brand: 'Pure4Home',
-    logoSrc: '/brands/processed/pure4home.png',
+    logoSrc: '/brands/processed/pure4home.webp',
     logoWidth: 700,
     logoHeight: 149,
     amazonUrl:
@@ -115,7 +115,7 @@ export const AMZ_CREATIVE_PROJECTS: AmzCreativeProject[] = [
   {
     id: 'pinisi-home',
     brand: 'Pinisi Home',
-    logoSrc: '/brands/processed/pinisi.png',
+    logoSrc: '/brands/processed/pinisi.webp',
     logoWidth: 500,
     logoHeight: 248,
     amazonUrl:

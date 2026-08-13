@@ -27,7 +27,7 @@ export const WORK_PHASES: WorkPhase[] = [
       'A partir de ahí analizamos en profundidad el mercado, la competencia, las fugas de ventas, la conversión, el posicionamiento, las palabras clave, el PPC, la rentabilidad y los puntos críticos que están frenando el crecimiento.',
     ],
     image: {
-      src: '/images/about/audit-work.jpg',
+      src: '/images/about/audit-work.webp',
       alt: 'Christian trabajando en el análisis de una cuenta de Amazon',
       position: '50% 50%',
       aspect: 'portrait',

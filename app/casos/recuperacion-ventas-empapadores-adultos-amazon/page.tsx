@@ -338,7 +338,7 @@ export default function EmpapadoresAdultosAmazonCasePage() {
               </Reveal>
               <Reveal delay={0.08} className="mx-auto w-full max-w-xl">
                 <BeforeAfterComparison
-                  beforeSrc="/images/casos/empapadores-adultos-antes.png"
+                  beforeSrc="/images/casos/empapadores-adultos-antes.webp"
                   beforeAlt="Imagen principal anterior del producto de empapadores para adultos"
                   afterSrc="/amz-creatives/images-that-convert/1.webp"
                   afterAlt="Nueva imagen principal optimizada del producto de empapadores para adultos"
