@@ -23,7 +23,7 @@ function ProcessVisual({
 }) {
   if (phase.image) {
     return (
-      <div className="relative overflow-hidden rounded-[2rem] border border-white/14 bg-white/[0.045] shadow-[0_28px_90px_-45px_rgba(46,91,255,0.55)]">
+      <div className="relative w-full min-w-0 max-w-full overflow-hidden rounded-[2rem] border border-white/14 bg-white/[0.045] shadow-[0_28px_90px_-45px_rgba(46,91,255,0.55)]">
         <div
           className={cn(
             'relative',
@@ -56,7 +56,7 @@ function ProcessVisual({
 
   if (variant === 'roadmap') {
     return (
-      <div className="relative overflow-hidden rounded-[2rem] border border-white/14 bg-[#07172f]/80 p-6 shadow-[0_28px_90px_-45px_rgba(46,91,255,0.5)] md:p-8">
+      <div className="relative w-full min-w-0 max-w-full overflow-hidden rounded-[2rem] border border-white/14 bg-[#07172f]/80 p-5 shadow-[0_28px_90px_-45px_rgba(46,91,255,0.5)] sm:p-6 md:p-8">
         <div className="absolute -top-20 -left-16 size-52 rounded-full bg-electric/12 blur-3xl" />
         <div className="relative flex items-center justify-between border-b border-white/10 pb-5">
           <div>
@@ -78,12 +78,12 @@ function ProcessVisual({
           ].map(([number, label]) => (
             <div
               key={number}
-              className="flex items-center gap-4 rounded-xl border border-white/8 bg-white/[0.035] px-4 py-3.5"
+              className="flex min-w-0 items-center gap-3 rounded-xl border border-white/8 bg-white/[0.035] px-3.5 py-3.5 sm:gap-4 sm:px-4"
             >
               <span className="font-display text-xs font-bold text-electric">
                 {number}
               </span>
-              <span className="text-sm text-white/65">{label}</span>
+              <span className="min-w-0 text-sm text-white/65">{label}</span>
               <Check className="ml-auto size-4 text-white/25" aria-hidden="true" />
             </div>
           ))}
@@ -93,7 +93,7 @@ function ProcessVisual({
   }
 
   return (
-    <div className="relative overflow-hidden rounded-[2rem] border border-white/14 bg-[#07172f]/80 p-6 shadow-[0_28px_90px_-45px_rgba(46,91,255,0.5)] md:p-8">
+    <div className="relative w-full min-w-0 max-w-full overflow-hidden rounded-[2rem] border border-white/14 bg-[#07172f]/80 p-5 shadow-[0_28px_90px_-45px_rgba(46,91,255,0.5)] sm:p-6 md:p-8">
       <div className="absolute -right-16 -bottom-20 size-52 rounded-full bg-electric/12 blur-3xl" />
       <div className="relative flex items-center gap-4">
         <span className="flex size-12 items-center justify-center rounded-full border border-electric/25 bg-electric/10 text-electric">

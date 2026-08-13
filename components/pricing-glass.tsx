@@ -166,7 +166,7 @@ const TOTAL_MANAGEMENT_BRANDS = [
 
 function TotalManagementCard() {
   return (
-    <article className="relative mt-14 overflow-hidden rounded-[2rem] border border-[#7895ff]/35 bg-[#07152c]/88 shadow-[0_35px_120px_-50px_rgba(46,91,255,0.8)] backdrop-blur-xl lg:mt-16">
+    <article className="relative mt-14 w-full min-w-0 max-w-full overflow-hidden rounded-[2rem] border border-[#7895ff]/35 bg-[#07152c]/88 shadow-[0_35px_120px_-50px_rgba(46,91,255,0.8)] backdrop-blur-xl lg:mt-16">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-16 top-0 h-px bg-gradient-to-r from-transparent via-[#9db5ff]/80 to-transparent"
@@ -176,8 +176,8 @@ function TotalManagementCard() {
         className="pointer-events-none absolute -top-40 left-1/3 size-[30rem] rounded-full bg-electric/10 blur-3xl"
       />
 
-      <div className="relative grid lg:grid-cols-[0.42fr_0.58fr]">
-        <div className="flex flex-col p-6 md:p-9 lg:p-10">
+      <div className="relative grid min-w-0 lg:grid-cols-[0.42fr_0.58fr]">
+        <div className="flex min-w-0 flex-col p-5 sm:p-6 md:p-9 lg:p-10">
           <span className="text-[10px] font-bold tracking-[0.2em] text-[#9db5ff] uppercase">
             Servicio más completo
           </span>
@@ -237,7 +237,7 @@ function TotalManagementCard() {
           </Link>
         </div>
 
-        <div className="border-t border-white/10 p-6 md:p-9 lg:border-t-0 lg:border-l lg:p-10">
+        <div className="min-w-0 border-t border-white/10 p-5 sm:p-6 md:p-9 lg:border-t-0 lg:border-l lg:p-10">
           <h3 className="text-xs font-bold tracking-[0.16em] text-white/75 uppercase">
             Todo lo que incluye
           </h3>
